@@ -1,8 +1,8 @@
-package com.example.springapi.service;
+package com.service;
 
 import org.springframework.stereotype.Service;
-import com.example.springapi.api.model.DatabaseConnector;
-import com.example.springapi.api.model.Trip;
+import com.model.DatabaseConnector;
+import com.model.Trip;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,8 +26,10 @@ public class TripService {
                 "FROM trips WHERE trip_id = ?;";
 
         try (Connection connection = databaseConnector.getConnection()) {
+
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, tripId);
+
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 trip = new Trip();

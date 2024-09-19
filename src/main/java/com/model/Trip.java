@@ -1,4 +1,4 @@
-package com.example.springapi.api.model;
+package com.model;
 
 import java.sql.Time;
 
@@ -6,25 +6,6 @@ public class Trip {
     private int trip_id;
     private Time tpep_pickup_datetime;
     private double average_wind_speed;
-
-//    String vendor_id;
-//    LocalDateTime tpep_dropoff_datetime;
-//    int passenger_count;
-//    double trip_distance;
-//    String rate_code_id;
-//    String store_and_fwd_flag;
-//    int pickup_location_id;
-//    int dropoff_location_id;
-//    int payment_type;
-//    double fare_amount;
-//    double extra;
-//    double mta_tax
-//    double tip_amount;
-//    double tolls_amount;
-//    double improvement_surcharge;
-//    double total_amount;
-//    double congestion_surcharge;
-//    double airport_fee;
 
     public double getAverage_wind_speed() {
         return average_wind_speed;
@@ -50,3 +31,22 @@ public class Trip {
         this.tpep_pickup_datetime = tpep_pickup_datetime;
     }
 }
+
+//    String vendor_id;
+//    LocalDateTime tpep_dropoff_datetime;
+//    int passenger_count;
+//    double trip_distance;
+//    String rate_code_id;
+//    String store_and_fwd_flag;
+//    int pickup_location_id;
+//    int dropoff_location_id;
+//    int payment_type;
+//    double fare_amount;
+//    double extra;
+//    double mta_tax
+//    double tip_amount;
+//    double tolls_amount;
+//    double improvement_surcharge;
+//    double total_amount;
+//    double congestion_surcharge;
+//    double airport_fee;

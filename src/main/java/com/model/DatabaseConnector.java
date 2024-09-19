@@ -1,4 +1,4 @@
-package com.example.springapi.api.model;
+package com.model;
 
 import java.sql.*;
 

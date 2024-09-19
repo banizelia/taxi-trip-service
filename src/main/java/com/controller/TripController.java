@@ -1,10 +1,11 @@
-package com.example.springapi.api.controller;
+package com.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.springapi.api.model.Trip;
-import com.example.springapi.service.TripService;
+import com.model.Trip;
+import com.service.TripService;
 
 @RestController
 public class TripController {
@@ -16,8 +17,8 @@ public class TripController {
     }
 
     @GetMapping("/{tripId}")
-    public ResponseEntity<Trip> getTripById(@PathVariable Integer tripId) {
-        Trip trip = tripService.getTripById(tripId);
+    public ResponseEntity<Trip> getTripById(@PathVariable Integer id) {
+        Trip trip = tripService.getTripById(id);
         if (trip != null) {
             return ResponseEntity.ok(trip);
         } else {
@@ -25,9 +26,14 @@ public class TripController {
         }
     }
 
+//    @RequestMapping(method = RequestMethod.GET, value = "/test")
+//    @ResponseBody
+//    public ResponseEntity<String> test() {
+//        return new ResponseEntity<String>("test", HttpStatus.OK);
+//    }
+
     @GetMapping("/test")
     public String test() {
-        System.out.println("test");
         return "test";
     }
 }

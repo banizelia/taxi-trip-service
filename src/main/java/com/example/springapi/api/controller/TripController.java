@@ -30,9 +30,4 @@ public class TripController {
         System.out.println("test");
         return "test";
     }
-
-    @GetMapping("/hello")
-    public String hello() {
-        return "Hello, World!";
-    }
 }

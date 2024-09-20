@@ -34,7 +34,7 @@ public class TripService {
             if (resultSet.next()) {
                 trip = new Trip();
                 trip.setTrip_id(resultSet.getInt("trip_id"));
-                trip.setTpep_pickup_datetime(resultSet.getTime("tpep_pickup_datetime"));
+                trip.setPickup_datetime(resultSet.getTime("tpep_pickup_datetime"));
                 trip.setAverage_wind_speed(resultSet.getDouble("average_wind_speed"));
             }
         } catch (SQLException e) {

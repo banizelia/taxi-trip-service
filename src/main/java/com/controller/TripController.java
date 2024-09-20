@@ -16,16 +16,6 @@ public class TripController {
         this.tripService = tripService;
     }
 
-    @GetMapping("/{tripId}")
-    public ResponseEntity<Trip> getTripById(@PathVariable Integer id) {
-        Trip trip = tripService.getTripById(id);
-        if (trip != null) {
-            return ResponseEntity.ok(trip);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
 //    @RequestMapping(method = RequestMethod.GET, value = "/test")
 //    @ResponseBody
 //    public ResponseEntity<String> test() {

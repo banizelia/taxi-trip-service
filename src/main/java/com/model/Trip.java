@@ -4,7 +4,7 @@ import java.sql.Time;
 
 public class Trip {
     private int trip_id;
-    private Time tpep_pickup_datetime;
+    private Time pickup_datetime;
     private double average_wind_speed;
 
     public double getAverage_wind_speed() {
@@ -23,12 +23,12 @@ public class Trip {
         this.trip_id = trip_id;
     }
 
-    public Time getTpep_pickup_datetime() {
-        return tpep_pickup_datetime;
+    public Time getPickup_datetime() {
+        return pickup_datetime;
     }
 
-    public void setTpep_pickup_datetime(Time tpep_pickup_datetime) {
-        this.tpep_pickup_datetime = tpep_pickup_datetime;
+    public void setPickup_datetime(Time pickup_datetime) {
+        this.pickup_datetime = pickup_datetime;
     }
 }
 

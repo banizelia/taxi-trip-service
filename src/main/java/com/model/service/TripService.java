@@ -19,8 +19,4 @@ public class TripService {
         return tripsRepository.filterTrips(startDateTime, endDateTime, minWindSpeed, maxWindSpeed);
     }
 
-
-//    public Optional<List<Trip>> filterPickupDatetime(String startDateTime, String endDateTime) {
-//        return tripsRepository.filterByPickupDatetime(startDateTime, endDateTime);
-//    }
 }

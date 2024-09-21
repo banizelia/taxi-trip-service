@@ -23,68 +23,68 @@ public class Trip {
 
 
     @Column(name = "vendor_id")
-    private String vendor_id;
+    private String vendorId;
 
     @Column(name = "pickup_datetime")
-    private String pickup_datetime;
+    private String pickupDatetime;
 
     @Column(name = "dropoff_datetime")
-    private String dropoff_datetime;
+    private String dropoffDatetime;
 
     @Column(name = "passenger_count")
-    private Integer passenger_count;
+    private Integer passengerCount;
 
     @Column(name = "trip_distance")
-    private Double trip_distance;
+    private Double tripDistance;
 
     @Column(name = "rate_code_id")
-    private String rate_code_id;
+    private String rateCodeId;
 
     @Column(name = "store_and_fwd_flag")
-    private String store_and_fwd_flag;
+    private String storeAndFwdFlag;
 
     @Column(name = "pickup_location_id")
-    private Integer pickup_location_id;
+    private Integer pickupLocationId;
 
     @Column(name = "dropoff_location_id")
-    private Integer dropoff_location_id;
+    private Integer dropoffLocationId;
 
     @Column(name = "payment_type")
-    private String payment_type;
+    private String paymentType;
 
     @Column(name = "fare_amount")
-    private Double fare_amount;
+    private Double fareAmount;
 
     @Column(name = "extra")
     private Double extra;
 
     @Column(name = "mta_tax")
-    private Double mta_tax;
+    private Double mtaTax;
 
     @Column(name = "tip_amount")
-    private Double tip_amount;
+    private Double tipAmount;
 
     @Column(name = "tolls_amount")
-    private Double tolls_amount;
+    private Double tollsAmount;
 
     @Column(name = "improvement_surcharge")
-    private Double improvement_surcharge;
+    private Double improvementSurcharge;
 
     @Column(name = "total_amount")
-    private Double total_amount;
+    private Double totalAmount;
 
     @Column(name = "congestion_surcharge")
-    private Double congestion_surcharge;
+    private Double congestionSurcharge;
 
     @Column(name = "airport_fee")
-    private Double airport_fee;
+    private Double airportFee;
 
-    public Double getTip_amount() {
-        return tip_amount;
+    public Double getTipAmount() {
+        return tipAmount;
     }
 
-    public void setTip_amount(Double tip_amount) {
-        this.tip_amount = tip_amount;
+    public void setTipAmount(Double tipAmount) {
+        this.tipAmount = tipAmount;
     }
 
     public Long getId() {
@@ -95,92 +95,92 @@ public class Trip {
         this.id = id;
     }
 
-    public String getVendor_id() {
-        return vendor_id;
+    public String getVendorId() {
+        return vendorId;
     }
 
-    public void setVendor_id(String vendor_id) {
-        this.vendor_id = vendor_id;
+    public void setVendorId(String vendorId) {
+        this.vendorId = vendorId;
     }
 
-    public String getPickup_datetime() {
-        return pickup_datetime;
+    public String getPickupDatetime() {
+        return pickupDatetime;
     }
 
-    public void setPickup_datetime(String pickup_datetime) {
-        this.pickup_datetime = pickup_datetime;
+    public void setPickupDatetime(String pickupDatetime) {
+        this.pickupDatetime = pickupDatetime;
     }
 
-    public String getDropoff_datetime() {
-        return dropoff_datetime;
+    public String getDropoffDatetime() {
+        return dropoffDatetime;
     }
 
-    public void setDropoff_datetime(String dropoff_datetime) {
-        this.dropoff_datetime = dropoff_datetime;
+    public void setDropoffDatetime(String dropoffDatetime) {
+        this.dropoffDatetime = dropoffDatetime;
     }
 
-    public Integer getPassenger_count() {
-        return passenger_count;
+    public Integer getPassengerCount() {
+        return passengerCount;
     }
 
-    public void setPassenger_count(Integer passenger_count) {
-        this.passenger_count = passenger_count;
+    public void setPassengerCount(Integer passengerCount) {
+        this.passengerCount = passengerCount;
     }
 
-    public Double getTrip_distance() {
-        return trip_distance;
+    public Double getTripDistance() {
+        return tripDistance;
     }
 
-    public void setTrip_distance(Double trip_distance) {
-        this.trip_distance = trip_distance;
+    public void setTripDistance(Double tripDistance) {
+        this.tripDistance = tripDistance;
     }
 
-    public String getRate_code_id() {
-        return rate_code_id;
+    public String getRateCodeId() {
+        return rateCodeId;
     }
 
-    public void setRate_code_id(String rate_code_id) {
-        this.rate_code_id = rate_code_id;
+    public void setRateCodeId(String rateCodeId) {
+        this.rateCodeId = rateCodeId;
     }
 
-    public String getStore_and_fwd_flag() {
-        return store_and_fwd_flag;
+    public String getStoreAndFwdFlag() {
+        return storeAndFwdFlag;
     }
 
-    public void setStore_and_fwd_flag(String store_and_fwd_flag) {
-        this.store_and_fwd_flag = store_and_fwd_flag;
+    public void setStoreAndFwdFlag(String storeAndFwdFlag) {
+        this.storeAndFwdFlag = storeAndFwdFlag;
     }
 
-    public Integer getPickup_location_id() {
-        return pickup_location_id;
+    public Integer getPickupLocationId() {
+        return pickupLocationId;
     }
 
-    public void setPickup_location_id(Integer pickup_location_id) {
-        this.pickup_location_id = pickup_location_id;
+    public void setPickupLocationId(Integer pickupLocationId) {
+        this.pickupLocationId = pickupLocationId;
     }
 
-    public Integer getDropoff_location_id() {
-        return dropoff_location_id;
+    public Integer getDropoffLocationId() {
+        return dropoffLocationId;
     }
 
-    public void setDropoff_location_id(Integer dropoff_location_id) {
-        this.dropoff_location_id = dropoff_location_id;
+    public void setDropoffLocationId(Integer dropoffLocationId) {
+        this.dropoffLocationId = dropoffLocationId;
     }
 
-    public String getPayment_type() {
-        return payment_type;
+    public String getPaymentType() {
+        return paymentType;
     }
 
-    public void setPayment_type(String payment_type) {
-        this.payment_type = payment_type;
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType;
     }
 
-    public Double getFare_amount() {
-        return fare_amount;
+    public Double getFareAmount() {
+        return fareAmount;
     }
 
-    public void setFare_amount(Double fare_amount) {
-        this.fare_amount = fare_amount;
+    public void setFareAmount(Double fareAmount) {
+        this.fareAmount = fareAmount;
     }
 
     public Double getExtra() {
@@ -191,51 +191,51 @@ public class Trip {
         this.extra = extra;
     }
 
-    public Double getMta_tax() {
-        return mta_tax;
+    public Double getMtaTax() {
+        return mtaTax;
     }
 
-    public void setMta_tax(Double mta_tax) {
-        this.mta_tax = mta_tax;
+    public void setMtaTax(Double mtaTax) {
+        this.mtaTax = mtaTax;
     }
 
-    public Double getTolls_amount() {
-        return tolls_amount;
+    public Double getTollsAmount() {
+        return tollsAmount;
     }
 
-    public void setTolls_amount(Double tolls_amount) {
-        this.tolls_amount = tolls_amount;
+    public void setTollsAmount(Double tollsAmount) {
+        this.tollsAmount = tollsAmount;
     }
 
-    public Double getImprovement_surcharge() {
-        return improvement_surcharge;
+    public Double getImprovementSurcharge() {
+        return improvementSurcharge;
     }
 
-    public void setImprovement_surcharge(Double improvement_surcharge) {
-        this.improvement_surcharge = improvement_surcharge;
+    public void setImprovementSurcharge(Double improvementSurcharge) {
+        this.improvementSurcharge = improvementSurcharge;
     }
 
-    public Double getTotal_amount() {
-        return total_amount;
+    public Double getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setTotal_amount(Double total_amount) {
-        this.total_amount = total_amount;
+    public void setTotalAmount(Double totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
-    public Double getCongestion_surcharge() {
-        return congestion_surcharge;
+    public Double getCongestionSurcharge() {
+        return congestionSurcharge;
     }
 
-    public void setCongestion_surcharge(Double congestion_surcharge) {
-        this.congestion_surcharge = congestion_surcharge;
+    public void setCongestionSurcharge(Double congestionSurcharge) {
+        this.congestionSurcharge = congestionSurcharge;
     }
 
-    public Double getAirport_fee() {
-        return airport_fee;
+    public Double getAirportFee() {
+        return airportFee;
     }
 
-    public void setAirport_fee(Double airport_fee) {
-        this.airport_fee = airport_fee;
+    public void setAirportFee(Double airportFee) {
+        this.airportFee = airportFee;
     }
 }

@@ -18,16 +18,6 @@ public class TripController {
         this.tripService = tripService;
     }
 
-    @GetMapping("/test")
-    public Optional<Trip> test(@RequestParam("date")  String date) {
-        Optional<Trip> trip = tripService.findById(date);
-
-        if (trip != null){
-            return trip;
-        }
-        return null;
-    }
-
     @GetMapping("/filter")
     public Optional<List<Trip>> filterTrips(
             @RequestParam(value = "startDateTime", required = false) String startDateTime,
@@ -39,31 +29,4 @@ public class TripController {
         return tripService.filterTrips(startDateTime, endDateTime, minWindSpeed, maxWindSpeed);
     }
 
-
-
-//    @GetMapping("/filter")
-//    public Optional<List<Trip>> filterTrips(
-//            @RequestParam("startDateTime") String startDateTime,
-//            @RequestParam("endDateTime") String endDateTime) {
-//
-//        return tripService.filterPickupDatetime(startDateTime, endDateTime);
-//    }
-
-
-
-
-
-
-
-
-//    @GetMapping("/trip")
-//    public Trip getTripById(@RequestParam("id") Long id) {
-//        Trip trip = tripService.getTripById(id);
-//
-//        if (trip != null) {
-//            return trip;
-//        }
-//
-//        return null;
-//    }
 }

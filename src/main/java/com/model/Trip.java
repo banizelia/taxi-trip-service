@@ -6,21 +6,20 @@ import jakarta.persistence.*;
 @Table(name = "trips")
 public class Trip {
 
-//    @Transient
-//    private double average_wind_speed;
-//
-//    public double getAverage_wind_speed() {
-//        return average_wind_speed;
-//    }
-//
-//    public void setAverage_wind_speed(double average_wind_speed) {
-//        this.average_wind_speed = average_wind_speed;
-//    }
+    @Transient
+    private double average_wind_speed;
+
+    public double getAverage_wind_speed() {
+        return average_wind_speed;
+    }
+
+    public void setAverage_wind_speed(double average_wind_speed) {
+        this.average_wind_speed = average_wind_speed;
+    }
 
     @Id
     @Column(name = "id")
     private Long id;
-
 
     @Column(name = "vendor_id")
     private String vendorId;

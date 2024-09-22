@@ -23,10 +23,25 @@ public class TripController {
             @RequestParam(value = "startDateTime", required = false) String startDateTime,
             @RequestParam(value = "endDateTime", required = false) String endDateTime,
             @RequestParam(value = "minWindSpeed", required = false) Double minWindSpeed,
-            @RequestParam(value = "maxWindSpeed", required = false) Double maxWindSpeed) {
+            @RequestParam(value = "maxWindSpeed", required = false) Double maxWindSpeed,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "pickup_datetime") String sortBy, // pickup_datetime or average_wind_speed
+            @RequestParam(value = "direction", required = false, defaultValue = "asc") String direction) { // asc or desc
 
-
-        return tripService.filterTrips(startDateTime, endDateTime, minWindSpeed, maxWindSpeed);
+        return tripService.filterTrips(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, sortBy, direction);
     }
 
+    @GetMapping("/addToFavourite")
+    public void addToFavourite(@RequestParam(value = "id") Long id){
+        tripService.addToFavourite(id);
+    }
+
+    @GetMapping("/removeFromFavourite")
+    public void removeFromFavourite(@RequestParam(value = "id") Long id){
+        tripService.removeFromFavourite(id);
+    }
+
+    @GetMapping("/getFavouriteList")
+    public Optional<List<Trip>> getFavouriteList(){
+        return  tripService.getFavouriteList();
+    }
 }

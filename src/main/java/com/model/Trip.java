@@ -7,15 +7,7 @@ import jakarta.persistence.*;
 public class Trip {
 
     @Transient
-    private double average_wind_speed;
-
-    public double getAverage_wind_speed() {
-        return average_wind_speed;
-    }
-
-    public void setAverage_wind_speed(double average_wind_speed) {
-        this.average_wind_speed = average_wind_speed;
-    }
+    private double averageWindSpeed;
 
     @Id
     @Column(name = "id")
@@ -77,6 +69,14 @@ public class Trip {
 
     @Column(name = "airport_fee")
     private Double airportFee;
+
+    public Double getAverageWindSpeed() {
+        return averageWindSpeed;
+    }
+
+    public void setAverageWindSpeed(Double averageWindSpeed) {
+        this.averageWindSpeed = averageWindSpeed;
+    }
 
     public Double getTipAmount() {
         return tipAmount;

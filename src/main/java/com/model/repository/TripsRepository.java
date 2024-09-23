@@ -25,8 +25,7 @@ public interface TripsRepository extends JpaRepository<Trip, Long> {
             @Param("startDateTime") String startDateTime,
             @Param("endDateTime") String endDateTime,
             @Param("minWindSpeed") Double minWindSpeed,
-            @Param("maxWindSpeed") Double maxWindSpeed,
-            Sort sort);
+            @Param("maxWindSpeed") Double maxWindSpeed /*, Sort sort*/);
 
 
 //    @Query(value = "SELECT trips.*, weather_observations.average_wind_speed " +

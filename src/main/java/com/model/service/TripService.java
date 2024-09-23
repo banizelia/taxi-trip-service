@@ -18,7 +18,7 @@ public class TripService {
 
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
 
-        List<Trip> trips = tripsRepository.filterTrips(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, sort);
+        List<Trip> trips = tripsRepository.filterTrips(startDateTime, endDateTime, minWindSpeed, maxWindSpeed /*, sort*/);
 
         return Optional.of(trips);
     }

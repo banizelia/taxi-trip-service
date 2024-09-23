@@ -2,14 +2,10 @@ package com.model.controller;
 
 import com.model.Trip;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.model.service.TripService;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 
 @RestController
@@ -33,7 +29,7 @@ public class TripController {
             @RequestParam(value = "sortBy", required = false, defaultValue = "id") String sortBy /* pickup_datetime or average_wind_speed */ ) {
 
 
-        Optional<List<Trip>> result = tripService.filterTrips(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy);
+        Optional<List<Trip>> result = tripService.filterTrips(startDateTime, endDateTime, minWindSpeed, maxWindSpeed , direction, sortBy);
 
         return result;
     }

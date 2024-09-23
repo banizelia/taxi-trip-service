@@ -1,13 +1,28 @@
 package com.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "trips")
 public class Trip {
 
-    @Transient
-    private double averageWindSpeed;
+    @ManyToOne
+    @JoinColumn(name = "pickup_date")
+    private Weather weather;
+
+//    @Transient
+//    @JsonIgnore
+//    private Double averageWindSpeed;
+//
+//    public Double getAverageWindSpeed() {
+//        return averageWindSpeed;
+//    }
+//
+//    public void setAverageWindSpeed(Double averageWindSpeed) {
+//        this.averageWindSpeed = averageWindSpeed;
+//    }
+
 
     @Id
     @Column(name = "id")
@@ -18,6 +33,25 @@ public class Trip {
 
     @Column(name = "pickup_datetime")
     private String pickupDatetime;
+
+    @Column(name = "pickup_date")
+    private String pickupDate;
+
+    public String getPickupDate() {
+        return pickupDate;
+    }
+
+    public void setPickupDate(String pickupDate) {
+        this.pickupDate = pickupDate;
+    }
+
+    public Weather getWeather() {
+        return weather;
+    }
+
+    public void setWeather(Weather weather) {
+        this.weather = weather;
+    }
 
     @Column(name = "dropoff_datetime")
     private String dropoffDatetime;
@@ -69,14 +103,6 @@ public class Trip {
 
     @Column(name = "airport_fee")
     private Double airportFee;
-
-    public Double getAverageWindSpeed() {
-        return averageWindSpeed;
-    }
-
-    public void setAverageWindSpeed(Double averageWindSpeed) {
-        this.averageWindSpeed = averageWindSpeed;
-    }
 
     public Double getTipAmount() {
         return tipAmount;

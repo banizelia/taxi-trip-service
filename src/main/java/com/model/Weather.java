@@ -3,6 +3,8 @@ package com.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.sql.Date;
 import java.util.List;
 
 @Entity
@@ -13,7 +15,7 @@ public class Weather {
     private List<Trip> trips;
 
     @Id
-    @Column(name = "id")
+    @Column(name = "weather_id")
     private Long id;
 
     @Column(name = "station_id")
@@ -23,7 +25,7 @@ public class Weather {
     private String stationName;
 
     @Column(name = "date")
-    private String date;
+    private Date date;
 
     @Column(name = "average_wind_speed")
     private Double averageWindSpeed;
@@ -43,12 +45,13 @@ public class Weather {
     @Column(name = "min_temperature")
     private Long minTemperature;
 
-    public Long getMaxTemperature() {
-        return maxTemperature;
+
+    public List<Trip> getTrips() {
+        return trips;
     }
 
-    public void setMaxTemperature(Long maxTemperature) {
-        this.maxTemperature = maxTemperature;
+    public void setTrips(List<Trip> trips) {
+        this.trips = trips;
     }
 
     public Long getId() {
@@ -75,11 +78,11 @@ public class Weather {
         this.stationName = stationName;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -113,6 +116,14 @@ public class Weather {
 
     public void setSnowfall(Double snowfall) {
         this.snowfall = snowfall;
+    }
+
+    public Long getMaxTemperature() {
+        return maxTemperature;
+    }
+
+    public void setMaxTemperature(Long maxTemperature) {
+        this.maxTemperature = maxTemperature;
     }
 
     public Long getMinTemperature() {

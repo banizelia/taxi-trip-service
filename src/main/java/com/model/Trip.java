@@ -2,6 +2,9 @@ package com.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+import java.sql.Date;
+
 @Entity
 @Table(name = "trips")
 public class Trip {
@@ -29,30 +32,11 @@ public class Trip {
     @Column(name = "vendor_id")
     private String vendorId;
 
-    @Column(name = "pickup_datetime", insertable=false, updatable=false)
-    private String pickupDatetime;
-
-    @Column(name = "pickup_date")
-    private String pickupDate;
-
-    public String getPickupDate() {
-        return pickupDate;
-    }
-
-    public void setPickupDate(String pickupDate) {
-        this.pickupDate = pickupDate;
-    }
-
-    public Weather getWeather() {
-        return weather;
-    }
-
-    public void setWeather(Weather weather) {
-        this.weather = weather;
-    }
+    @Column(name = "pickup_datetime")
+    private LocalDateTime pickupDatetime;
 
     @Column(name = "dropoff_datetime")
-    private String dropoffDatetime;
+    private LocalDateTime dropoffDatetime;
 
     @Column(name = "passenger_count")
     private Integer passengerCount;
@@ -102,13 +86,9 @@ public class Trip {
     @Column(name = "airport_fee")
     private Double airportFee;
 
-    public Double getTipAmount() {
-        return tipAmount;
-    }
+    @Column(name = "pickup_date", insertable=false, updatable=false)
+    private Date pickupDate;
 
-    public void setTipAmount(Double tipAmount) {
-        this.tipAmount = tipAmount;
-    }
 
     public Long getId() {
         return id;
@@ -116,6 +96,14 @@ public class Trip {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Weather getWeather() {
+        return weather;
+    }
+
+    public void setWeather(Weather weather) {
+        this.weather = weather;
     }
 
     public String getVendorId() {
@@ -126,19 +114,19 @@ public class Trip {
         this.vendorId = vendorId;
     }
 
-    public String getPickupDatetime() {
+    public LocalDateTime getPickupDatetime() {
         return pickupDatetime;
     }
 
-    public void setPickupDatetime(String pickupDatetime) {
+    public void setPickupDatetime(LocalDateTime pickupDatetime) {
         this.pickupDatetime = pickupDatetime;
     }
 
-    public String getDropoffDatetime() {
+    public LocalDateTime getDropoffDatetime() {
         return dropoffDatetime;
     }
 
-    public void setDropoffDatetime(String dropoffDatetime) {
+    public void setDropoffDatetime(LocalDateTime dropoffDatetime) {
         this.dropoffDatetime = dropoffDatetime;
     }
 
@@ -222,6 +210,14 @@ public class Trip {
         this.mtaTax = mtaTax;
     }
 
+    public Double getTipAmount() {
+        return tipAmount;
+    }
+
+    public void setTipAmount(Double tipAmount) {
+        this.tipAmount = tipAmount;
+    }
+
     public Double getTollsAmount() {
         return tollsAmount;
     }
@@ -260,5 +256,13 @@ public class Trip {
 
     public void setAirportFee(Double airportFee) {
         this.airportFee = airportFee;
+    }
+
+    public Date getPickupDate() {
+        return pickupDate;
+    }
+
+    public void setPickupDate(Date pickupDate) {
+        this.pickupDate = pickupDate;
     }
 }

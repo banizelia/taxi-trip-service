@@ -1,6 +1,5 @@
 package com.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -8,7 +7,7 @@ import jakarta.persistence.*;
 public class Trip {
 
     @ManyToOne
-    @JoinColumn(name = "pickup_date")
+    @JoinColumn(name = "pickup_date", referencedColumnName = "date" ,insertable=false, updatable=false)
     private Weather weather;
 
 //    @Transient
@@ -23,7 +22,6 @@ public class Trip {
 //        this.averageWindSpeed = averageWindSpeed;
 //    }
 
-
     @Id
     @Column(name = "id")
     private Long id;
@@ -31,7 +29,7 @@ public class Trip {
     @Column(name = "vendor_id")
     private String vendorId;
 
-    @Column(name = "pickup_datetime")
+    @Column(name = "pickup_datetime", insertable=false, updatable=false)
     private String pickupDatetime;
 
     @Column(name = "pickup_date")

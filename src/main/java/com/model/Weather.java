@@ -43,8 +43,6 @@ public class Weather {
     @Column(name = "min_temperature")
     private Long minTemperature;
 
-
-
     public Long getMaxTemperature() {
         return maxTemperature;
     }

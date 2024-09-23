@@ -8,6 +8,31 @@
     <artifactId>SpringBootRestService</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>10.0.0</version>
+
+                <configuration>
+                    <url>jdbc:postgresql://localhost:5432/project</url>
+                    <user>postgres</user>
+                    <password>12345678</password>
+                    <locations>classpath:db/migration</locations>
+                </configuration>
+
+<!--                <dependencies>-->
+<!--                    <dependency>-->
+<!--                        <groupId>com.h2database</groupId>-->
+<!--                        <artifactId>h2</artifactId>-->
+<!--                        <version>2.2.224</version>-->
+<!--                    </dependency>-->
+<!--                </dependencies>-->
+            </plugin>
+        </plugins>
+    </build>
+
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -49,7 +74,26 @@
             <version>42.7.4</version>
         </dependency>
 
+
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>10.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+            <version>10.18.0</version>
+            <scope>runtime</scope>
+        </dependency>
+
+
+
     </dependencies>
+
+
 
 
 </project>

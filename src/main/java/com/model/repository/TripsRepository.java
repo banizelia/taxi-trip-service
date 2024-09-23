@@ -13,7 +13,7 @@ import java.util.*;
 @Repository
 public interface TripsRepository extends JpaRepository<Trip, Long> {
 
-    @Query(value = "SELECT trips.*, weather_observations.average_wind_speed " +
+    @Query(value = "SELECT trips.*, weather_observations.* " +
             "FROM weather_observations " +
             "INNER JOIN trips ON weather_observations.date = trips.pickup_datetime::DATE " +
             "WHERE (:startDateTime IS NULL OR pickup_datetime >= :startDateTime) AND " +

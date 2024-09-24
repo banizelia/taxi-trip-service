@@ -19,6 +19,13 @@ public class Trip {
     @JoinColumn(name = "pickup_date", referencedColumnName = "date" ,insertable=false, updatable=false)
     private Weather weather;
 
+    @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "id", referencedColumnName = "trip_id" ,insertable=false, updatable=false)
+    private FavoriteTrip favoriteTrip;
+
+
+
     @Id
     @Column(name = "id")
     private Long id;

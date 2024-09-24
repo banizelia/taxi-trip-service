@@ -19,13 +19,20 @@ public class TripService {
 
 
         // todo понять, как размапить данные на trip, можно чисто в теории сделать конструктор, который будет принимать array и вызывать миллион методов
-        // эффективно ли такое решение, оно дважды проходится по списку, в иделе сразу выгружать нужные данные
+        // эффективно ли такое решение, оно дважды проходится по списку, в иделе сразу получать нужные данные
 
         List<Trip> trips = new ArrayList<>();
 
-        List<Object[]> results = tripsRepository.test();
-        for (Object[] row : results) {
-            System.out.println(row.length);
+
+        for (Object[] objects : tripsRepository.test()) {
+            Object[] tripParams =  Arrays.copyOfRange(objects, 0, 21);
+            Object[] weatherParams =  Arrays.copyOfRange(objects, 21, objects.length);
+
+            Trip trip = new Trip(tripParams);
+            Weather weather = new Weather(weatherParams);
+            trip.setWeather(weather);
+
+            trips.add(trip);
         }
 
         return Optional.of(trips);
@@ -36,7 +43,7 @@ public class TripService {
 //
 //
 
-    // todo понять, почнму соритровка выдает ошибку
+    // todo понять, почему соритровка выдает ошибку
 
 //        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
 //

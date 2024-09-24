@@ -1,29 +1,20 @@
 package com.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "trips")
 public class Trip {
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "pickup_date", referencedColumnName = "date" ,insertable=false, updatable=false)
     private Weather weather;
-
-//    @Transient
-//    @JsonIgnore
-//    private Double averageWindSpeed;
-//
-//    public Double getAverageWindSpeed() {
-//        return averageWindSpeed;
-//    }
-//
-//    public void setAverageWindSpeed(Double averageWindSpeed) {
-//        this.averageWindSpeed = averageWindSpeed;
-//    }
 
     @Id
     @Column(name = "id")
@@ -33,10 +24,10 @@ public class Trip {
     private String vendorId;
 
     @Column(name = "pickup_datetime")
-    private LocalDateTime pickupDatetime;
+    private Timestamp pickupDatetime;
 
     @Column(name = "dropoff_datetime")
-    private LocalDateTime dropoffDatetime;
+    private Timestamp dropoffDatetime;
 
     @Column(name = "passenger_count")
     private Integer passengerCount;
@@ -89,6 +80,29 @@ public class Trip {
     @Column(name = "pickup_date", insertable=false, updatable=false)
     private Date pickupDate;
 
+    public Trip(Object[] tripParams) {
+        this.id = (Long) tripParams[0];
+        this.vendorId = (String) tripParams[1];
+        this.pickupDatetime = (Timestamp) tripParams[2];
+        this.dropoffDatetime = (Timestamp) tripParams[3];
+        this.passengerCount = (Integer) tripParams[4];
+        this.tripDistance = (Double) tripParams[5];
+        this.rateCodeId = (String) tripParams[6];
+        this.storeAndFwdFlag = (String) tripParams[7];
+        this.pickupLocationId = (Integer) tripParams[8];
+        this.dropoffLocationId = (Integer) tripParams[9];
+        this.paymentType = (String) tripParams[10];
+        this.fareAmount = (Double) tripParams[11];
+        this.extra = (Double) tripParams[12];
+        this.mtaTax = (Double) tripParams[13];
+        this.tipAmount = (Double) tripParams[14];
+        this.tollsAmount = (Double) tripParams[15];
+        this.improvementSurcharge = (Double) tripParams[16];
+        this.totalAmount = (Double) tripParams[17];
+        this.congestionSurcharge = (Double) tripParams[18];
+        this.airportFee = (Double) tripParams[19];
+        this.pickupDate = (Date) tripParams[20];
+    }
 
     public Long getId() {
         return id;
@@ -114,19 +128,19 @@ public class Trip {
         this.vendorId = vendorId;
     }
 
-    public LocalDateTime getPickupDatetime() {
+    public Timestamp getPickupDatetime() {
         return pickupDatetime;
     }
 
-    public void setPickupDatetime(LocalDateTime pickupDatetime) {
+    public void setPickupDatetime(Timestamp pickupDatetime) {
         this.pickupDatetime = pickupDatetime;
     }
 
-    public LocalDateTime getDropoffDatetime() {
+    public Timestamp getDropoffDatetime() {
         return dropoffDatetime;
     }
 
-    public void setDropoffDatetime(LocalDateTime dropoffDatetime) {
+    public void setDropoffDatetime(Timestamp dropoffDatetime) {
         this.dropoffDatetime = dropoffDatetime;
     }
 

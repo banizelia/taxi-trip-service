@@ -10,13 +10,9 @@ import java.util.*;
 @Repository
 public interface TripsRepository extends JpaRepository<Trip, Long> {
 
-//    @Query(value = "SELECT t, w FROM trips t JOIN weather_observations w ON t.pickup_date = w.date limit 1", nativeQuery = true)
-//    List<Object[]> test();
-
-
-        @Query(value = "SELECT trips.*, weather_observations.* " +
+    @Query(value = "SELECT trips.*, weather_observations.* " +
             "FROM weather_observations " +
-            "INNER JOIN trips ON weather_observations.date = trips.pickup_datetime::DATE " +
+            "JOIN trips ON weather_observations.date = trips.pickup_datetime::DATE " +
             "limit 1 ",
             nativeQuery = true)
     List<Object[]> test();

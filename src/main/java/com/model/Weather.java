@@ -12,6 +12,9 @@ import java.util.List;
 @Table(name = "weather_observations")
 public class Weather {
 
+    public Weather() {
+    }
+
     @OneToMany(mappedBy = "weather")
     private List<Trip> trips;
 

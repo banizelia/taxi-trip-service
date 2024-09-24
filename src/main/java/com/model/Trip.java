@@ -11,6 +11,9 @@ import java.sql.Timestamp;
 @Table(name = "trips")
 public class Trip {
 
+    public Trip() {
+    }
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "pickup_date", referencedColumnName = "date" ,insertable=false, updatable=false)

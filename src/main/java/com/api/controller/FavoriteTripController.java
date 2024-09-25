@@ -1,6 +1,5 @@
 package com.api.controller;
 
-
 import com.api.model.Trip;
 import com.api.service.FavoriteTripService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,5 +33,4 @@ public class FavoriteTripController {
     public ResponseEntity<String> deleteFromFavourite(@RequestParam(value = "tripId") Long id){
         return favoriteTripService.deleteFromFavourite(id);
     }
-
 }

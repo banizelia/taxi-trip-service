@@ -1,14 +1,11 @@
 package com.api.service;
 
-import com.api.model.FavoriteTrip;
-import com.api.model.Trip;
+import com.api.model.*;
 import com.api.repository.FavoriteTripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class FavoriteTripService {
@@ -38,7 +35,6 @@ public class FavoriteTripService {
         }
 
         return ResponseEntity.ok("success");
-
     }
 
     public Optional<List<Trip>> getFavouriteTrips() {

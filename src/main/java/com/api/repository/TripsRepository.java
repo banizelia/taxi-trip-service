@@ -1,13 +1,11 @@
 package com.api.repository;
 
 import com.api.model.Trip;
-
 import org.springframework.data.domain.Limit;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Sort;
-
 import java.sql.Timestamp;
 import java.util.*;
 

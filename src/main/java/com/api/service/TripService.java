@@ -2,11 +2,9 @@ package com.api.service;
 
 import com.api.repository.TripsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Limit;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import com.api.model.Trip;
-
 import java.sql.Timestamp;
 import java.util.*;
 

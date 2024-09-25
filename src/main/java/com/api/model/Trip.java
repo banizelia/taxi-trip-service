@@ -10,9 +10,6 @@ import java.sql.Timestamp;
 @Table(name = "trips")
 public class Trip {
 
-    public Trip() {
-    }
-
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "pickup_date", referencedColumnName = "date" ,insertable=false, updatable=false)
@@ -22,8 +19,6 @@ public class Trip {
     @OneToOne
     @JoinColumn(name = "id", referencedColumnName = "trip_id" ,insertable=false, updatable=false)
     private FavoriteTrip favoriteTrip;
-
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -89,6 +84,9 @@ public class Trip {
 
     @Column(name = "pickup_date", insertable=false, updatable=false)
     private Date pickupDate;
+
+    public Trip() {
+    }
 
     public Long getId() {
         return id;

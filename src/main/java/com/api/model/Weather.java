@@ -2,17 +2,12 @@ package com.api.model;
 
 
 import jakarta.persistence.*;
-
 import java.sql.Date;
-
 import java.util.List;
 
 @Entity
 @Table(name = "weather_observations")
 public class Weather {
-
-    public Weather() {
-    }
 
     @OneToMany(mappedBy = "weather")
     private List<Trip> trips;
@@ -48,6 +43,9 @@ public class Weather {
 
     @Column(name = "min_temperature")
     private Long minTemperature;
+
+    public Weather() {
+    }
 
     public List<Trip> getTrips() {
         return trips;

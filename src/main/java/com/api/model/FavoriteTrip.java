@@ -1,7 +1,6 @@
-package com.model;
+package com.api.model;
 
 import jakarta.persistence.*;
-import org.springframework.data.domain.Persistable;
 
 @Entity
 @Table(name = "favorite_trips")
@@ -10,24 +9,24 @@ public class FavoriteTrip {
     @OneToOne(mappedBy = "favoriteTrip")
     private Trip trip;
 
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-
     @Column(name = "trip_id")
     private Long tripId;
 
     public FavoriteTrip() {
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     public Long getTripId() {
         return tripId;

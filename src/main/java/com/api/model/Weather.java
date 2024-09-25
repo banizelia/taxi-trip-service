@@ -1,9 +1,8 @@
-package com.model;
+package com.api.model;
 
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.sql.Date;
 
 import java.util.List;
@@ -19,6 +18,7 @@ public class Weather {
     private List<Trip> trips;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "weather_id")
     private Long id;
 
@@ -48,20 +48,6 @@ public class Weather {
 
     @Column(name = "min_temperature")
     private Long minTemperature;
-
-    public Weather(Object[] weatherParams) {
-
-        this.stationId = (String) weatherParams[0];
-        this.stationName = (String) weatherParams[1];
-        this.date = (Date) weatherParams[2];
-        this.averageWindSpeed = (Double) weatherParams[3];
-        this.precipitation = (Double) weatherParams[4];
-        this.snowDepth = (Double) weatherParams[5];
-        this.snowfall = (Double) weatherParams[6];
-        this.maxTemperature = (Long) weatherParams[7];
-        this.minTemperature = (Long) weatherParams[8];
-        this.id = (Long) weatherParams[9];
-    }
 
     public List<Trip> getTrips() {
         return trips;
@@ -150,4 +136,20 @@ public class Weather {
     public void setMinTemperature(Long minTemperature) {
         this.minTemperature = minTemperature;
     }
+
+
+//        public Weather(Object[] weatherParams) {
+//
+//        this.stationId = (String) weatherParams[0];
+//        this.stationName = (String) weatherParams[1];
+//        this.date = (Date) weatherParams[2];
+//        this.averageWindSpeed = (Double) weatherParams[3];
+//        this.precipitation = (Double) weatherParams[4];
+//        this.snowDepth = (Double) weatherParams[5];
+//        this.snowfall = (Double) weatherParams[6];
+//        this.maxTemperature = (Long) weatherParams[7];
+//        this.minTemperature = (Long) weatherParams[8];
+//        this.id = (Long) weatherParams[9];
+//    }
+
 }

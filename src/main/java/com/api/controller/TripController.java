@@ -1,11 +1,10 @@
-package com.model.controller;
+package com.api.controller;
 
-import com.model.Trip;
+import com.api.model.Trip;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.model.service.TripService;
+import com.api.service.TripService;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -21,7 +20,6 @@ public class TripController {
         this.tripService = tripService;
     }
 
-
     @GetMapping("/filter")
     public Optional<List<Trip>> filter(
             @RequestParam(value = "startDateTime", required = false, defaultValue = "2016-01-01 00:00:00") Timestamp startDateTime,
@@ -36,22 +34,5 @@ public class TripController {
         Optional<List<Trip>> trips = tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, sort);
 
         return trips;
-    }
-
-    @PutMapping("/addToFavourite")
-    public ResponseEntity<String> addToFavourite(@RequestParam(value = "id") Long id){
-
-        return tripService.addToFavourite(id);
-    }
-
-    @DeleteMapping("/removeFromFavourite")
-    public ResponseEntity<String> removeFromFavourite(@RequestParam(value = "id") Long id){
-
-        return tripService.removeFromFavourite(id);
-    }
-
-    @GetMapping("/getFavouriteList")
-    public Optional<List<Trip>> getFavouriteList(){
-        return tripService.getFavouriteList();
     }
 }

@@ -1,13 +1,18 @@
 package com.api.controller;
 
-import com.api.model.Trip;
+
+import org.springframework.core.io.*;
+import org.springframework.http.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+import com.api.model.Trip;
 import com.api.service.TripService;
-
 import java.sql.Timestamp;
 import java.util.*;
+
+
+
 
 @RestController
 @RequestMapping("/trips")
@@ -34,5 +39,16 @@ public class TripController {
         Optional<List<Trip>> trips = tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, sort);
 
         return trips;
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<Resource> getFile() {
+        String filename = "tutorials.xlsx";
+        InputStreamResource file = new InputStreamResource(tripService.load());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .body(file);
     }
 }

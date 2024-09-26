@@ -241,6 +241,9 @@ public class Trip {
     }
 
     public Double getCongestionSurcharge() {
+        if (congestionSurcharge == null){
+            return 0.0;
+        }
         return congestionSurcharge;
     }
 
@@ -249,6 +252,9 @@ public class Trip {
     }
 
     public Double getAirportFee() {
+        if (airportFee == null){
+            return 0.0;
+        }
         return airportFee;
     }
 

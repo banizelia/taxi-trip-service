@@ -22,5 +22,6 @@ public interface TripsRepository extends JpaRepository<Trip, Long> {
                       Sort sort, Limit limit);
 
 
-
+    @Query("select t from Trip t")
+    List<Trip> findAll(Limit of);
 }

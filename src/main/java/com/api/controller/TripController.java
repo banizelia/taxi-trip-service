@@ -1,6 +1,5 @@
 package com.api.controller;
 
-
 import org.springframework.core.io.*;
 import org.springframework.http.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +9,6 @@ import com.api.model.Trip;
 import com.api.service.TripService;
 import java.sql.Timestamp;
 import java.util.*;
-
-
 
 
 @RestController
@@ -42,9 +39,10 @@ public class TripController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<Resource> getFile() {
-        String filename = "tutorials.xlsx";
-        InputStreamResource file = new InputStreamResource(tripService.load());
+    public ResponseEntity<Resource> download() {
+        String filename = "trips.xlsx";
+
+        InputStreamResource file = new InputStreamResource(tripService.download());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)

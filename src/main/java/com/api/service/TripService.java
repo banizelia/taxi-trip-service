@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import com.api.model.Trip;
-
 import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
 import java.util.*;
@@ -22,8 +21,8 @@ public class TripService {
         return Optional.of(trips);
     }
 
-    public ByteArrayInputStream load() {
-        List<Trip> trips = tripsRepository.findAll();
+    public ByteArrayInputStream download() {
+        List<Trip> trips = tripsRepository.findAll(Limit.of(100_000));
         ByteArrayInputStream in = ExcelHelper.tripsToExcel(trips);
         return in;
     }

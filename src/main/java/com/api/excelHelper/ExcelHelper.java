@@ -54,7 +54,7 @@ public class ExcelHelper {
 
                 row.createCell(0).setCellValue(trip.getId());
                 row.createCell(1).setCellValue(trip.getVendorId());
-                row.createCell(2).setCellValue(trip.getPickupDate());
+                row.createCell(2).setCellValue(trip.getPickupDatetime());
                 row.createCell(3).setCellValue(trip.getDropoffDatetime());
                 row.createCell(4).setCellValue(trip.getPassengerCount());
                 row.createCell(5).setCellValue(trip.getTripDistance());
@@ -76,6 +76,7 @@ public class ExcelHelper {
             }
 
             workbook.write(out);
+
             return new ByteArrayInputStream(out.toByteArray());
         } catch (IOException e) {
             throw new RuntimeException("fail to import data to Excel file: " + e.getMessage());

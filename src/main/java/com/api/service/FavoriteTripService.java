@@ -18,7 +18,6 @@ public class FavoriteTripService {
             FavoriteTrip favoriteTrip = new FavoriteTrip();
             favoriteTrip.setTripId(id);
             favoriteTripRepository.save(favoriteTrip);
-
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("already in the table");
         }
@@ -39,7 +38,6 @@ public class FavoriteTripService {
 
     public Optional<List<Trip>> getFavouriteTrips() {
         List<Trip> trips = favoriteTripRepository.getFavouriteTrips();
-        System.out.println(trips.size());
         return Optional.of(trips);
     }
 }

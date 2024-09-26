@@ -33,4 +33,10 @@ public class FavoriteTripController {
     public ResponseEntity<String> deleteFromFavourite(@RequestParam(value = "tripId") Long id){
         return favoriteTripService.deleteFromFavourite(id);
     }
+
+
+    @PutMapping("/dragAndDrop")
+    public ResponseEntity<String> dragAndDrop(@RequestParam(value = "tripId") Long tripId, @RequestParam(value = "newPosition") Long newPosition) {
+        return favoriteTripService.dragAndDrop(tripId, newPosition);
+    }
 }

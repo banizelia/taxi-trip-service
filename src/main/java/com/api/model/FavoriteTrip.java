@@ -13,6 +13,9 @@ public class FavoriteTrip {
     @Column(name = "trip_id")
     private Long tripId;
 
+    @Column(name = "position")
+    private Long position;
+
     public FavoriteTrip() {
     }
 
@@ -22,5 +25,13 @@ public class FavoriteTrip {
 
     public void setTripId(Long tripId) {
         this.tripId = tripId;
+    }
+
+    public Long getPosition() {
+        return position;
+    }
+
+    public void setPosition(Long position) {
+        this.position = position;
     }
 }

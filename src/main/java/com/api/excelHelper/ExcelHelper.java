@@ -42,6 +42,7 @@ public class ExcelHelper {
     private static final int BATCH_SIZE = 100_000;
 
     public static ByteArrayInputStream tripsToExcel(TripsRepository tripsRepository) {
+
         try (SXSSFWorkbook workbook = createMyCustomWorkbook();
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 

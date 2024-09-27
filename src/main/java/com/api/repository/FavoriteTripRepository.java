@@ -1,6 +1,7 @@
 package com.api.repository;
 
 import com.api.model.*;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long> {
 
-    @Query("SELECT t FROM Trip t JOIN t.favoriteTrip ft")
+    @Query("SELECT t FROM Trip t JOIN t.favoriteTrip ft ORDER BY favoriteTrip.position")
     List<Trip> getFavouriteTrips();
 
     @Query("SELECT COALESCE(MAX(ft.position), 0) FROM FavoriteTrip ft")

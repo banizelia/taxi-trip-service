@@ -16,15 +16,13 @@ public class TripService {
     TripsRepository tripsRepository;
 
     public Optional<List<Trip>> filter(Timestamp startDateTime, Timestamp endDateTime, Double minWindSpeed, Double maxWindSpeed, Sort sort) {
-        List<Trip> trips = tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, sort, Limit.of(1_000));
+        List<Trip> trips = tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, sort, Limit.of(500_000));
 
         return Optional.of(trips);
     }
 
     public ByteArrayInputStream download() {
-        List<Trip> trips = tripsRepository.findAll(Limit.of(100_000));
-        ByteArrayInputStream in = ExcelHelper.tripsToExcel(trips);
-        return in;
+        return ExcelHelper.tripsToExcel(tripsRepository);
     }
 
 }

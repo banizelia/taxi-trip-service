@@ -7,6 +7,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import com.api.model.Trip;
 import com.api.service.TripService;
+
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.*;
 

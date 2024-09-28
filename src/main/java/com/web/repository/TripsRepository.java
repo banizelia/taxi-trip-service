@@ -1,6 +1,6 @@
-package com.api.repository;
+package com.web.repository;
 
-import com.api.model.Trip;
+import com.web.model.Trip;
 import org.springframework.data.domain.Limit;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;

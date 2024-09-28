@@ -1,7 +1,7 @@
-package com.api.controller;
+package com.web.controller;
 
-import com.api.model.Trip;
-import com.api.service.FavoriteTripService;
+import com.web.model.Trip;
+import com.web.service.FavoriteTripService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

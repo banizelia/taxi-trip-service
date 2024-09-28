@@ -1,14 +1,13 @@
-package com.api.controller;
+package com.web.controller;
 
 import org.springframework.core.io.*;
 import org.springframework.http.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
-import com.api.model.Trip;
-import com.api.service.TripService;
+import com.web.model.Trip;
+import com.web.service.TripService;
 
-import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.*;
 

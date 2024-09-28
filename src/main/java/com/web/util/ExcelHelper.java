@@ -1,11 +1,11 @@
-package com.api.excelHelper;
+package com.web.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
-import com.api.model.Trip;
-import com.api.repository.TripsRepository;
+import com.web.model.Trip;
+import com.web.repository.TripsRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.data.domain.PageRequest;
@@ -55,7 +55,6 @@ public class ExcelHelper {
             Pageable pageable = PageRequest.of(0, BATCH_SIZE, Sort.by(Sort.Direction.ASC, "id"));
 
             List<Trip> currentBatch;
-
             do {
                 currentBatch = tripsRepository.findAll(pageable).getContent();
 
@@ -90,7 +89,7 @@ public class ExcelHelper {
                 try {
                     dispose();
                 } catch (Exception e) {
-                    //some logging
+                    throw e;
                 }
                 super.close();
             }

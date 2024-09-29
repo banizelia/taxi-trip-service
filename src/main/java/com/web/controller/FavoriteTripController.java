@@ -5,9 +5,7 @@ import com.web.service.FavoriteTripService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/favouriteTrips")
@@ -19,17 +17,17 @@ public class FavoriteTripController {
         this.favoriteTripService = favoriteTripService;
     }
 
-    @GetMapping("/getFavouriteTrips")
-    public Optional<List<Trip>> getFavouriteTrips(){
+    @GetMapping("/get")
+    public List<Trip> getFavouriteTrips(){
         return favoriteTripService.getFavouriteTrips();
     }
 
-    @PutMapping("/saveToFavourite")
+    @PutMapping("/save")
     public ResponseEntity<String> saveToFavourite(@RequestParam(value = "tripId") Long id){
         return favoriteTripService.saveToFavourite(id);
     }
 
-    @DeleteMapping("/deleteFromFavouriteByTripId")
+    @DeleteMapping("/delete")
     public ResponseEntity<String> deleteFromFavourite(@RequestParam(value = "tripId") Long id){
         return favoriteTripService.deleteFromFavourite(id);
     }

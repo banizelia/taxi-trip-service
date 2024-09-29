@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-
 public class ExcelHelper {
     public static String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     static String[] HEADERs = {"id",
@@ -84,7 +83,7 @@ public class ExcelHelper {
     }
 
     static SXSSFWorkbook createMyCustomWorkbook() {
-        return new SXSSFWorkbook() {
+        SXSSFWorkbook workbook = new SXSSFWorkbook() {
             public void close() throws IOException {
                 try {
                     dispose();
@@ -94,8 +93,9 @@ public class ExcelHelper {
                 super.close();
             }
         };
+        workbook.setCompressTempFiles(true);
+        return workbook;
     }
-
 
     private static void createHeader(Sheet sheet) {
         Row headerRow = sheet.createRow(0);
@@ -110,8 +110,8 @@ public class ExcelHelper {
 
         row.createCell(0).setCellValue(trip.getId());
         row.createCell(1).setCellValue(trip.getVendorId());
-        row.createCell(2).setCellValue(trip.getPickupDatetime());
-        row.createCell(3).setCellValue(trip.getDropoffDatetime());
+        row.createCell(2).setCellValue(trip.getPickupDatetime().toString());
+        row.createCell(3).setCellValue(trip.getDropoffDatetime().toString());
         row.createCell(4).setCellValue(trip.getPassengerCount());
         row.createCell(5).setCellValue(trip.getTripDistance());
         row.createCell(6).setCellValue(trip.getRateCodeId());
@@ -128,6 +128,6 @@ public class ExcelHelper {
         row.createCell(17).setCellValue(trip.getTotalAmount());
         row.createCell(18).setCellValue(trip.getCongestionSurcharge());
         row.createCell(19).setCellValue(trip.getAirportFee());
-        row.createCell(20).setCellValue(trip.getPickupDate());
+        row.createCell(20).setCellValue(trip.getPickupDate().toString());
     }
 }

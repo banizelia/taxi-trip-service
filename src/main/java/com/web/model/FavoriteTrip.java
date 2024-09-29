@@ -6,7 +6,10 @@ import jakarta.persistence.*;
 @Table(name = "favorite_trips")
 public class FavoriteTrip {
 
-    @OneToOne(mappedBy = "favoriteTrip")
+    @Version
+    private Long version;
+
+    @OneToOne(mappedBy = "favoriteTrip", fetch = FetchType.LAZY)
     private Trip trip;
 
     @Id
@@ -33,5 +36,13 @@ public class FavoriteTrip {
 
     public void setPosition(Long position) {
         this.position = position;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }

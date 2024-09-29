@@ -1,22 +1,24 @@
 package com.web.repository;
 
-import com.web.model.*;
-import org.springframework.data.jpa.repository.*;
+import com.web.model.FavoriteTrip;
+import com.web.model.Trip;
+import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long> {
 
-    @Query("SELECT t FROM Trip t JOIN t.favoriteTrip ft ORDER BY favoriteTrip.position")
+    @Query("SELECT t FROM Trip t JOIN FavoriteTrip ft ON t.id = ft.tripId ORDER BY ft.position")
     List<Trip> getFavouriteTrips();
 
     @Query("SELECT COALESCE(MAX(ft.position), 0) FROM FavoriteTrip ft")
-    Optional<Long> findMaxPosition();
+    Long findMaxPosition();
 
     @Modifying
     @Transactional

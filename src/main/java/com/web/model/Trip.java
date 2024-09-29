@@ -2,7 +2,6 @@ package com.web.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
 import java.sql.Date;
 import java.sql.Timestamp;
 
@@ -11,12 +10,12 @@ import java.sql.Timestamp;
 public class Trip {
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pickup_date", referencedColumnName = "date" ,insertable=false, updatable=false)
     private Weather weather;
 
     @JsonIgnore
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id", referencedColumnName = "trip_id" ,insertable=false, updatable=false)
     private FavoriteTrip favoriteTrip;
 
@@ -269,30 +268,4 @@ public class Trip {
     public void setPickupDate(Date pickupDate) {
         this.pickupDate = pickupDate;
     }
-
-
-//        public Trip(Object[] tripParams) {
-//        this.id = (Long) tripParams[0];
-//        this.vendorId = (String) tripParams[1];
-//        this.pickupDatetime = (Timestamp) tripParams[2];
-//        this.dropoffDatetime = (Timestamp) tripParams[3];
-//        this.passengerCount = (Integer) tripParams[4];
-//        this.tripDistance = (Double) tripParams[5];
-//        this.rateCodeId = (String) tripParams[6];
-//        this.storeAndFwdFlag = (String) tripParams[7];
-//        this.pickupLocationId = (Integer) tripParams[8];
-//        this.dropoffLocationId = (Integer) tripParams[9];
-//        this.paymentType = (String) tripParams[10];
-//        this.fareAmount = (Double) tripParams[11];
-//        this.extra = (Double) tripParams[12];
-//        this.mtaTax = (Double) tripParams[13];
-//        this.tipAmount = (Double) tripParams[14];
-//        this.tollsAmount = (Double) tripParams[15];
-//        this.improvementSurcharge = (Double) tripParams[16];
-//        this.totalAmount = (Double) tripParams[17];
-//        this.congestionSurcharge = (Double) tripParams[18];
-//        this.airportFee = (Double) tripParams[19];
-//        this.pickupDate = (Date) tripParams[20];
-//    }
-
 }

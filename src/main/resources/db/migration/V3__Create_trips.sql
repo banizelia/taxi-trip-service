@@ -39,6 +39,8 @@ ALTER TABLE IF EXISTS public.trips
 COPY favorite_trips 
 FROM '*\trips.csv.csv' DELIMITER ',' CSV HEADER;
 
+-- Лучше заменить COPY на SQL-запрос с INSERT, если возможно, либо использовать стратегию для загрузки данных вне Flyway миграций.
+
 INSERT INTO public.trips
 (id, vendor_id, pickup_datetime, dropoff_datetime, passenger_count, trip_distance, rate_code_id, store_and_fwd_flag, pickup_location_id, dropoff_location_id, payment_type, fare_amount, extra, mta_tax, tip_amount, tolls_amount, improvement_surcharge, total_amount, congestion_surcharge, airport_fee, pickup_date)
 VALUES

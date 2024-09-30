@@ -11,7 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.List;
 
 
@@ -20,10 +20,10 @@ public class TripService {
     @Autowired
     TripsRepository tripsRepository;
 
-    public List<Trip> filter(LocalDateTime startDateTime, LocalDateTime endDateTime, Double minWindSpeed, Double maxWindSpeed, String direction, String sortBy, Integer page) {
+    public List<Trip> filter(Timestamp startDateTime, Timestamp endDateTime, Double minWindSpeed, Double maxWindSpeed, String direction, String sortBy, Integer page) {
 
-        if (endDateTime.isBefore(startDateTime)){
-            throw new IllegalArgumentException("endDateTime is before startDateTime: startDateTime = " + startDateTime + " endDateTime = " + endDateTime);
+        if (endDateTime.before(startDateTime)){
+            throw new IllegalArgumentException("endDateTime is before startDateTime, startDateTime = " + startDateTime + " endDateTime = " + endDateTime);
         }
 
         if (!direction.equalsIgnoreCase("asc") && !direction.equalsIgnoreCase("desc")){
@@ -47,5 +47,4 @@ public class TripService {
     public ByteArrayInputStream download() {
         return ExcelHelper.tripsToExcel(tripsRepository);
     }
-
 }

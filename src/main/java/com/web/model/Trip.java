@@ -268,4 +268,12 @@ public class Trip {
     public void setPickupDate(Date pickupDate) {
         this.pickupDate = pickupDate;
     }
+
+    public FavoriteTrip getFavoriteTrip() {
+        return favoriteTrip;
+    }
+
+    public void setFavoriteTrip(FavoriteTrip favoriteTrip) {
+        this.favoriteTrip = favoriteTrip;
+    }
 }

@@ -5,7 +5,6 @@ import com.web.service.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
@@ -29,12 +28,8 @@ public class TripController {
 
     @GetMapping("/filter")
     public List<Trip> filter(
-            @RequestParam(value = "startDateTime", required = false, defaultValue = "2016-01-01 00:00:00")
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDateTime,
-
-            @RequestParam(value = "endDateTime", required = false, defaultValue = "2016-01-31 23:59:59")
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDateTime,
-
+            @RequestParam(value = "startDateTime", required = false, defaultValue = "2016-01-01 00:00:00") Timestamp startDateTime,
+            @RequestParam(value = "endDateTime", required = false, defaultValue = "2016-01-31 23:59:59") Timestamp endDateTime,
             @RequestParam(value = "minWindSpeed", required = false, defaultValue = "0") Double minWindSpeed,
             @RequestParam(value = "maxWindSpeed", required = false, defaultValue = "9999") Double maxWindSpeed,
             @RequestParam(value = "direction", required = false, defaultValue = "asc") String direction, /* asc or desc */

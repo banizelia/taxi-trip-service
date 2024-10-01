@@ -4,71 +4,67 @@ import com.web.model.Trip;
 import com.web.service.TripService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.io.InputStreamResource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.core.io.Resource;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@WebMvcTest(TripController.class)
-public class TripControllerTest {
+class TripControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
+    @Mock
     private TripService tripService;
 
-    private Trip trip;
+    @InjectMocks
+    private TripController tripController;
 
     @BeforeEach
-    public void setUp() {
-        trip = new Trip();
-        trip.setId(1L);
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testFilter() throws Exception {
-        when(tripService.filter(any(Timestamp.class), any(Timestamp.class), anyDouble(), anyDouble(), anyString(), anyString(), anyInt()))
-                .thenReturn(Collections.singletonList(trip));
+    void testFilter() {
+        Timestamp startDateTime = Timestamp.valueOf("2016-01-01 00:00:00");
+        Timestamp endDateTime = Timestamp.valueOf("2016-01-31 23:59:59");
+        Double minWindSpeed = 0.0;
+        Double maxWindSpeed = 9999.0;
+        String direction = "asc";
+        String sortBy = "id";
+        int page = 0;
+        int pageSize = 500;
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/trips/filter")
-                        .param("startDateTime", "2016-01-01 00:00:00")
-                        .param("endDateTime", "2016-01-31 23:59:59")
-                        .param("minWindSpeed", "0")
-                        .param("maxWindSpeed", "9999")
-                        .param("direction", "asc")
-                        .param("sortBy", "id")
-                        .param("page", "1")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json("[{'id':1}]"));
+        List<Trip> expectedTrips = new ArrayList<>();
+        when(tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize))
+                .thenReturn(expectedTrips);
+
+        List<Trip> result = tripController.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize);
+
+        assertEquals(expectedTrips, result);
+        verify(tripService, times(1)).filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize);
     }
 
     @Test
-    public void testDownload() throws Exception {
-        ByteArrayInputStream inputStream = new ByteArrayInputStream("Mock Excel Content".getBytes());
-        InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
+    void testDownload() {
+        Resource mockResource = mock(Resource.class);
+        ResponseEntity<Resource> expectedResponse = ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=trips.xlsx")
+                .body(mockResource);
 
-        when(tripService.download()).thenReturn(inputStream);
+        when(tripService.download()).thenReturn(expectedResponse);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/trips/download")
-                        .accept(MediaType.APPLICATION_OCTET_STREAM))
-                .andExpect(status().isOk())
-                .andExpect(header().string("Content-Disposition", "attachment; filename=trips.xlsx"))
-                .andExpect(content().contentType("application/vnd.ms-excel"));
+        ResponseEntity<Resource> result = tripController.download();
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(expectedResponse.getBody(), result.getBody());
+        verify(tripService, times(1)).download();
     }
 }

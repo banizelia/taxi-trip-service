@@ -22,8 +22,4 @@ public interface TripsRepository extends JpaRepository<Trip, Long> {
                       @Param("minWindSpeed") Double minWindSpeed,
                       @Param("maxWindSpeed") Double maxWindSpeed,
                       Pageable pageable);
-
-
-    @Query("select t from Trip t")
-    List<Trip> findAll(Limit of);
 }

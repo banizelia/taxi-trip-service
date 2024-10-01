@@ -1,6 +1,7 @@
 package com.web.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.web.util.AllowedField;
 import jakarta.persistence.*;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -22,66 +23,87 @@ public class Trip {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @AllowedField
     private Long id;
 
     @Column(name = "vendor_id")
+    @AllowedField
     private String vendorId;
 
     @Column(name = "pickup_datetime")
+    @AllowedField
     private Timestamp pickupDatetime;
 
     @Column(name = "dropoff_datetime")
+    @AllowedField
     private Timestamp dropoffDatetime;
 
     @Column(name = "passenger_count")
+    @AllowedField
     private Integer passengerCount;
 
     @Column(name = "trip_distance")
+    @AllowedField
     private Double tripDistance;
 
     @Column(name = "rate_code_id")
+    @AllowedField
     private String rateCodeId;
 
     @Column(name = "store_and_fwd_flag")
+    @AllowedField
     private String storeAndFwdFlag;
 
     @Column(name = "pickup_location_id")
+    @AllowedField
     private Integer pickupLocationId;
 
     @Column(name = "dropoff_location_id")
+    @AllowedField
     private Integer dropoffLocationId;
 
     @Column(name = "payment_type")
+    @AllowedField
     private String paymentType;
 
     @Column(name = "fare_amount")
+    @AllowedField
     private Double fareAmount;
 
     @Column(name = "extra")
+    @AllowedField
     private Double extra;
 
     @Column(name = "mta_tax")
+    @AllowedField
     private Double mtaTax;
 
     @Column(name = "tip_amount")
+    @AllowedField
     private Double tipAmount;
 
     @Column(name = "tolls_amount")
+    @AllowedField
     private Double tollsAmount;
 
     @Column(name = "improvement_surcharge")
+    @AllowedField
     private Double improvementSurcharge;
 
     @Column(name = "total_amount")
+    @AllowedField
     private Double totalAmount;
 
     @Column(name = "congestion_surcharge")
+    @AllowedField
     private Double congestionSurcharge;
 
     @Column(name = "airport_fee")
+    @AllowedField
     private Double airportFee;
 
     @Column(name = "pickup_date", insertable=false, updatable=false)
+    @AllowedField
     private Date pickupDate;
 
     public Trip() {

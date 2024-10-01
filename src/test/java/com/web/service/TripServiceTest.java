@@ -72,7 +72,7 @@ class TripServiceTest {
                 tripService.filter(startDateTime, endDateTime, 0.0, 9999.0, "invalid", "id", 0, 500)
         );
 
-        assertEquals("Invalid value 'invalid' for orders given; Has to be either 'desc' or 'asc' (case insensitive)", exception.getMessage());
+        assertEquals("Invalid direction : invalid", exception.getMessage());
     }
 
     @Test

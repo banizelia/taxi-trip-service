@@ -17,17 +17,17 @@ public class FavoriteTripController {
         this.favoriteTripService = favoriteTripService;
     }
 
-    @GetMapping()
+    @GetMapping("/get")
     public List<Trip> getFavouriteTrips(){
         return favoriteTripService.getFavouriteTrips();
     }
 
-    @PutMapping()
+    @PutMapping("/save")
     public ResponseEntity<String> saveToFavourite(@RequestParam(value = "tripId") Long id){
         return favoriteTripService.saveToFavourite(id);
     }
 
-    @DeleteMapping()
+    @DeleteMapping("/delete")
     public ResponseEntity<String> deleteFromFavourite(@RequestParam(value = "tripId") Long id){
         return favoriteTripService.deleteFromFavourite(id);
     }

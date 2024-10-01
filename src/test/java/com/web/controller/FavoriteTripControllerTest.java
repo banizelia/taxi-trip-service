@@ -41,7 +41,7 @@ public class FavoriteTripControllerTest {
     public void testGetFavouriteTrips() throws Exception {
         when(favoriteTripService.getFavouriteTrips()).thenReturn(Collections.singletonList(trip));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/favouriteTrips/get")
+        mockMvc.perform(MockMvcRequestBuilders.get("/favorite-trips/get")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[{'id':1}]"));
@@ -51,7 +51,7 @@ public class FavoriteTripControllerTest {
     public void testSaveToFavourite() throws Exception {
         when(favoriteTripService.saveToFavourite(anyLong())).thenReturn(ResponseEntity.ok("Trip saved to favourites"));
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/favouriteTrips/save")
+        mockMvc.perform(MockMvcRequestBuilders.put("/favorite-trips/save")
                         .param("tripId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Trip saved to favourites"));
@@ -61,7 +61,7 @@ public class FavoriteTripControllerTest {
     public void testDeleteFromFavourite() throws Exception {
         when(favoriteTripService.deleteFromFavourite(anyLong())).thenReturn(ResponseEntity.ok("Trip removed from favourites"));
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/favouriteTrips/delete")
+        mockMvc.perform(MockMvcRequestBuilders.delete("/favorite-trips/delete")
                         .param("tripId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Trip removed from favourites"));
@@ -71,7 +71,7 @@ public class FavoriteTripControllerTest {
     public void testDragAndDrop() throws Exception {
         when(favoriteTripService.dragAndDrop(anyLong(), anyLong())).thenReturn(ResponseEntity.ok("Trip moved"));
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/favouriteTrips/dragAndDrop")
+        mockMvc.perform(MockMvcRequestBuilders.put("/favorite-trips/drag-and-drop")
                         .param("tripId", "1")
                         .param("newPosition", "2"))
                 .andExpect(status().isOk())

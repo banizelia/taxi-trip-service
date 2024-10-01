@@ -34,20 +34,14 @@ public class TripController {
             @RequestParam(value = "maxWindSpeed", required = false, defaultValue = "9999") Double maxWindSpeed,
             @RequestParam(value = "direction", required = false, defaultValue = "asc") String direction, /* asc or desc */
             @RequestParam(value = "sortBy", required = false, defaultValue = "id") String sortBy, /* pickupDatetime or averageWindSpeed */
-            @RequestParam(value = "page") Integer page){
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "pageSize", defaultValue = "500") Integer pageSize ){
 
-        return tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page);
+        return tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize);
     }
 
     @GetMapping("/download")
     public ResponseEntity<Resource> download() {
-        String filename = "trips.xlsx";
-
-        InputStreamResource file = new InputStreamResource(tripService.download());
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-                .body(file);
+        return tripService.download();
     }
 }

@@ -1,6 +1,5 @@
 package com.web.model;
 
-import com.web.util.AllowedField;
 import jakarta.persistence.*;
 import java.sql.Date;
 import java.util.List;
@@ -15,43 +14,33 @@ public class Weather {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "weather_id")
-    @AllowedField
     private Long id;
 
     @Column(name = "station_id")
-    @AllowedField
     private String stationId;
 
     @Column(name = "station_name")
-    @AllowedField
     private String stationName;
 
     @Column(name = "date")
-    @AllowedField
     private Date date;
 
     @Column(name = "average_wind_speed")
-    @AllowedField
     private Double averageWindSpeed;
 
     @Column(name = "precipitation")
-    @AllowedField
     private Double precipitation;
 
     @Column(name = "snow_depth")
-    @AllowedField
     private Double snowDepth;
 
     @Column(name = "snowfall")
-    @AllowedField
     private Double snowfall;
 
     @Column(name = "max_temperature")
-    @AllowedField
     private Long maxTemperature;
 
     @Column(name = "min_temperature")
-    @AllowedField
     private Long minTemperature;
 
     public Weather() {

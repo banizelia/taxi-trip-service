@@ -3,6 +3,8 @@ package com.web.util;
 import com.web.model.FavoriteTrip;
 import com.web.model.Trip;
 import com.web.model.Weather;
+import jakarta.persistence.Column;
+
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -20,7 +22,7 @@ public class FieldUtil {
         if (TRIP_FIELDS.isEmpty()){
 
             TRIP_FIELDS.addAll(Arrays.stream(Trip.class.getDeclaredFields())
-                    .filter(field -> field.isAnnotationPresent(AllowedField.class))
+                    .filter(field -> field.isAnnotationPresent(Column.class))
                     .map(Field::getName)
                     .collect(Collectors.toSet()));
         }
@@ -32,7 +34,7 @@ public class FieldUtil {
         if (WEATHER_FIELDS.isEmpty()){
 
             WEATHER_FIELDS.addAll(Arrays.stream(Weather.class.getDeclaredFields())
-                    .filter(field -> field.isAnnotationPresent(AllowedField.class))
+                    .filter(field -> field.isAnnotationPresent(Column.class))
                     .map(Field::getName)
                     .collect(Collectors.toSet()));
         }
@@ -44,7 +46,7 @@ public class FieldUtil {
         if (FAVORITE_TRIP_FIELDS.isEmpty()){
 
             FAVORITE_TRIP_FIELDS.addAll(Arrays.stream(FavoriteTrip.class.getDeclaredFields())
-                    .filter(field -> field.isAnnotationPresent(AllowedField.class))
+                    .filter(field -> field.isAnnotationPresent(Column.class))
                     .map(Field::getName)
                     .collect(Collectors.toSet()));
         }

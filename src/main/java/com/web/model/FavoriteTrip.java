@@ -1,6 +1,5 @@
 package com.web.model;
 
-import com.web.util.AllowedField;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,11 +14,9 @@ public class FavoriteTrip {
 
     @Id
     @Column(name = "trip_id")
-    @AllowedField
     private Long tripId;
 
     @Column(name = "position")
-    @AllowedField
     private Long position;
 
     public FavoriteTrip() {

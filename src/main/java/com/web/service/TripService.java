@@ -30,7 +30,7 @@ public class TripService {
 
     public List<Trip> filter(Timestamp startDateTime, Timestamp endDateTime,
                              Double minWindSpeed, Double maxWindSpeed,
-                             String dir, String sortBy,
+                             String direction, String sortBy,
                              Integer page, Integer pageSize) {
 
         if (endDateTime.before(startDateTime)){
@@ -39,6 +39,10 @@ public class TripService {
 
         if (page < 0){
             throw new IllegalArgumentException("Invalid page field, smaller than zero: " + page);
+        }
+
+        if (!direction.equalsIgnoreCase("asc") && !direction.equalsIgnoreCase("desc")){
+            throw new IllegalArgumentException("Invalid direction : " + direction);
         }
 
         Set<String> weatherAndTripAllowedField = new HashSet<>();
@@ -50,14 +54,7 @@ public class TripService {
             throw new IllegalArgumentException("Invalid sort field: " + sortBy);
         }
 
-        Sort.Direction direction = null;
-        try {
-            direction = Sort.Direction.fromString(dir);
-        } catch (Exception e) {
-            throw e;
-        }
-
-        Sort sort = Sort.by(direction, sortBy);
+        Sort sort = Sort.by( Sort.Direction.fromString(direction), sortBy);
         Pageable pageable = PageRequest.of(page, pageSize, sort);
 
         return tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);

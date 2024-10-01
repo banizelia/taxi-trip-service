@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/favouriteTrips")
+@RequestMapping("/favorite-trips")
 public class FavoriteTripController {
     private final FavoriteTripService favoriteTripService;
 
@@ -17,17 +17,17 @@ public class FavoriteTripController {
         this.favoriteTripService = favoriteTripService;
     }
 
-    @GetMapping("/get")
+    @GetMapping()
     public List<Trip> getFavouriteTrips(){
         return favoriteTripService.getFavouriteTrips();
     }
 
-    @PutMapping("/save")
+    @PutMapping()
     public ResponseEntity<String> saveToFavourite(@RequestParam(value = "tripId") Long id){
         return favoriteTripService.saveToFavourite(id);
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping()
     public ResponseEntity<String> deleteFromFavourite(@RequestParam(value = "tripId") Long id){
         return favoriteTripService.deleteFromFavourite(id);
     }

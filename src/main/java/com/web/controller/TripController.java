@@ -40,15 +40,15 @@ public class TripController {
             @Parameter(description = "Максимальная скорость ветра") @RequestParam(value = "maxWindSpeed", required = false, defaultValue = "9999") Double maxWindSpeed,
             @Parameter(description = "Направление сортировки (asc/desc)") @RequestParam(value = "direction", required = false, defaultValue = "asc") String direction,
             @Parameter(description = "Поле, по которому будет происходить сортировка, например pickupDatetime") @RequestParam(value = "sortBy", required = false, defaultValue = "id") String sortBy,
-            @Parameter(description = "Номер страницы") @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @Parameter(description = "Размер страницы") @RequestParam(value = "pageSize", defaultValue = "500") Integer pageSize ){
+            @Parameter(description = "Номер страницы") @RequestParam(value = "page", defaultValue = "1") Integer page,
+            @Parameter(description = "Размер страницы") @RequestParam(value = "pageSize", defaultValue = "500") Integer pageSize){
 
         return tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize);
     }
 
     @Operation(summary = "Экспорт поездок в Excel")
     @GetMapping("/download")
-    public ResponseEntity<Resource> download() {
-        return tripService.download();
+    public ResponseEntity<Resource> download(@Parameter(description = "Ограничение по листам") @RequestParam(value = "listsLimit", defaultValue = "15") Integer listsLimit) {
+        return tripService.download(listsLimit);
     }
 }

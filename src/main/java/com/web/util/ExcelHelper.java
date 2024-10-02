@@ -40,7 +40,7 @@ public class ExcelHelper {
     private static final int MAX_ROWS_PER_SHEET = 1_000_000; // 1_048_576 is the maximum number of lines for xlsx sheet
     private static final int BATCH_SIZE = 100_000;
 
-    public static ByteArrayInputStream tripsToExcel(TripsRepository tripsRepository) {
+    public static ByteArrayInputStream tripsToExcel(TripsRepository tripsRepository, Integer listsLimit) {
 
         try (SXSSFWorkbook workbook = createMyCustomWorkbook();
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -72,7 +72,7 @@ public class ExcelHelper {
 
                 pageable = pageable.next();
 
-            } while (!currentBatch.isEmpty());
+            } while (!currentBatch.isEmpty() && sheetCount <= listsLimit);
 
             workbook.write(out);
 

@@ -59,9 +59,9 @@ public class TripService {
         return tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
     }
 
-    public ResponseEntity<Resource> download() {
+    public ResponseEntity<Resource> download(Integer listsLimit) {
         String filename = "trips.xlsx";
-        InputStreamResource file = new InputStreamResource(ExcelHelper.tripsToExcel(tripsRepository));
+        InputStreamResource file = new InputStreamResource(ExcelHelper.tripsToExcel(tripsRepository, listsLimit));
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)

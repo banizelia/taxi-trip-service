@@ -16,7 +16,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_favorite_trips_trip_id
     (trip_id ASC NULLS LAST);
 
 
-
 -- Лучше заменить COPY на SQL-запрос с INSERT, если возможно, либо использовать стратегию для загрузки данных вне Flyway миграций.
 INSERT INTO public.favorite_trips (trip_id, position, version) VALUES
 (1, 1, 0),

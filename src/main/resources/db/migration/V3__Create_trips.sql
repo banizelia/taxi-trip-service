@@ -36,9 +36,6 @@ TABLESPACE pg_default;
 ALTER TABLE IF EXISTS public.trips
     OWNER to postgres;
 
-COPY favorite_trips 
-FROM '*\trips.csv.csv' DELIMITER ',' CSV HEADER;
-
 -- Лучше заменить COPY на SQL-запрос с INSERT, если возможно, либо использовать стратегию для загрузки данных вне Flyway миграций.
 
 INSERT INTO public.trips

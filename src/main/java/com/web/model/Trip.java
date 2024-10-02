@@ -2,8 +2,10 @@ package com.web.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.sql.Date;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "trips")
@@ -28,10 +30,11 @@ public class Trip {
     private String vendorId;
 
     @Column(name = "pickup_datetime")
-    private Timestamp pickupDatetime;
+    private LocalDateTime pickupDatetime;
 
     @Column(name = "dropoff_datetime")
-    private Timestamp dropoffDatetime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime dropoffDatetime;
 
     @Column(name = "passenger_count")
     private Integer passengerCount;
@@ -111,19 +114,19 @@ public class Trip {
         this.vendorId = vendorId;
     }
 
-    public Timestamp getPickupDatetime() {
+    public LocalDateTime getPickupDatetime() {
         return pickupDatetime;
     }
 
-    public void setPickupDatetime(Timestamp pickupDatetime) {
+    public void setPickupDatetime(LocalDateTime pickupDatetime) {
         this.pickupDatetime = pickupDatetime;
     }
 
-    public Timestamp getDropoffDatetime() {
+    public LocalDateTime getDropoffDatetime() {
         return dropoffDatetime;
     }
 
-    public void setDropoffDatetime(Timestamp dropoffDatetime) {
+    public void setDropoffDatetime(LocalDateTime dropoffDatetime) {
         this.dropoffDatetime = dropoffDatetime;
     }
 

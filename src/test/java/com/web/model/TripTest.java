@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -33,14 +35,14 @@ public class TripTest {
 
     @Test
     public void testSetAndGetPickupDatetime() {
-        Timestamp pickupDatetime = new Timestamp(System.currentTimeMillis());
+        LocalDateTime pickupDatetime = LocalDateTime.now();
         trip.setPickupDatetime(pickupDatetime);
         assertEquals(pickupDatetime, trip.getPickupDatetime());
     }
 
     @Test
     public void testSetAndGetDropoffDatetime() {
-        Timestamp dropoffDatetime = new Timestamp(System.currentTimeMillis());
+        LocalDateTime dropoffDatetime = LocalDateTime.now();
         trip.setDropoffDatetime(dropoffDatetime);
         assertEquals(dropoffDatetime, trip.getDropoffDatetime());
     }

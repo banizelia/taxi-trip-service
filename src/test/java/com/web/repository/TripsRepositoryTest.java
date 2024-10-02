@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,8 +25,8 @@ class TripsRepositoryTest {
     @Test
     void testFilter() {
         // Данные для фильтрации
-        Timestamp startDateTime = Timestamp.valueOf("2016-01-01 00:00:00");
-        Timestamp endDateTime = Timestamp.valueOf("2016-01-31 23:59:59");
+        LocalDateTime startDateTime = LocalDateTime.of(2016, 1, 1, 0,0,0);
+        LocalDateTime endDateTime = LocalDateTime.of(2016, 1, 31, 23,59,59);
         Double minWindSpeed = 0.0;
         Double maxWindSpeed = 10.0;
 

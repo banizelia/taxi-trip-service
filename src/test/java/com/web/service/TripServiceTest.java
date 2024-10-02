@@ -32,8 +32,8 @@ class TripServiceTest {
 
     @Test
     void filter_validInput_shouldReturnTrips() {
-        Timestamp startDateTime = Timestamp.valueOf(LocalDateTime.of(2016, 1, 1, 0, 0));
-        Timestamp endDateTime = Timestamp.valueOf(LocalDateTime.of(2016, 1, 31, 23, 59));
+        LocalDateTime startDateTime = LocalDateTime.of(2016, 1, 1, 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2016, 1, 31, 23, 59);
         Double minWindSpeed = (double) 0;
         Double maxWindSpeed = 9999.0;
         String direction = "asc";
@@ -53,8 +53,8 @@ class TripServiceTest {
 
     @Test
     void filter_invalidEndDateTime_shouldThrowException() {
-        Timestamp startDateTime = Timestamp.valueOf(LocalDateTime.of(2016, 1, 31, 23, 59));
-        Timestamp endDateTime = Timestamp.valueOf(LocalDateTime.of(2016, 1, 1, 0, 0));
+        LocalDateTime startDateTime = LocalDateTime.of(2016, 1, 31, 23, 59);
+        LocalDateTime endDateTime = LocalDateTime.of(2016, 1, 1, 0, 0);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
                 tripService.filter(startDateTime, endDateTime, 0.0, 9999.0, "asc", "id", 0, 500)
@@ -65,8 +65,8 @@ class TripServiceTest {
 
     @Test
     void filter_invalidDirection_shouldThrowException() {
-        Timestamp startDateTime = Timestamp.valueOf(LocalDateTime.of(2016, 1, 1, 0, 0));
-        Timestamp endDateTime = Timestamp.valueOf(LocalDateTime.of(2016, 1, 31, 23, 59));
+        LocalDateTime startDateTime = LocalDateTime.of(2016, 1, 1, 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2016, 1, 31, 23, 59);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
                 tripService.filter(startDateTime, endDateTime, 0.0, 9999.0, "invalid", "id", 0, 500)
@@ -77,8 +77,8 @@ class TripServiceTest {
 
     @Test
     void filter_invalidSortBy_shouldThrowException() {
-        Timestamp startDateTime = Timestamp.valueOf(LocalDateTime.of(2016, 1, 1, 0, 0));
-        Timestamp endDateTime = Timestamp.valueOf(LocalDateTime.of(2016, 1, 31, 23, 59));
+        LocalDateTime startDateTime = LocalDateTime.of(2016, 1, 1, 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2016, 1, 31, 23, 59);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
                 tripService.filter(startDateTime, endDateTime, 0.0, 9999.0, "asc", "invalidField", 0, 500)
@@ -89,8 +89,8 @@ class TripServiceTest {
 
     @Test
     void filter_invalidPage_shouldThrowException() {
-        Timestamp startDateTime = Timestamp.valueOf(LocalDateTime.of(2016, 1, 1, 0, 0));
-        Timestamp endDateTime = Timestamp.valueOf(LocalDateTime.of(2016, 1, 31, 23, 59));
+        LocalDateTime startDateTime = LocalDateTime.of(2016, 1, 1, 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2016, 1, 31, 23, 59);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
                 tripService.filter(startDateTime, endDateTime, 0.0, 9999.0, "asc", "id", -1,500)

@@ -14,10 +14,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
-import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,12 +27,12 @@ public class TripService {
     @Autowired
     TripsRepository tripsRepository;
 
-    public List<Trip> filter(Timestamp startDateTime, Timestamp endDateTime,
+    public List<Trip> filter(LocalDateTime startDateTime, LocalDateTime endDateTime,
                              Double minWindSpeed, Double maxWindSpeed,
                              String direction, String sortBy,
                              Integer page, Integer pageSize) {
 
-        if (endDateTime.before(startDateTime)){
+        if (endDateTime.isBefore(startDateTime)){
             throw new IllegalArgumentException("endDateTime is before startDateTime, startDateTime = " + startDateTime + " endDateTime = " + endDateTime);
         }
 

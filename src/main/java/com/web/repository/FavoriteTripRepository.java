@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long> {
@@ -32,4 +33,10 @@ public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long
     void decrementPositions(@Param("oldPosition") Long oldPosition,
                             @Param("newPosition") Long newPosition);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE FavoriteTrip ft SET ft.position = ft.position - 1 WHERE ft.position > :oldPosition")
+    void decrementPositionsAfter(@Param("oldPosition") Long oldPosition);
+
+    Optional<FavoriteTrip> findByTripId(Long id);
 }

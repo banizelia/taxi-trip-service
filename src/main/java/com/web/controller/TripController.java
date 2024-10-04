@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class TripController {
             @Parameter(description = "Минимальная скорость ветра") @RequestParam(value = "minWindSpeed", required = false, defaultValue = "0") Double minWindSpeed,
             @Parameter(description = "Максимальная скорость ветра") @RequestParam(value = "maxWindSpeed", required = false, defaultValue = "9999") Double maxWindSpeed,
             @Parameter(description = "Направление сортировки (asc/desc)") @RequestParam(value = "direction", required = false, defaultValue = "asc") String direction,
-            @Parameter(description = "Поле, по которому будет происходить сортировка, например pickupDatetime") @RequestParam(value = "sortBy", required = false, defaultValue = "id") String sortBy,
+            @Parameter(description = "Поле, по которому будет происходить сортировка (pickupDatetime)") @RequestParam(value = "sortBy", required = false, defaultValue = "id") String sortBy,
             @Parameter(description = "Номер страницы") @RequestParam(value = "page", defaultValue = "1") Integer page,
             @Parameter(description = "Размер страницы") @RequestParam(value = "pageSize", defaultValue = "500") Integer pageSize){
 

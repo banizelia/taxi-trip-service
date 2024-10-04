@@ -1,11 +1,9 @@
 package com.web.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.sql.Date;
-import java.time.LocalDateTime;
+import java.time.*;
 
 @Entity
 @Table(name = "trips")
@@ -85,7 +83,7 @@ public class Trip {
     private Double airportFee;
 
     @Column(name = "pickup_date", insertable=false, updatable=false)
-    private Date pickupDate;
+    private LocalDate pickupDate;
 
     public Trip() {
     }
@@ -264,11 +262,11 @@ public class Trip {
         this.airportFee = airportFee;
     }
 
-    public Date getPickupDate() {
+    public LocalDate getPickupDate() {
         return pickupDate;
     }
 
-    public void setPickupDate(Date pickupDate) {
+    public void setPickupDate(LocalDate pickupDate) {
         this.pickupDate = pickupDate;
     }
 

@@ -38,7 +38,7 @@ public class FavoriteTripController {
         return favoriteTripService.deleteFromFavourite(id);
     }
 
-    @Operation(summary = "Переместить поездку в избранном")
+    @Operation(summary = "Поменять позицию поезкди в списке избранного")
     @PutMapping("/drag-and-drop")
     public ResponseEntity<String> dragAndDrop(@Parameter(description = "ID поездки") @RequestParam(value = "tripId") Long tripId,
                                               @Parameter(description = "Новая позиция") @RequestParam(value = "newPosition") Long newPosition) {

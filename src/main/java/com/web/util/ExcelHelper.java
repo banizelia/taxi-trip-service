@@ -3,7 +3,8 @@ package com.web.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.List;
+import java.util.stream.Stream;
+
 import com.web.model.Trip;
 import com.web.repository.TripsRepository;
 import org.apache.poi.ss.usermodel.*;
@@ -11,13 +12,10 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
 
 public class ExcelHelper {
-    private static Logger logger = LoggerFactory.getLogger(ExcelHelper.class);
-    public static String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    static String[] HEADERs = {"id",
+    private static final String[] HEADERS = {"id",
             "vendor_id",
             "pickup_datetime",
             "dropoff_datetime",
@@ -37,63 +35,58 @@ public class ExcelHelper {
             "total_amount",
             "congestion_surcharge",
             "airport_fee",
-            "pickup_date" };
-
-    static String SHEET = "trips_";
+            "pickup_date"};
+    private static final Logger logger = LoggerFactory.getLogger(ExcelHelper.class);
+    private static final String SHEET_PREFIX = "trips_";
     private static final int MAX_ROWS_PER_SHEET = 1_000_000; // 1_048_576 is the maximum number of lines for xlsx sheet
     private static final int BATCH_SIZE = 100_000;
 
 
     public static ByteArrayInputStream tripsToExcel(TripsRepository tripsRepository, Integer listsLimit) {
-        Long start = System.nanoTime()/1_000_000_000;
-
-        try (SXSSFWorkbook workbook = createMyCustomWorkbook();
+        try (SXSSFWorkbook workbook = createWorkbook();
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
             int sheetCount = 1;
-            int rowIdx = 1;
-
-            Sheet sheet = workbook.createSheet(SHEET + sheetCount);
+            Sheet sheet = workbook.createSheet(SHEET_PREFIX + sheetCount);
             createHeader(sheet);
 
-            Pageable pageable = PageRequest.of(0, BATCH_SIZE, Sort.by(Sort.Direction.ASC, "id"));
+            int rowIdx = 1;
+            int processedSheets = 0;
 
-            List<Trip> currentBatch;
-            do {
-
-                currentBatch = tripsRepository.findAll(pageable).getContent();
-
-                for (Trip trip : currentBatch) {
-
+            try (Stream<Trip> tripStream = streamAllTrips(tripsRepository)) {
+                for (Trip trip : (Iterable<Trip>) tripStream::iterator) {
                     if (rowIdx >= MAX_ROWS_PER_SHEET) {
                         sheetCount++;
-                        sheet = workbook.createSheet(SHEET + sheetCount);
+                        if (processedSheets >= listsLimit) {
+                            break;
+                        }
+                        sheet = workbook.createSheet(SHEET_PREFIX + sheetCount);
                         createHeader(sheet);
                         rowIdx = 1;
+                        processedSheets++;
+
+                        System.out.println(sheetCount);
                     }
-
-                    createRow(sheet, rowIdx, trip);
-                    rowIdx++;
+                    createRow(sheet, rowIdx++, trip);
                 }
-
-                Long now = System.nanoTime()/1_000_000_000;
-
-                logger.info("Сompleted page № " + pageable.getPageNumber() + " in " + (now - start) + " seconds"); // for test only
-                start = now;
-
-                pageable = pageable.next();
-
-            } while (!currentBatch.isEmpty() && sheetCount <= listsLimit);
+            }
 
             workbook.write(out);
-
             return new ByteArrayInputStream(out.toByteArray());
         } catch (IOException e) {
             throw new RuntimeException("Failed to export data to Excel file: " + e.getMessage(), e);
         }
     }
 
-    static SXSSFWorkbook createMyCustomWorkbook() {
+    private static Stream<Trip> streamAllTrips(TripsRepository tripsRepository) {
+        return Stream.iterate(PageRequest.of(0, BATCH_SIZE),
+                        PageRequest::next)
+                .map(tripsRepository::findAll)
+                .takeWhile(page -> !page.isEmpty())
+                .flatMap(Page::stream);
+    }
+
+    static SXSSFWorkbook createWorkbook() {
         SXSSFWorkbook workbook = new SXSSFWorkbook(100) {
             public void close() throws IOException {
                 try {
@@ -110,9 +103,9 @@ public class ExcelHelper {
 
     private static void createHeader(Sheet sheet) {
         Row headerRow = sheet.createRow(0);
-        for (int col = 0; col < HEADERs.length; col++) {
+        for (int col = 0; col < HEADERS.length; col++) {
             Cell cell = headerRow.createCell(col);
-            cell.setCellValue(HEADERs[col]);
+            cell.setCellValue(HEADERS[col]);
         }
     }
 

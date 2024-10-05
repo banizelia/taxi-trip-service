@@ -45,7 +45,7 @@ public class TripController {
         return tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize);
     }
 
-    @Operation(summary = "Экспорт поездок в Excel")
+    @Operation(summary = "Экспортирует поездки в формате Excel с возможностью ограничения количества листов.")
     @GetMapping("/download")
     public ResponseEntity<Resource> download(@Parameter(description = "Ограничение по листам") @RequestParam(value = "listsLimit", defaultValue = "2") Integer listsLimit) {
         return tripService.download(listsLimit);

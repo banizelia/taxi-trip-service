@@ -8,11 +8,14 @@ import com.web.model.Trip;
 import com.web.repository.TripsRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 public class ExcelHelper {
+    private static Logger logger = LoggerFactory.getLogger(ExcelHelper.class);
     public static String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     static String[] HEADERs = {"id",
             "vendor_id",
@@ -40,7 +43,9 @@ public class ExcelHelper {
     private static final int MAX_ROWS_PER_SHEET = 1_000_000; // 1_048_576 is the maximum number of lines for xlsx sheet
     private static final int BATCH_SIZE = 100_000;
 
+
     public static ByteArrayInputStream tripsToExcel(TripsRepository tripsRepository, Integer listsLimit) {
+        Long start = System.nanoTime()/1_000_000_000;
 
         try (SXSSFWorkbook workbook = createMyCustomWorkbook();
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -55,6 +60,7 @@ public class ExcelHelper {
 
             List<Trip> currentBatch;
             do {
+
                 currentBatch = tripsRepository.findAll(pageable).getContent();
 
                 for (Trip trip : currentBatch) {
@@ -70,6 +76,11 @@ public class ExcelHelper {
                     rowIdx++;
                 }
 
+                Long now = System.nanoTime()/1_000_000_000;
+
+                logger.info("Сompleted page № " + pageable.getPageNumber() + " in " + (now - start) + " seconds"); // for test only
+                start = now;
+
                 pageable = pageable.next();
 
             } while (!currentBatch.isEmpty() && sheetCount <= listsLimit);
@@ -83,7 +94,7 @@ public class ExcelHelper {
     }
 
     static SXSSFWorkbook createMyCustomWorkbook() {
-        SXSSFWorkbook workbook = new SXSSFWorkbook() {
+        SXSSFWorkbook workbook = new SXSSFWorkbook(100) {
             public void close() throws IOException {
                 try {
                     dispose();

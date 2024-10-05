@@ -15,9 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 public class ExcelHelper {
-    private static Logger logger = LoggerFactory.getLogger(ExcelHelper.class);
-    public static String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    static String[] HEADERs = {"id",
+    private static final String[] HEADERS = {"id",
             "vendor_id",
             "pickup_datetime",
             "dropoff_datetime",
@@ -38,8 +36,8 @@ public class ExcelHelper {
             "congestion_surcharge",
             "airport_fee",
             "pickup_date" };
-
-    static String SHEET = "trips_";
+    private static final Logger logger = LoggerFactory.getLogger(ExcelHelper.class);
+    private static final String SHEET = "trips_";
     private static final int MAX_ROWS_PER_SHEET = 1_000_000; // 1_048_576 is the maximum number of lines for xlsx sheet
     private static final int BATCH_SIZE = 100_000;
 
@@ -60,7 +58,6 @@ public class ExcelHelper {
 
             List<Trip> currentBatch;
             do {
-
                 currentBatch = tripsRepository.findAll(pageable).getContent();
 
                 for (Trip trip : currentBatch) {
@@ -77,13 +74,12 @@ public class ExcelHelper {
                 }
 
                 Long now = System.nanoTime()/1_000_000_000;
-
                 logger.info("Сompleted page № " + pageable.getPageNumber() + " in " + (now - start) + " seconds"); // for test only
                 start = now;
 
                 pageable = pageable.next();
 
-            } while (!currentBatch.isEmpty() && sheetCount <= listsLimit);
+            } while (!currentBatch.isEmpty() && sheetCount < listsLimit);
 
             workbook.write(out);
 
@@ -110,9 +106,9 @@ public class ExcelHelper {
 
     private static void createHeader(Sheet sheet) {
         Row headerRow = sheet.createRow(0);
-        for (int col = 0; col < HEADERs.length; col++) {
+        for (int col = 0; col < HEADERS.length; col++) {
             Cell cell = headerRow.createCell(col);
-            cell.setCellValue(HEADERs[col]);
+            cell.setCellValue(HEADERS[col]);
         }
     }
 

@@ -45,10 +45,8 @@ public class ExcelHelper {
     public static ByteArrayInputStream tripsToExcel(TripsRepository tripsRepository, Integer listsLimit) {
         Long start = System.nanoTime()/1_000_000_000;
 
-        try (SXSSFWorkbook workbook = createMyCustomWorkbook();
+        try (SXSSFWorkbook workbook = createWorkbook();
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-
-//            1
 
             int sheetCount = 1;
             int rowIdx = 1;
@@ -91,7 +89,7 @@ public class ExcelHelper {
         }
     }
 
-    static SXSSFWorkbook createMyCustomWorkbook() {
+    static SXSSFWorkbook createWorkbook() {
         SXSSFWorkbook workbook = new SXSSFWorkbook(100) {
             public void close() throws IOException {
                 try {

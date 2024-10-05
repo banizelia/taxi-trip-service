@@ -4,7 +4,6 @@ import com.web.model.FavoriteTrip;
 import com.web.model.Trip;
 import com.web.model.Weather;
 import jakarta.persistence.Column;
-
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashSet;

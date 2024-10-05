@@ -47,7 +47,7 @@ public class TripController {
 
     @Operation(summary = "Экспорт поездок в Excel")
     @GetMapping("/download")
-    public ResponseEntity<Resource> download(@Parameter(description = "Ограничение по листам") @RequestParam(value = "listsLimit", defaultValue = "15") Integer listsLimit) {
+    public ResponseEntity<Resource> download(@Parameter(description = "Ограничение по листам") @RequestParam(value = "listsLimit", defaultValue = "2") Integer listsLimit) {
         return tripService.download(listsLimit);
     }
 }

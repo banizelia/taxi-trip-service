@@ -171,7 +171,7 @@ public class TripTest {
 
     @Test
     public void testSetAndGetPickupDate() {
-        Date pickupDate = new Date(System.currentTimeMillis());
+        LocalDate pickupDate = LocalDate.now();
         trip.setPickupDate(pickupDate);
         assertEquals(pickupDate, trip.getPickupDate());
     }

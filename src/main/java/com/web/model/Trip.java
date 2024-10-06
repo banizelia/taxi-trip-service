@@ -270,6 +270,14 @@ public class Trip {
         this.pickupDate = pickupDate;
     }
 
+    @PrePersist
+    @PreUpdate
+    public void setPickupDate() {
+        if (pickupDatetime != null) {
+            this.pickupDate = pickupDatetime.toLocalDate();
+        }
+    }
+
     public FavoriteTrip getFavoriteTrip() {
         return favoriteTrip;
     }

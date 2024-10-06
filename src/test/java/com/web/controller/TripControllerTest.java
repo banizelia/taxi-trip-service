@@ -60,12 +60,12 @@ class TripControllerTest {
                 .header("Content-Disposition", "attachment; filename=trips.xlsx")
                 .body(mockResource);
 
-        when(tripService.download()).thenReturn(expectedResponse);
+        when(tripService.download(2)).thenReturn(expectedResponse);
 
-        ResponseEntity<Resource> result = tripController.download();
+        ResponseEntity<Resource> result = tripController.download(2);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(expectedResponse.getBody(), result.getBody());
-        verify(tripService, times(1)).download();
+        verify(tripService, times(1)).download(2);
     }
 }

@@ -57,7 +57,7 @@ public class TripService {
         return tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
     }
 
-    public ResponseEntity<Resource> download(Integer listsLimit ) {
+    public ResponseEntity<Resource> download(Integer listsLimit) {
         if (listsLimit<1){
             throw new IllegalArgumentException("listsLimit cannot be less than one");
         }

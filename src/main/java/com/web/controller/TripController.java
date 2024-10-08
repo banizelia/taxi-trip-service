@@ -26,22 +26,36 @@ public class TripController {
     }
 
     @Operation(summary = "Фильтрация поездок")
-    @GetMapping("/filter")
-    public List<Trip> filter(
-            @Parameter(description = "Начальная дата и время поездки") @RequestParam(value = "startDateTime", required = false, defaultValue = "2016-01-01 00:00:00")
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDateTime,
+    @GetMapping
+    public ResponseEntity<List<Trip>> filterTrips(
+            @Parameter(description = "Начальная дата и время поездки", example = "2016-01-01T00:00:00.000")
+            @RequestParam(required = false, defaultValue = "2016-01-01T00:00:00.000") LocalDateTime startDateTime,
 
-            @Parameter(description = "Конечная дата и время поездки") @RequestParam(value = "endDateTime", required = false, defaultValue = "2016-01-31 23:59:59")
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDateTime,
+            @Parameter(description = "Конечная дата и время поездки", example = "2016-02-01T00:00:00.000")
+            @RequestParam(required = false, defaultValue = "2016-02-01T00:00:00.000") LocalDateTime endDateTime,
 
-            @Parameter(description = "Минимальная скорость ветра") @RequestParam(value = "minWindSpeed", required = false, defaultValue = "0") Double minWindSpeed,
-            @Parameter(description = "Максимальная скорость ветра") @RequestParam(value = "maxWindSpeed", required = false, defaultValue = "9999") Double maxWindSpeed,
-            @Parameter(description = "Направление сортировки (asc/desc)") @RequestParam(value = "direction", required = false, defaultValue = "asc") String direction,
-            @Parameter(description = "Поле, по которому будет происходить сортировка, например: pickupDatetime") @RequestParam(value = "sortBy", required = false, defaultValue = "id") String sortBy,
-            @Parameter(description = "Номер страницы") @RequestParam(value = "page", defaultValue = "1") Integer page,
-            @Parameter(description = "Размер страниц") @RequestParam(value = "pageSize", defaultValue = "500") Integer pageSize){
+            @Parameter(description = "Минимальная скорость ветра")
+            @RequestParam(required = false, defaultValue = "0") Double minWindSpeed,
 
-        return tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize);
+            @Parameter(description = "Максимальная скорость ветра")
+            @RequestParam(required = false, defaultValue = "9999") Double maxWindSpeed,
+
+            @Parameter(description = "Направление сортировки (asc/desc)")
+            @RequestParam(required = false, defaultValue = "asc") String direction,
+
+            @Parameter(description = "Поле, по которому будет происходить сортировка")
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+
+            @Parameter(description = "Номер страницы")
+            @RequestParam(defaultValue = "0") Integer page,
+
+            @Parameter(description = "Размер страницы")
+            @RequestParam(defaultValue = "20") Integer pageSize) {
+
+        System.out.println(startDateTime);
+
+        List<Trip> trips = tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize);
+        return ResponseEntity.ok(trips);
     }
 
     @Operation(summary = "Экспортирует поездки в формате Excel с возможностью ограничения количества листов.")

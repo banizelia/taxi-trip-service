@@ -14,7 +14,6 @@ import java.util.List;
 public class FavoriteTripController {
     private final FavoriteTripService favoriteTripService;
 
-    @Autowired
     public FavoriteTripController(FavoriteTripService favoriteTripService) {
         this.favoriteTripService = favoriteTripService;
     }
@@ -27,8 +26,7 @@ public class FavoriteTripController {
 
     @Operation(summary = "Добавить поездку в избранное")
     @PutMapping("/save")
-    public ResponseEntity<String> saveToFavourite(
-            @Parameter(description = "ID поездки") @RequestParam(value = "tripId") Long id) {
+    public ResponseEntity<String> saveToFavourite(@Parameter(description = "ID поездки") @RequestParam(value = "tripId") Long id) {
         return favoriteTripService.saveToFavourite(id);
     }
 

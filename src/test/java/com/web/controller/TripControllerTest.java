@@ -47,7 +47,7 @@ class TripControllerTest {
         when(tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize))
                 .thenReturn(expectedTrips);
 
-        List<Trip> result = tripController.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize);
+        List<Trip> result = tripController.filterTrips(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize).getBody();
 
         assertEquals(expectedTrips, result);
         verify(tripService, times(1)).filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize);

@@ -42,7 +42,7 @@ public class ExcelHelper {
     private static final int BATCH_SIZE = 100_000;
 
 
-    public static ByteArrayInputStream tripsToExcel(TripsRepository tripsRepository, Integer listsLimit) {
+    public static ByteArrayInputStream tripsToExcel(TripsRepository tripsRepository, Integer sheetLimit) {
         Long start = System.nanoTime()/1_000_000_000;
 
         try (SXSSFWorkbook workbook = createWorkbook();
@@ -79,7 +79,7 @@ public class ExcelHelper {
 
                 pageable = pageable.next();
 
-            } while (!currentBatch.isEmpty() && sheetCount < listsLimit);
+            } while (!currentBatch.isEmpty() && sheetCount < sheetLimit);
 
             workbook.write(out);
 

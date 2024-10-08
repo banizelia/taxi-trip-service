@@ -4,9 +4,7 @@ import com.web.model.Trip;
 import com.web.service.TripService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,12 +18,24 @@ import java.util.List;
 public class TripController {
     private final TripService tripService;
 
-    @Autowired
     public TripController(TripService tripService) {
         this.tripService = tripService;
     }
 
-    @Operation(summary = "Фильтрация поездок")
+    /**
+     * Фильтрация поездок по параметрам.
+     *
+     * @param startDateTime начальная дата и время поездки
+     * @param endDateTime конечная дата и время поездки
+     * @param minWindSpeed минимальная скорость ветра
+     * @param maxWindSpeed максимальная скорость ветра
+     * @param direction направление сортировки (asc или desc)
+     * @param sortBy поле для сортировки
+     * @param page номер страницы
+     * @param pageSize размер страницы
+     * @return список отфильтрованных поездок
+     */
+    @Operation(summary = "Фильтрация поездок", description = "Позволяет фильтровать поездки по дате, скорости ветра, а также сортировать и разбивать на страницы.")
     @GetMapping
     public ResponseEntity<List<Trip>> filterTrips(
             @Parameter(description = "Начальная дата и время поездки", example = "2016-01-01T00:00:00.000")
@@ -40,7 +50,7 @@ public class TripController {
             @Parameter(description = "Максимальная скорость ветра")
             @RequestParam(required = false, defaultValue = "9999") Double maxWindSpeed,
 
-            @Parameter(description = "Направление сортировки (asc/desc)")
+            @Parameter(description = "Направление сортировки (asc или desc)")
             @RequestParam(required = false, defaultValue = "asc") String direction,
 
             @Parameter(description = "Поле, по которому будет происходить сортировка")
@@ -52,15 +62,20 @@ public class TripController {
             @Parameter(description = "Размер страницы")
             @RequestParam(defaultValue = "20") Integer pageSize) {
 
-        System.out.println(startDateTime);
-
         List<Trip> trips = tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize);
         return ResponseEntity.ok(trips);
     }
 
-    @Operation(summary = "Экспортирует поездки в формате Excel с возможностью ограничения количества листов.")
+    /**
+     * Экспорт поездок в формате Excel.
+     *
+     * @param sheetLimit ограничение по количеству листов в Excel
+     * @return Excel файл с поездками
+     */
+    @Operation(summary = "Экспорт поездок в формате Excel", description = "Экспортирует список поездок в формате Excel, с возможностью задать ограничение по количеству листов.")
     @GetMapping("/download")
-    public ResponseEntity<Resource> download(@Parameter(description = "Ограничение по листам") @RequestParam(value = "listsLimit", defaultValue = "2") Integer listsLimit) {
-        return tripService.download(listsLimit);
+    public ResponseEntity<Resource> download(
+            @Parameter(description = "Ограничение по листам") @RequestParam(value = "sheetLimit", defaultValue = "2") Integer sheetLimit) {
+        return tripService.download(sheetLimit);
     }
 }

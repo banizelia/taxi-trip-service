@@ -4,47 +4,85 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Модель для представления данных наблюдений за погодой, включая данные о ветре, осадках, температуре и снегопаде.
+ */
 @Entity
 @Table(name = "weather_observations")
 public class Weather {
 
+    /**
+     * Список поездок, связанных с текущими погодными условиями.
+     */
     @OneToMany(mappedBy = "weather")
     private List<Trip> trips;
 
+    /**
+     * Идентификатор записи о погоде (основной ключ).
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "weather_id")
     private Long id;
 
+    /**
+     * Идентификатор метеостанции.
+     */
     @Column(name = "station_id")
     private String stationId;
 
+    /**
+     * Название метеостанции.
+     */
     @Column(name = "station_name")
     private String stationName;
 
+    /**
+     * Дата наблюдения за погодой.
+     */
     @Column(name = "date")
     private LocalDate date;
 
+    /**
+     * Средняя скорость ветра.
+     */
     @Column(name = "average_wind_speed")
     private Double averageWindSpeed;
 
+    /**
+     * Количество осадков.
+     */
     @Column(name = "precipitation")
     private Double precipitation;
 
+    /**
+     * Глубина снега на момент наблюдения.
+     */
     @Column(name = "snow_depth")
     private Double snowDepth;
 
+    /**
+     * Количество выпавшего снега.
+     */
     @Column(name = "snowfall")
     private Double snowfall;
 
+    /**
+     * Максимальная температура.
+     */
     @Column(name = "max_temperature")
     private Long maxTemperature;
 
+    /**
+     * Минимальная температура.
+     */
     @Column(name = "min_temperature")
     private Long minTemperature;
 
     public Weather() {
     }
+
+    // Getters and setters
 
     public List<Trip> getTrips() {
         return trips;

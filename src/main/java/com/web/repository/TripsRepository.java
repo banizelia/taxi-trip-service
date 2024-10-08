@@ -12,9 +12,20 @@ import java.util.List;
 @Repository
 public interface TripsRepository extends JpaRepository<Trip, Long> {
 
+    /**
+     * Фильтрует поездки по дате и времени начала/окончания, а также по диапазону скорости ветра.
+     * Результаты сортируются и ограничиваются с использованием Pageable.
+     *
+     * @param startDateTime  начальная дата и время поездки
+     * @param endDateTime    конечная дата и время поездки
+     * @param minWindSpeed   минимальная скорость ветра
+     * @param maxWindSpeed   максимальная скорость ветра
+     * @param pageable       параметры пагинации и сортировки
+     * @return список отфильтрованных поездок
+     */
     @Query("SELECT t FROM Trip t WHERE " +
-            " (pickupDatetime BETWEEN :startDateTime AND :endDateTime) AND " +
-            " (weather.averageWindSpeed BETWEEN :minWindSpeed AND :maxWindSpeed)")
+            " (t.pickupDatetime BETWEEN :startDateTime AND :endDateTime) AND " +
+            " (t.weather.averageWindSpeed BETWEEN :minWindSpeed AND :maxWindSpeed)")
     List<Trip> filter(@Param("startDateTime") LocalDateTime startDateTime,
                       @Param("endDateTime") LocalDateTime endDateTime,
                       @Param("minWindSpeed") Double minWindSpeed,

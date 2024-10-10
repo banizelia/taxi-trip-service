@@ -40,7 +40,7 @@ class FavoriteTripServiceTest {
     void saveToFavourite_TripIdLessThanOne_ReturnsBadRequest() {
         ResponseEntity<String> response = favoriteTripService.saveToFavourite(0L);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("ID cant be smaller than 1", response.getBody());
+        assertEquals("ID can't be smaller than 1", response.getBody());
     }
 
     @Test

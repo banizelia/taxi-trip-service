@@ -1,44 +1,37 @@
 package com.web.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 /**
- * Модель избранной поездки, содержащая информацию о поездке, позиции в списке избранного и версии записи.
+ * Model of a favorite trip, containing information about the trip, its position in the favorites list, and the record version.
  */
 @Entity
 @Table(name = "favorite_trips")
 public class FavoriteTrip {
 
     /**
-     * Версия записи для реализации оптимистичной блокировки.
+     * Record version for optimistic locking implementation.
      */
     @Version
     private Long version;
 
     /**
-     * Связь с моделью поездки, отображающая поездку, которая находится в избранном.
+     * Relationship with the Trip model, representing the trip that is in favorites.
      */
     @OneToOne(mappedBy = "favoriteTrip", fetch = FetchType.LAZY)
     @JoinColumn(name = "trip_id")
     private Trip trip;
 
     /**
-     * Идентификатор избранной поездки (основной ключ).
+     * Favorite trip identifier (primary key).
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * Идентификатор поездки, которая находится в избранном.
-     */
     @Column(name = "trip_id")
     private Long tripId;
 
-    /**
-     * Позиция поездки в списке избранного.
-     */
     @Column(name = "position")
     private Long position;
 

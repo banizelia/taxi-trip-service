@@ -15,11 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 /**
- * Класс для экспорта данных поездок в Excel файл.
+ * Utility class for exporting trip data to Excel file.
  */
 public class ExcelHelper {
-
-    // Заголовки столбцов для Excel файла
+    // Column headers for the Excel file
     private static final String[] HEADERS = {"id",
             "vendor_id",
             "pickup_datetime",
@@ -43,21 +42,21 @@ public class ExcelHelper {
             "pickup_date" };
     private static final Logger logger = LoggerFactory.getLogger(ExcelHelper.class);
 
-    // Имя листа Excel файла
+    // Name of the Excel sheet
     private static final String SHEET = "trips_";
 
-    // Максимальное количество строк на одном листе Excel
+    // Maximum number of rows per Excel sheet
     private static final int MAX_ROWS_PER_SHEET = 1_000_000;
 
-    // Размер выборки для одного запроса к базе данных
+    // Batch size for database queries
     private static final int BATCH_SIZE = 100_000;
 
     /**
-     * Экспортирует данные поездок из базы данных в Excel файл.
+     * Exports trip data from the database to an Excel file.
      *
-     * @param tripsRepository репозиторий для получения данных поездок
-     * @param sheetLimit максимальное количество листов в Excel файле
-     * @return InputStream с содержимым Excel файла
+     * @param tripsRepository repository for retrieving trip data
+     * @param sheetLimit maximum number of sheets in the Excel file
+     * @return InputStream with the contents of the Excel file
      */
     public static ByteArrayInputStream tripsToExcel(TripsRepository tripsRepository, Integer sheetLimit) {
         Long start = System.nanoTime()/1_000_000_000;
@@ -68,21 +67,21 @@ public class ExcelHelper {
             int sheetCount = 1;
             int rowIdx = 1;
 
-            // Создаем первый лист и добавляем заголовок
+            // Create the first sheet and add the header
             Sheet sheet = workbook.createSheet(SHEET + sheetCount);
             createHeader(sheet);
 
-            // Постраничный запрос данных из базы с сортировкой по id
+            // Paginated query of data from the database with sorting by id
             Pageable pageable = PageRequest.of(0, BATCH_SIZE, Sort.by(Sort.Direction.ASC, "id"));
             List<Trip> currentBatch;
 
-            // Цикл по страницам данных
+            // Loop through data pages
             do {
                 currentBatch = tripsRepository.findAll(pageable).getContent();
 
-                // Заполняем строки данными поездок
+                // Fill rows with trip data
                 for (Trip trip : currentBatch) {
-                    // Если достигли максимума строк на листе, создаем новый лист
+                    // If we've reached the maximum rows per sheet, create a new sheet
                     if (rowIdx >= MAX_ROWS_PER_SHEET) {
                         sheetCount++;
                         sheet = workbook.createSheet(SHEET + sheetCount);
@@ -94,9 +93,9 @@ public class ExcelHelper {
                     rowIdx++;
                 }
 
-                // Логгируем информацию о выполнении текущей страницы
+                // Log information about the current page execution
                 Long now = System.nanoTime()/1_000_000_000;
-                logger.info("Сompleted page № " + pageable.getPageNumber() + " in " + (now - start) + " seconds");
+                logger.info("Completed page # " + pageable.getPageNumber() + " in " + (now - start) + " seconds");
                 start = now;
 
                 pageable = pageable.next();
@@ -107,34 +106,34 @@ public class ExcelHelper {
 
             return new ByteArrayInputStream(out.toByteArray());
         } catch (IOException e) {
-            throw new RuntimeException("Ошибка при экспорте данных в Excel файл: " + e.getMessage(), e);
+            throw new RuntimeException("Error exporting data to Excel file: " + e.getMessage(), e);
         }
     }
 
     /**
-     * Создает новый рабочий Excel файл с поддержкой временных файлов для больших данных.
+     * Creates a new Excel workbook with support for temporary files for large data sets.
      *
-     * @return SXSSFWorkbook объект для работы с Excel
+     * @return SXSSFWorkbook object for working with Excel
      */
     static SXSSFWorkbook createWorkbook() {
         SXSSFWorkbook workbook = new SXSSFWorkbook(100) {
             public void close() throws IOException {
                 try {
-                    dispose(); // Освобождаем временные ресурсы
+                    dispose(); // Release temporary resources
                 } catch (Exception e) {
                     throw e;
                 }
                 super.close();
             }
         };
-        workbook.setCompressTempFiles(true); // Включаем сжатие временных файлов
+        workbook.setCompressTempFiles(true); // Enable compression of temporary files
         return workbook;
     }
 
     /**
-     * Создает заголовок для листа Excel файла.
+     * Creates a header for the Excel sheet.
      *
-     * @param sheet лист, на котором создается заголовок
+     * @param sheet the sheet where the header is created
      */
     private static void createHeader(Sheet sheet) {
         Row headerRow = sheet.createRow(0);
@@ -145,11 +144,11 @@ public class ExcelHelper {
     }
 
     /**
-     * Создает строку с данными поездки в листе Excel.
+     * Creates a row with trip data in the Excel sheet.
      *
-     * @param sheet лист, в котором создается строка
-     * @param rowIdx индекс строки
-     * @param trip объект поездки с данными
+     * @param sheet the sheet where the row is created
+     * @param rowIdx the index of the row
+     * @param trip the Trip object with data
      */
     private static void createRow(Sheet sheet, int rowIdx, Trip trip) {
         Row row = sheet.createRow(rowIdx);

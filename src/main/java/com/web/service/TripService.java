@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Сервис для работы с данными поездок.
+ * Service for managing trip data.
  */
 @Service
 public class TripService {
@@ -28,53 +28,66 @@ public class TripService {
     @Autowired
     TripsRepository tripsRepository;
 
+    /**
+     * Filters and retrieves trips based on various criteria.
+     *
+     * @param startDateTime Start date and time for filtering trips.
+     * @param endDateTime End date and time for filtering trips.
+     * @param minWindSpeed Minimum wind speed for filtering trips.
+     * @param maxWindSpeed Maximum wind speed for filtering trips.
+     * @param direction Sorting direction (asc or desc).
+     * @param sortBy Field to sort by.
+     * @param page Page number for pagination.
+     * @param pageSize Page size for pagination.
+     * @return ResponseEntity containing a list of filtered trips.
+     * @throws IllegalArgumentException if input parameters are invalid.
+     */
     public ResponseEntity<List<Trip>> filter(LocalDateTime startDateTime, LocalDateTime endDateTime,
                                              Double minWindSpeed, Double maxWindSpeed,
                                              String direction, String sortBy,
                                              Integer page, Integer pageSize) {
-
-        // Проверка на корректность периода времени
         if (endDateTime.isBefore(startDateTime)){
             throw new IllegalArgumentException("endDateTime is before startDateTime, startDateTime = " + startDateTime + " endDateTime = " + endDateTime);
         }
 
-        // Проверка на корректность периода времени
         if (maxWindSpeed <= minWindSpeed){
             throw new IllegalArgumentException("maxWindSpeed is smaller or equal to minWindSpeed, maxWindSpeed = " + maxWindSpeed + " minWindSpeed = " + minWindSpeed);
         }
 
-        // Проверка на корректность номера страницы
         if (page < 0){
             throw new IllegalArgumentException("Invalid page field, smaller than zero: " + page);
         }
 
-        // Проверка на корректность направления сортировки
         if (!direction.equalsIgnoreCase("asc") && !direction.equalsIgnoreCase("desc")){
             throw new IllegalArgumentException("Invalid direction : " + direction);
         }
 
-        // Создаем набор разрешенных полей для сортировки (Trip и Weather)
+        // Create a set of allowed sorting fields (Trip and Weather)
         Set<String> weatherAndTripAllowedField = new HashSet<>();
         weatherAndTripAllowedField.addAll(FieldUtil.getTripFields());
         weatherAndTripAllowedField.addAll(FieldUtil.getWeatherFields());
 
-        // Проверка на наличие указанного поля для сортировки
         if (!weatherAndTripAllowedField.contains(sortBy)) {
             throw new IllegalArgumentException("Invalid sort field: " + sortBy);
         }
 
-        // Формирование параметров сортировки и пагинации
+        // Create sorting and pagination parameters
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         Pageable pageable = PageRequest.of(page, pageSize, sort);
 
-        // Возвращаем отфильтрованные данные
         return ResponseEntity.ok(tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable));
     }
 
+    /**
+     * Downloads trip data as an Excel file.
+     *
+     * @param sheetLimit The maximum number of sheets in the Excel file.
+     * @return ResponseEntity containing the Excel file as a Resource.
+     * @throws IllegalArgumentException if sheetLimit is less than one.
+     */
     public ResponseEntity<Resource> download(Integer sheetLimit) {
-        // Проверка на корректность ограничения по листам
         if (sheetLimit < 1){
-            throw new IllegalArgumentException("listsLimit cannot be less than one");
+            throw new IllegalArgumentException("sheetLimit cannot be less than one");
         }
 
         String filename = "trips.xlsx";

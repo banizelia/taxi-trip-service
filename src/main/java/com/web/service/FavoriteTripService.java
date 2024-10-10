@@ -14,6 +14,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service class for managing favorite trips.
+ * This class provides methods for adding, removing, retrieving, and reordering favorite trips.
+ */
 @Service
 public class FavoriteTripService {
     @Autowired
@@ -22,13 +26,19 @@ public class FavoriteTripService {
     @Autowired
     TripsRepository tripsRepository;
 
-    public ResponseEntity<String> saveToFavourite(Long tripId){
+    /**
+     * Adds a trip to favorites.
+     *
+     * @param tripId The ID of the trip to be added to favorites.
+     * @return ResponseEntity with a status message.
+     */
+    public ResponseEntity<String> saveToFavourite(Long tripId) {
         if (tripId == null) {
             return ResponseEntity.badRequest().body("Trip ID cannot be null");
         }
 
-        if (tripId < 1){
-            return ResponseEntity.badRequest().body("ID cant be smaller than 1");
+        if (tripId < 1) {
+            return ResponseEntity.badRequest().body("ID can't be smaller than 1");
         }
 
         try {
@@ -59,13 +69,19 @@ public class FavoriteTripService {
         }
     }
 
+    /**
+     * Removes a trip from favorites.
+     *
+     * @param tripId The ID of the trip to be removed from favorites.
+     * @return ResponseEntity with a status message.
+     */
     public ResponseEntity<String> deleteFromFavourite(Long tripId) {
         if (tripId == null) {
             return ResponseEntity.badRequest().body("Trip ID cannot be null");
         }
 
-        if (tripId < 1){
-            return ResponseEntity.badRequest().body("ID cant be smaller than 1");
+        if (tripId < 1) {
+            return ResponseEntity.badRequest().body("ID can't be smaller than 1");
         }
 
         try {
@@ -87,6 +103,11 @@ public class FavoriteTripService {
         }
     }
 
+    /**
+     * Retrieves all favorite trips.
+     *
+     * @return ResponseEntity containing a list of favorite trips.
+     */
     public ResponseEntity<List<Trip>> getFavouriteTrips() {
         try {
             List<Trip> favoriteTrips = favoriteTripRepository.getFavouriteTrips();
@@ -96,6 +117,13 @@ public class FavoriteTripService {
         }
     }
 
+    /**
+     * Changes the position of a favorite trip in the list.
+     *
+     * @param tripId The ID of the trip to be moved.
+     * @param newPosition The new position for the trip in the favorites list.
+     * @return ResponseEntity with a status message.
+     */
     @Transactional
     public ResponseEntity<String> dragAndDrop(Long tripId, Long newPosition) {
         if (tripId == null || newPosition == null) {
@@ -139,6 +167,11 @@ public class FavoriteTripService {
         }
     }
 
+    /**
+     * Validates and repairs the positions of favorite trips in the list.
+     *
+     * @return ResponseEntity with a status message.
+     */
     @Transactional
     public ResponseEntity<String> validatePositions() {
         try {

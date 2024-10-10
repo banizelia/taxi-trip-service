@@ -33,17 +33,32 @@
 
 1. Клонируйте репозиторий проекта:
    ```bash
-   git clone https://github.com/banizelia/taxi-trip-service
+   git clone https://github.com/ваш_репозиторий/название_проекта.git
    ```
 
 2. Перейдите в директорию проекта:
    ```bash
-   cd taxi-trip-service
+   cd название_проекта
    ```
 
 3. Установите зависимости:
    ```bash
    mvn clean install
+   ```
+
+4. Создайте базу данных PostgreSQL:
+
+   ```sql
+   CREATE DATABASE taxi_trip_service;
+   ```
+
+5. Настройте параметры подключения к базе данных в файле `application.properties` (или `application.yml`):
+   ```properties
+   spring.datasource.url=jdbc:postgresql://localhost:5432/taxi_trip_service
+   spring.datasource.username=your_db_username
+   spring.datasource.password=your_db_password
+   spring.jpa.hibernate.ddl-auto=update
+   spring.jpa.show-sql=true
    ```
 
 ## Запуск приложения

@@ -28,27 +28,19 @@ public class TripService {
     @Autowired
     TripsRepository tripsRepository;
 
-    /**
-     * Фильтрация поездок по дате, скорости ветра и сортировке.
-     *
-     * @param startDateTime дата и время начала
-     * @param endDateTime дата и время окончания
-     * @param minWindSpeed минимальная скорость ветра
-     * @param maxWindSpeed максимальная скорость ветра
-     * @param direction направление сортировки (asc или desc)
-     * @param sortBy поле для сортировки
-     * @param page номер страницы
-     * @param pageSize размер страницы
-     * @return список отфильтрованных поездок
-     */
-    public List<Trip> filter(LocalDateTime startDateTime, LocalDateTime endDateTime,
-                             Double minWindSpeed, Double maxWindSpeed,
-                             String direction, String sortBy,
-                             Integer page, Integer pageSize) {
+    public ResponseEntity<List<Trip>> filter(LocalDateTime startDateTime, LocalDateTime endDateTime,
+                                             Double minWindSpeed, Double maxWindSpeed,
+                                             String direction, String sortBy,
+                                             Integer page, Integer pageSize) {
 
         // Проверка на корректность периода времени
         if (endDateTime.isBefore(startDateTime)){
             throw new IllegalArgumentException("endDateTime is before startDateTime, startDateTime = " + startDateTime + " endDateTime = " + endDateTime);
+        }
+
+        // Проверка на корректность периода времени
+        if (maxWindSpeed <= minWindSpeed){
+            throw new IllegalArgumentException("maxWindSpeed is smaller or equal to minWindSpeed, maxWindSpeed = " + maxWindSpeed + " minWindSpeed = " + minWindSpeed);
         }
 
         // Проверка на корректность номера страницы
@@ -76,15 +68,9 @@ public class TripService {
         Pageable pageable = PageRequest.of(page, pageSize, sort);
 
         // Возвращаем отфильтрованные данные
-        return tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
+        return ResponseEntity.ok(tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable));
     }
 
-    /**
-     * Экспорт поездок в Excel файл и отправка его как вложение.
-     *
-     * @param sheetLimit максимальное количество листов в Excel файле
-     * @return ResponseEntity с Excel файлом
-     */
     public ResponseEntity<Resource> download(Integer sheetLimit) {
         // Проверка на корректность ограничения по листам
         if (sheetLimit < 1){
@@ -94,7 +80,6 @@ public class TripService {
         String filename = "trips.xlsx";
         InputStreamResource file = new InputStreamResource(ExcelHelper.tripsToExcel(tripsRepository, sheetLimit));
 
-        // Формирование ответа с файлом для скачивания
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))

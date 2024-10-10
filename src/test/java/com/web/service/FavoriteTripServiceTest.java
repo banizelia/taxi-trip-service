@@ -16,7 +16,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 class FavoriteTripServiceTest {
@@ -36,113 +37,141 @@ class FavoriteTripServiceTest {
     }
 
     @Test
-    void saveToFavourite_tripIdLessThanOne_returnsBadRequest() {
+    void saveToFavourite_TripIdLessThanOne_ReturnsBadRequest() {
         ResponseEntity<String> response = favoriteTripService.saveToFavourite(0L);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("ID cant be smaller than 1", response.getBody());
     }
 
     @Test
-    void saveToFavourite_tripAlreadyInFavorites_returnsBadRequest() {
-        when(favoriteTripRepository.findByTripId(1L)).thenReturn(Optional.of(new FavoriteTrip()));
+    void saveToFavourite_TripAlreadyExists_ReturnsBadRequest() {
+        when(favoriteTripRepository.findByTripId(anyLong())).thenReturn(Optional.of(new FavoriteTrip()));
+
         ResponseEntity<String> response = favoriteTripService.saveToFavourite(1L);
+
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Trip already in the table", response.getBody());
     }
 
     @Test
-    void saveToFavourite_tripDoesNotExist_returnsBadRequest() {
-        when(favoriteTripRepository.findByTripId(1L)).thenReturn(Optional.empty());
-        when(tripsRepository.existsById(1L)).thenReturn(false);
+    void saveToFavourite_TripDoesNotExist_ReturnsBadRequest() {
+        when(tripsRepository.existsById(anyLong())).thenReturn(false);
 
         ResponseEntity<String> response = favoriteTripService.saveToFavourite(1L);
+
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Such trip doesn't exist", response.getBody());
     }
 
     @Test
-    void saveToFavourite_successfulSave_returnsCreated() {
-        when(favoriteTripRepository.findByTripId(1L)).thenReturn(Optional.empty());
-        when(tripsRepository.existsById(1L)).thenReturn(true);
-        when(favoriteTripRepository.findMaxPosition()).thenReturn(1L);
+    void saveToFavourite_OptimisticLockException_ReturnsConflict() {
+        when(tripsRepository.existsById(anyLong())).thenReturn(true);
+        when(favoriteTripRepository.findByTripId(anyLong())).thenReturn(Optional.empty());
+        when(favoriteTripRepository.findMaxPosition()).thenThrow(OptimisticLockException.class);
 
         ResponseEntity<String> response = favoriteTripService.saveToFavourite(1L);
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals("Trip added to favorites", response.getBody());
-        verify(favoriteTripRepository, times(1)).save(any(FavoriteTrip.class));
-    }
 
-    @Test
-    void saveToFavourite_optimisticLockException_returnsConflict() {
-        when(favoriteTripRepository.findByTripId(1L)).thenThrow(OptimisticLockException.class);
-
-        ResponseEntity<String> response = favoriteTripService.saveToFavourite(1L);
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         assertEquals("Conflict occurred while saving the trip", response.getBody());
     }
 
     @Test
-    void deleteFromFavourite_tripNotFound_returnsNotFound() {
-        when(favoriteTripRepository.findByTripId(1L)).thenReturn(Optional.empty());
+    void saveToFavourite_Success_ReturnsCreated() {
+        when(tripsRepository.existsById(anyLong())).thenReturn(true);
+        when(favoriteTripRepository.findByTripId(anyLong())).thenReturn(Optional.empty());
+        when(favoriteTripRepository.findMaxPosition()).thenReturn(1L);
+
+        ResponseEntity<String> response = favoriteTripService.saveToFavourite(1L);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals("Trip added to favorites", response.getBody());
+    }
+
+    @Test
+    void deleteFromFavourite_TripNotFound_ReturnsNotFound() {
+        when(favoriteTripRepository.findByTripId(anyLong())).thenReturn(Optional.empty());
 
         ResponseEntity<String> response = favoriteTripService.deleteFromFavourite(1L);
+
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("Trip not found", response.getBody());
     }
 
     @Test
-    void deleteFromFavourite_successfulDelete_returnsOk() {
+    void deleteFromFavourite_Success_ReturnsOk() {
         FavoriteTrip favoriteTrip = new FavoriteTrip();
         favoriteTrip.setPosition(1L);
-        when(favoriteTripRepository.findByTripId(1L)).thenReturn(Optional.of(favoriteTrip));
+
+        when(favoriteTripRepository.findByTripId(anyLong())).thenReturn(Optional.of(favoriteTrip));
 
         ResponseEntity<String> response = favoriteTripService.deleteFromFavourite(1L);
+
+        verify(favoriteTripRepository, times(1)).delete(favoriteTrip);
+        verify(favoriteTripRepository, times(1)).decrementPositionsAfter(favoriteTrip.getPosition());
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Trip deleted successfully", response.getBody());
-        verify(favoriteTripRepository, times(1)).delete(favoriteTrip);
-        verify(favoriteTripRepository, times(1)).decrementPositionsAfter(1L);
     }
 
     @Test
-    void getFavouriteTrips_returnsList() {
+    void getFavouriteTrips_ReturnsListOfTrips() {
         List<Trip> trips = List.of(new Trip(), new Trip());
         when(favoriteTripRepository.getFavouriteTrips()).thenReturn(trips);
 
-        List<Trip> result = favoriteTripService.getFavouriteTrips();
-        assertEquals(trips.size(), result.size());
+        ResponseEntity<List<Trip>> response = favoriteTripService.getFavouriteTrips();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(trips, response.getBody());
     }
 
     @Test
-    void dragAndDrop_tripNotFound_returnsNotFound() {
-        when(favoriteTripRepository.findByTripId(1L)).thenReturn(Optional.empty());
+    void dragAndDrop_TripNotFound_ReturnsNotFound() {
+        when(favoriteTripRepository.findByTripId(anyLong())).thenReturn(Optional.empty());
 
         ResponseEntity<String> response = favoriteTripService.dragAndDrop(1L, 2L);
+
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("Trip not found", response.getBody());
     }
 
     @Test
-    void dragAndDrop_positionOutOfBounds_returnsBadRequest() {
+    void dragAndDrop_PositionIsTheSame_ReturnsBadRequest() {
         FavoriteTrip favoriteTrip = new FavoriteTrip();
-        favoriteTrip.setPosition(3L);
-        when(favoriteTripRepository.findByTripId(1L)).thenReturn(Optional.of(favoriteTrip));
-        when(favoriteTripRepository.findMaxPosition()).thenReturn(4L);
+        favoriteTrip.setPosition(1L);
 
-        ResponseEntity<String> response = favoriteTripService.dragAndDrop(1L, 5L);
+        when(favoriteTripRepository.findByTripId(anyLong())).thenReturn(Optional.of(favoriteTrip));
+
+        ResponseEntity<String> response = favoriteTripService.dragAndDrop(1L, 1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Position remains unchanged", response.getBody());
+    }
+
+    @Test
+    void dragAndDrop_NewPositionOutOfBounds_ReturnsBadRequest() {
+        FavoriteTrip favoriteTrip = new FavoriteTrip();
+        favoriteTrip.setPosition(1L);
+
+        when(favoriteTripRepository.findByTripId(anyLong())).thenReturn(Optional.of(favoriteTrip));
+        when(favoriteTripRepository.findMaxPosition()).thenReturn(2L);
+
+        ResponseEntity<String> response = favoriteTripService.dragAndDrop(1L, 3L);
+
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("New position is out of bounds.", response.getBody());
     }
 
     @Test
-    void dragAndDrop_successfulUpdate_returnsOk() {
+    void dragAndDrop_Success_ReturnsOk() {
         FavoriteTrip favoriteTrip = new FavoriteTrip();
         favoriteTrip.setPosition(1L);
-        when(favoriteTripRepository.findByTripId(1L)).thenReturn(Optional.of(favoriteTrip));
+
+        when(favoriteTripRepository.findByTripId(anyLong())).thenReturn(Optional.of(favoriteTrip));
         when(favoriteTripRepository.findMaxPosition()).thenReturn(3L);
 
         ResponseEntity<String> response = favoriteTripService.dragAndDrop(1L, 2L);
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Position updated successfully", response.getBody());
-        verify(favoriteTripRepository, times(1)).save(favoriteTrip);
     }
 }

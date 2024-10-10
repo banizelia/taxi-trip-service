@@ -4,77 +4,106 @@ import com.web.model.Trip;
 import com.web.service.FavoriteTripService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(FavoriteTripController.class)
-public class FavoriteTripControllerTest {
+class FavoriteTripControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
+    @Mock
     private FavoriteTripService favoriteTripService;
 
-    private Trip trip;
+    @InjectMocks
+    private FavoriteTripController favoriteTripController;
+
+    private MockMvc mockMvc;
 
     @BeforeEach
-    public void setUp() {
-        trip = new Trip();
-        trip.setId(1L);
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(favoriteTripController).build();
     }
 
     @Test
-    public void testGetFavouriteTrips() throws Exception {
-        when(favoriteTripService.getFavouriteTrips()).thenReturn(Collections.singletonList(trip));
+    void getFavouriteTrips_ReturnsListOfTrips() throws Exception {
+        List<Trip> trips = List.of(new Trip(), new Trip());
+        when(favoriteTripService.getFavouriteTrips()).thenReturn(ResponseEntity.ok(trips));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/favorite-trips/get")
-                        .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/v1/favorite-trips"))
                 .andExpect(status().isOk())
-                .andExpect(content().json("[{'id':1}]"));
+                .andExpect(jsonPath("$.length()").value(trips.size()));
     }
 
     @Test
-    public void testSaveToFavourite() throws Exception {
-        when(favoriteTripService.saveToFavourite(anyLong())).thenReturn(ResponseEntity.ok("Trip saved to favourites"));
+    void saveToFavourite_Success() throws Exception {
+        when(favoriteTripService.saveToFavourite(anyLong())).thenReturn(ResponseEntity.status(HttpStatus.CREATED).body("Trip added to favorites"));
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/favorite-trips/save")
+        mockMvc.perform(put("/api/v1/favorite-trips/")
+                        .param("tripId", "1"))
+                .andExpect(status().isCreated())
+                .andExpect(content().string("Trip added to favorites"));
+    }
+
+    @Test
+    void saveToFavourite_TripAlreadyExists_ReturnsBadRequest() throws Exception {
+        when(favoriteTripService.saveToFavourite(anyLong())).thenReturn(ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Trip already in the table"));
+
+        mockMvc.perform(put("/api/v1/favorite-trips/")
+                        .param("tripId", "1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Trip already in the table"));
+    }
+
+    @Test
+    void deleteFromFavourite_Success() throws Exception {
+        when(favoriteTripService.deleteFromFavourite(anyLong())).thenReturn(ResponseEntity.ok("Trip deleted successfully"));
+
+        mockMvc.perform(delete("/api/v1/favorite-trips")
                         .param("tripId", "1"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Trip saved to favourites"));
+                .andExpect(content().string("Trip deleted successfully"));
     }
 
     @Test
-    public void testDeleteFromFavourite() throws Exception {
-        when(favoriteTripService.deleteFromFavourite(anyLong())).thenReturn(ResponseEntity.ok("Trip removed from favourites"));
+    void deleteFromFavourite_TripNotFound_ReturnsNotFound() throws Exception {
+        when(favoriteTripService.deleteFromFavourite(anyLong())).thenReturn(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Trip not found"));
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/favorite-trips/delete")
+        mockMvc.perform(delete("/api/v1/favorite-trips")
                         .param("tripId", "1"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Trip removed from favourites"));
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Trip not found"));
     }
 
     @Test
-    public void testDragAndDrop() throws Exception {
-        when(favoriteTripService.dragAndDrop(anyLong(), anyLong())).thenReturn(ResponseEntity.ok("Trip moved"));
+    void dragAndDrop_Success() throws Exception {
+        when(favoriteTripService.dragAndDrop(anyLong(), anyLong())).thenReturn(ResponseEntity.ok("Position updated successfully"));
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/favorite-trips/drag-and-drop")
+        mockMvc.perform(put("/api/v1/favorite-trips/drag-and-drop")
                         .param("tripId", "1")
                         .param("newPosition", "2"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Trip moved"));
+                .andExpect(content().string("Position updated successfully"));
+    }
+
+    @Test
+    void dragAndDrop_TripNotFound_ReturnsNotFound() throws Exception {
+        when(favoriteTripService.dragAndDrop(anyLong(), anyLong())).thenReturn(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Trip not found"));
+
+        mockMvc.perform(put("/api/v1/favorite-trips/drag-and-drop")
+                        .param("tripId", "1")
+                        .param("newPosition", "2"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Trip not found"));
     }
 }

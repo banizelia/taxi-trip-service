@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/trips")
+@RequestMapping("/api/v1/trips")
 public class TripController {
     private final TripService tripService;
 
@@ -22,19 +22,6 @@ public class TripController {
         this.tripService = tripService;
     }
 
-    /**
-     * Фильтрация поездок по параметрам.
-     *
-     * @param startDateTime начальная дата и время поездки
-     * @param endDateTime конечная дата и время поездки
-     * @param minWindSpeed минимальная скорость ветра
-     * @param maxWindSpeed максимальная скорость ветра
-     * @param direction направление сортировки (asc или desc)
-     * @param sortBy поле для сортировки
-     * @param page номер страницы
-     * @param pageSize размер страницы
-     * @return список отфильтрованных поездок
-     */
     @Operation(summary = "Фильтрация поездок", description = "Позволяет фильтровать поездки по дате, скорости ветра, а также сортировать и разбивать на страницы.")
     @GetMapping
     public ResponseEntity<List<Trip>> filterTrips(
@@ -61,21 +48,12 @@ public class TripController {
 
             @Parameter(description = "Размер страницы")
             @RequestParam(defaultValue = "20") Integer pageSize) {
-
-        List<Trip> trips = tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize);
-        return ResponseEntity.ok(trips);
+        return tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize);
     }
 
-    /**
-     * Экспорт поездок в формате Excel.
-     *
-     * @param sheetLimit ограничение по количеству листов в Excel
-     * @return Excel файл с поездками
-     */
     @Operation(summary = "Экспорт поездок в формате Excel", description = "Экспортирует список поездок в формате Excel, с возможностью задать ограничение по количеству листов.")
     @GetMapping("/download")
-    public ResponseEntity<Resource> download(
-            @Parameter(description = "Ограничение по листам") @RequestParam(value = "sheetLimit", defaultValue = "2") Integer sheetLimit) {
+    public ResponseEntity<Resource> download(@Parameter(description = "Ограничение по листам") @RequestParam(value = "sheetLimit", defaultValue = "2") Integer sheetLimit) {
         return tripService.download(sheetLimit);
     }
 }

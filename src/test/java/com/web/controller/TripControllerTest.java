@@ -11,12 +11,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class TripControllerTest {
@@ -33,39 +33,80 @@ class TripControllerTest {
     }
 
     @Test
-    void testFilter() {
-        LocalDateTime startDateTime = LocalDateTime.of(2016, 1, 1, 0, 0 ,0);
-        LocalDateTime endDateTime =  LocalDateTime.of(2016, 1, 31, 23, 59 ,59);
+    void testFilterTrips() {
+        // Arrange
+        LocalDateTime startDateTime = LocalDateTime.of(2016, 1, 1, 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2016, 2, 1, 0, 0);
         Double minWindSpeed = 0.0;
         Double maxWindSpeed = 9999.0;
         String direction = "asc";
         String sortBy = "id";
-        int page = 0;
-        int pageSize = 500;
+        Integer page = 0;
+        Integer pageSize = 20;
 
-        List<Trip> expectedTrips = new ArrayList<>();
-        when(tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize))
-                .thenReturn(expectedTrips);
+        List<Trip> expectedTrips = Arrays.asList(new Trip(), new Trip());
+        ResponseEntity<List<Trip>> expectedResponse = ResponseEntity.ok(expectedTrips);
 
-        List<Trip> result = tripController.filterTrips(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize).getBody();
+        when(tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
+                direction, sortBy, page, pageSize))
+                .thenReturn(expectedResponse);
 
-        assertEquals(expectedTrips, result);
-        verify(tripService, times(1)).filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize);
+        // Act
+        ResponseEntity<List<Trip>> actualResponse = tripController.filterTrips(
+                startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
+                direction, sortBy, page, pageSize);
+
+        // Assert
+        assertEquals(expectedResponse, actualResponse);
+        verify(tripService).filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
+                direction, sortBy, page, pageSize);
     }
 
     @Test
     void testDownload() {
+        // Arrange
+        Integer sheetLimit = 2;
         Resource mockResource = mock(Resource.class);
-        ResponseEntity<Resource> expectedResponse = ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=trips.xlsx")
-                .body(mockResource);
+        ResponseEntity<Resource> expectedResponse = ResponseEntity.ok(mockResource);
 
-        when(tripService.download(2)).thenReturn(expectedResponse);
+        when(tripService.download(sheetLimit)).thenReturn(expectedResponse);
 
-        ResponseEntity<Resource> result = tripController.download(2);
+        // Act
+        ResponseEntity<Resource> actualResponse = tripController.download(sheetLimit);
 
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(expectedResponse.getBody(), result.getBody());
-        verify(tripService, times(1)).download(2);
+        // Assert
+        assertEquals(expectedResponse, actualResponse);
+        verify(tripService).download(sheetLimit);
+    }
+
+    @Test
+    void testFilterTripsEmptyResult() {
+        // Arrange
+        LocalDateTime startDateTime = LocalDateTime.of(2016, 1, 1, 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2016, 2, 1, 0, 0);
+        Double minWindSpeed = 0.0;
+        Double maxWindSpeed = 9999.0;
+        String direction = "asc";
+        String sortBy = "id";
+        Integer page = 0;
+        Integer pageSize = 20;
+
+        List<Trip> emptyList = Collections.emptyList();
+        ResponseEntity<List<Trip>> expectedResponse = ResponseEntity.ok(emptyList);
+
+        when(tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
+                direction, sortBy, page, pageSize))
+                .thenReturn(expectedResponse);
+
+        // Act
+        ResponseEntity<List<Trip>> actualResponse = tripController.filterTrips(
+                startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
+                direction, sortBy, page, pageSize);
+
+        // Assert
+        assertEquals(expectedResponse, actualResponse);
+        assertEquals(0, actualResponse.getBody().size());
+        verify(tripService).filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
+                direction, sortBy, page, pageSize);
     }
 }

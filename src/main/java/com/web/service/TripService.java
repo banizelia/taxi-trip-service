@@ -2,8 +2,8 @@ package com.web.service;
 
 import com.web.model.Trip;
 import com.web.repository.TripsRepository;
-import com.web.util.ExcelHelper;
-import com.web.util.FieldUtil;
+import com.web.export.TripExcelExporter;
+import com.web.model.reflection.ColumnAnnotatedFields;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -64,8 +64,8 @@ public class TripService {
 
         // Create a set of allowed sorting fields (Trip and Weather)
         Set<String> weatherAndTripAllowedField = new HashSet<>();
-        weatherAndTripAllowedField.addAll(FieldUtil.getTripFields());
-        weatherAndTripAllowedField.addAll(FieldUtil.getWeatherFields());
+        weatherAndTripAllowedField.addAll(ColumnAnnotatedFields.getTripFields());
+        weatherAndTripAllowedField.addAll(ColumnAnnotatedFields.getWeatherFields());
 
         if (!weatherAndTripAllowedField.contains(sortBy)) {
             throw new IllegalArgumentException("Invalid sort field: " + sortBy);
@@ -91,7 +91,7 @@ public class TripService {
         }
 
         String filename = "trips.xlsx";
-        InputStreamResource file = new InputStreamResource(ExcelHelper.tripsToExcel(tripsRepository, sheetLimit));
+        InputStreamResource file = new InputStreamResource(TripExcelExporter.tripsToExcel(tripsRepository, sheetLimit));
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)

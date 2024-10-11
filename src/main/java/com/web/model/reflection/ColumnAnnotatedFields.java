@@ -1,4 +1,4 @@
-package com.web.util;
+package com.web.model.reflection;
 
 import com.web.model.FavoriteTrip;
 import com.web.model.Trip;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * Utility class for retrieving fields annotated with @Column
  * from Trip, FavoriteTrip, and Weather models.
  */
-public class FieldUtil {
+public class ColumnAnnotatedFields {
 
     // Cached sets of fields for different models
     private static final Set<String> TRIP_FIELDS = new HashSet<>();

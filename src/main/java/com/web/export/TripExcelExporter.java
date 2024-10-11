@@ -1,4 +1,4 @@
-package com.web.util;
+package com.web.export;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,7 +17,7 @@ import org.springframework.data.domain.Sort;
 /**
  * Utility class for exporting trip data to Excel file.
  */
-public class ExcelHelper {
+public class TripExcelExporter {
     // Column headers for the Excel file
     private static final String[] HEADERS = {"id",
             "vendor_id",
@@ -40,7 +40,7 @@ public class ExcelHelper {
             "congestion_surcharge",
             "airport_fee",
             "pickup_date" };
-    private static final Logger logger = LoggerFactory.getLogger(ExcelHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(TripExcelExporter.class);
 
     // Name of the Excel sheet
     private static final String SHEET = "trips_";

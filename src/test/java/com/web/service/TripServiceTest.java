@@ -2,7 +2,7 @@ package com.web.service;
 
 import com.web.model.Trip;
 import com.web.repository.TripsRepository;
-import com.web.util.ExcelHelper;
+import com.web.export.TripExcelExporter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -105,8 +105,8 @@ class TripServiceTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(new byte[0]);
 
         // Мокируем статический метод ExcelHelper.tripsToExcel
-        try (MockedStatic<ExcelHelper> excelHelperMockedStatic = mockStatic(ExcelHelper.class)) {
-            excelHelperMockedStatic.when(() -> ExcelHelper.tripsToExcel(tripsRepository, sheetLimit)).thenReturn(bais);
+        try (MockedStatic<TripExcelExporter> excelHelperMockedStatic = mockStatic(TripExcelExporter.class)) {
+            excelHelperMockedStatic.when(() -> TripExcelExporter.tripsToExcel(tripsRepository, sheetLimit)).thenReturn(bais);
 
             ResponseEntity<Resource> response = tripService.download(sheetLimit);
 

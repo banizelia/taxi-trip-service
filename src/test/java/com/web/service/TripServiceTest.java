@@ -11,6 +11,7 @@ import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,8 +21,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -50,13 +49,13 @@ class TripServiceTest {
         Integer page = 0;
         Integer pageSize = 20;
 
-        List<Trip> expectedTrips = Arrays.asList(new Trip(), new Trip());
+        Page<Trip> expectedTrips = Page.empty();
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.ASC, sortBy));
 
         when(tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable))
                 .thenReturn(expectedTrips);
 
-        ResponseEntity<List<Trip>> response = tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
+        ResponseEntity<Page<Trip>> response = tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
                 direction, sortBy, page, pageSize);
 
         assertEquals(200, response.getStatusCodeValue());

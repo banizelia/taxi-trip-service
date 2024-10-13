@@ -4,9 +4,9 @@ import com.web.model.Trip;
 import com.web.repository.TripsRepository;
 import com.web.export.TripExcelExporter;
 import com.web.model.reflection.ColumnAnnotatedFields;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -24,9 +23,11 @@ import java.util.Set;
  */
 @Service
 public class TripService {
+    private final TripsRepository tripsRepository;
 
-    @Autowired
-    TripsRepository tripsRepository;
+    public TripService(TripsRepository tripsRepository) {
+        this.tripsRepository = tripsRepository;
+    }
 
     /**
      * Filters and retrieves trips based on various criteria.
@@ -42,10 +43,21 @@ public class TripService {
      * @return ResponseEntity containing a list of filtered trips.
      * @throws IllegalArgumentException if input parameters are invalid.
      */
-    public ResponseEntity<List<Trip>> filter(LocalDateTime startDateTime, LocalDateTime endDateTime,
-                                             Double minWindSpeed, Double maxWindSpeed,
-                                             String direction, String sortBy,
-                                             Integer page, Integer pageSize) {
+    public ResponseEntity<Page<Trip>> filter(LocalDateTime startDateTime, LocalDateTime endDateTime,
+                              Double minWindSpeed, Double maxWindSpeed,
+                              String direction, String sortBy,
+                              Integer page, Integer pageSize) {
+        validateFilterParams(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy);
+
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+        Pageable pageable = PageRequest.of(page, pageSize, sort);
+
+        return ResponseEntity.ok(tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable));
+    }
+
+    private void validateFilterParams(LocalDateTime startDateTime, LocalDateTime endDateTime,
+                                      Double minWindSpeed, Double maxWindSpeed,
+                                      String direction, String sortBy) {
         if (endDateTime.isBefore(startDateTime)){
             throw new IllegalArgumentException("endDateTime is before startDateTime, startDateTime = " + startDateTime + " endDateTime = " + endDateTime);
         }
@@ -54,15 +66,10 @@ public class TripService {
             throw new IllegalArgumentException("maxWindSpeed is smaller or equal to minWindSpeed, maxWindSpeed = " + maxWindSpeed + " minWindSpeed = " + minWindSpeed);
         }
 
-        if (page < 0){
-            throw new IllegalArgumentException("Invalid page field, smaller than zero: " + page);
-        }
-
         if (!direction.equalsIgnoreCase("asc") && !direction.equalsIgnoreCase("desc")){
             throw new IllegalArgumentException("Invalid direction : " + direction);
         }
 
-        // Create a set of allowed sorting fields (Trip and Weather)
         Set<String> weatherAndTripAllowedField = new HashSet<>();
         weatherAndTripAllowedField.addAll(ColumnAnnotatedFields.getTripFields());
         weatherAndTripAllowedField.addAll(ColumnAnnotatedFields.getWeatherFields());
@@ -70,12 +77,6 @@ public class TripService {
         if (!weatherAndTripAllowedField.contains(sortBy)) {
             throw new IllegalArgumentException("Invalid sort field: " + sortBy);
         }
-
-        // Create sorting and pagination parameters
-        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
-        Pageable pageable = PageRequest.of(page, pageSize, sort);
-
-        return ResponseEntity.ok(tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable));
     }
 
     /**

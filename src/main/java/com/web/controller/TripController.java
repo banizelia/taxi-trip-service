@@ -4,9 +4,12 @@ import com.web.model.Trip;
 import com.web.service.TripService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,12 +22,12 @@ import java.util.List;
  * This controller handles operations related to trips such as
  * filtering, sorting, pagination, and exporting to Excel.
  */
+@Validated
 @RestController
 @RequestMapping("/api/v1/trips")
 public class TripController {
     private final TripService tripService;
 
-    @Autowired
     public TripController(TripService tripService) {
         this.tripService = tripService;
     }
@@ -44,7 +47,7 @@ public class TripController {
      */
     @Operation(summary = "Filter trips", description = "Allows filtering trips by date, wind speed, as well as sorting and pagination.")
     @GetMapping
-    public ResponseEntity<List<Trip>> filterTrips(
+    public ResponseEntity<Page<Trip>> filterTrips(
             @Parameter(description = "Start date and time of the trip", example = "2016-01-01T00:00:00.000")
             @RequestParam(required = false, defaultValue = "2016-01-01T00:00:00.000") LocalDateTime startDateTime,
 
@@ -52,10 +55,10 @@ public class TripController {
             @RequestParam(required = false, defaultValue = "2016-02-01T00:00:00.000") LocalDateTime endDateTime,
 
             @Parameter(description = "Minimum wind speed")
-            @RequestParam(required = false, defaultValue = "0") Double minWindSpeed,
+            @RequestParam(required = false, defaultValue = "0") @Min(0) Double minWindSpeed,
 
             @Parameter(description = "Maximum wind speed")
-            @RequestParam(required = false, defaultValue = "9999") Double maxWindSpeed,
+            @RequestParam(required = false, defaultValue = "9999") @Min(0) Double maxWindSpeed,
 
             @Parameter(description = "Sorting direction (asc or desc)")
             @RequestParam(required = false, defaultValue = "asc") String direction,
@@ -64,10 +67,10 @@ public class TripController {
             @RequestParam(required = false, defaultValue = "id") String sortBy,
 
             @Parameter(description = "Page number")
-            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "0") @Min(0) Integer page,
 
             @Parameter(description = "Page size")
-            @RequestParam(defaultValue = "20") Integer pageSize) {
+            @RequestParam(defaultValue = "20") @Min(1) @Max(200) Integer pageSize) {
         return tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize);
     }
 

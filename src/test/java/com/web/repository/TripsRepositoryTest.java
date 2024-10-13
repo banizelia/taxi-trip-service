@@ -1,17 +1,15 @@
 package com.web.repository;
 
 import com.web.model.Trip;
-import com.web.repository.TripsRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,10 +31,10 @@ class TripsRepositoryTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         // Вызов метода фильтрации
-        List<Trip> trips = tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
+        Page<Trip> trips = tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
 
         // Проверка того, что метод вернул результаты (если данные существуют в базе данных)
         assertNotNull(trips);
-        assertTrue(trips.size() <= 10); // Ограничение по количеству записей на страницу
+        assertTrue(trips.getSize() <= 10); // Ограничение по количеству записей на страницу
     }
 }

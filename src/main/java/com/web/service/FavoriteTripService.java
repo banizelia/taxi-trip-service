@@ -20,11 +20,13 @@ import java.util.Optional;
  */
 @Service
 public class FavoriteTripService {
-    @Autowired
-    FavoriteTripRepository favoriteTripRepository;
+    private final FavoriteTripRepository favoriteTripRepository;
+    private final TripsRepository tripsRepository;
 
-    @Autowired
-    TripsRepository tripsRepository;
+    public FavoriteTripService(TripsRepository tripsRepository, FavoriteTripRepository favoriteTripRepository) {
+        this.tripsRepository = tripsRepository;
+        this.favoriteTripRepository = favoriteTripRepository;
+    }
 
     /**
      * Adds a trip to favorites.
@@ -33,14 +35,6 @@ public class FavoriteTripService {
      * @return ResponseEntity with a status message.
      */
     public ResponseEntity<String> saveToFavourite(Long tripId) {
-        if (tripId == null) {
-            return ResponseEntity.badRequest().body("Trip ID cannot be null");
-        }
-
-        if (tripId < 1) {
-            return ResponseEntity.badRequest().body("ID can't be smaller than 1");
-        }
-
         try {
             if (favoriteTripRepository.findByTripId(tripId).isPresent()) {
                 return ResponseEntity.badRequest().body("Trip already in the table");
@@ -76,14 +70,6 @@ public class FavoriteTripService {
      * @return ResponseEntity with a status message.
      */
     public ResponseEntity<String> deleteFromFavourite(Long tripId) {
-        if (tripId == null) {
-            return ResponseEntity.badRequest().body("Trip ID cannot be null");
-        }
-
-        if (tripId < 1) {
-            return ResponseEntity.badRequest().body("ID can't be smaller than 1");
-        }
-
         try {
             Optional<FavoriteTrip> favoriteTripOptional = favoriteTripRepository.findByTripId(tripId);
 
@@ -126,10 +112,6 @@ public class FavoriteTripService {
      */
     @Transactional
     public ResponseEntity<String> dragAndDrop(Long tripId, Long newPosition) {
-        if (tripId == null || newPosition == null) {
-            return ResponseEntity.badRequest().body("Trip ID and new position cannot be null");
-        }
-
         try {
             Optional<FavoriteTrip> favoriteTripOptional = favoriteTripRepository.findByTripId(tripId);
 
@@ -146,7 +128,7 @@ public class FavoriteTripService {
 
             Long maxPosition = favoriteTripRepository.findMaxPosition();
 
-            if (newPosition < 1 || newPosition > maxPosition) {
+            if (newPosition > maxPosition) {
                 return ResponseEntity.badRequest().body("New position is out of bounds.");
             }
 

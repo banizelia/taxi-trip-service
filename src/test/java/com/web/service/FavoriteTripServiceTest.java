@@ -37,13 +37,6 @@ class FavoriteTripServiceTest {
     }
 
     @Test
-    void saveToFavourite_TripIdLessThanOne_ReturnsBadRequest() {
-        ResponseEntity<String> response = favoriteTripService.saveToFavourite(0L);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("ID can't be smaller than 1", response.getBody());
-    }
-
-    @Test
     void saveToFavourite_TripAlreadyExists_ReturnsBadRequest() {
         when(favoriteTripRepository.findByTripId(anyLong())).thenReturn(Optional.of(new FavoriteTrip()));
 

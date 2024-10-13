@@ -18,7 +18,6 @@ import org.springframework.data.domain.Sort;
  * Utility class for exporting trip data to Excel file.
  */
 public class TripExcelExporter {
-    // Column headers for the Excel file
     private static final String[] HEADERS = {"id",
             "vendor_id",
             "pickup_datetime",
@@ -41,14 +40,8 @@ public class TripExcelExporter {
             "airport_fee",
             "pickup_date" };
     private static final Logger logger = LoggerFactory.getLogger(TripExcelExporter.class);
-
-    // Name of the Excel sheet
     private static final String SHEET = "trips_";
-
-    // Maximum number of rows per Excel sheet
     private static final int MAX_ROWS_PER_SHEET = 1_000_000;
-
-    // Batch size for database queries
     private static final int BATCH_SIZE = 100_000;
 
     /**
@@ -59,7 +52,7 @@ public class TripExcelExporter {
      * @return InputStream with the contents of the Excel file
      */
     public static ByteArrayInputStream tripsToExcel(TripsRepository tripsRepository, Integer sheetLimit) {
-        Long start = System.nanoTime()/1_000_000_000;
+        long start = System.nanoTime()/1_000_000_000;
 
         try (SXSSFWorkbook workbook = createWorkbook();
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -67,21 +60,16 @@ public class TripExcelExporter {
             int sheetCount = 1;
             int rowIdx = 1;
 
-            // Create the first sheet and add the header
             Sheet sheet = workbook.createSheet(SHEET + sheetCount);
             createHeader(sheet);
 
-            // Paginated query of data from the database with sorting by id
             Pageable pageable = PageRequest.of(0, BATCH_SIZE, Sort.by(Sort.Direction.ASC, "id"));
             List<Trip> currentBatch;
 
-            // Loop through data pages
             do {
                 currentBatch = tripsRepository.findAll(pageable).getContent();
 
-                // Fill rows with trip data
                 for (Trip trip : currentBatch) {
-                    // If we've reached the maximum rows per sheet, create a new sheet
                     if (rowIdx >= MAX_ROWS_PER_SHEET) {
                         sheetCount++;
                         sheet = workbook.createSheet(SHEET + sheetCount);
@@ -89,13 +77,11 @@ public class TripExcelExporter {
                         rowIdx = 1;
                     }
 
-                    createRow(sheet, rowIdx, trip);
-                    rowIdx++;
+                    createRow(sheet, rowIdx++, trip);
                 }
 
-                // Log information about the current page execution
-                Long now = System.nanoTime()/1_000_000_000;
-                logger.info("Completed page # " + pageable.getPageNumber() + " in " + (now - start) + " seconds");
+                long now = System.nanoTime()/1_000_000_000;
+                logger.info("Completed page # {} in {} seconds", pageable.getPageNumber(), (now - start));
                 start = now;
 
                 pageable = pageable.next();
@@ -126,7 +112,7 @@ public class TripExcelExporter {
                 super.close();
             }
         };
-        workbook.setCompressTempFiles(true); // Enable compression of temporary files
+        workbook.setCompressTempFiles(true);
         return workbook;
     }
 

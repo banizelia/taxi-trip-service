@@ -4,8 +4,9 @@ import com.web.model.Trip;
 import com.web.service.FavoriteTripService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,12 +17,12 @@ import java.util.List;
  * This controller handles operations related to favorite trips such as
  * retrieving, adding, removing, and reordering favorite trips.
  */
+@Validated
 @RestController
 @RequestMapping("/api/v1/favorite-trips")
 public class FavoriteTripController {
     private final FavoriteTripService favoriteTripService;
 
-    @Autowired
     public FavoriteTripController(FavoriteTripService favoriteTripService) {
         this.favoriteTripService = favoriteTripService;
     }
@@ -43,7 +44,7 @@ public class FavoriteTripController {
      */
     @Operation(summary = "Add a trip to favorites", description = "Adds a trip with the specified ID to favorites.")
     @PutMapping()
-    public ResponseEntity<String> saveToFavourite(@Parameter(description = "Trip ID") @RequestParam("tripId") Long id) {
+    public ResponseEntity<String> saveToFavourite(@Parameter(description = "Trip ID") @RequestParam("tripId") @Min(1) Long id) {
         return favoriteTripService.saveToFavourite(id);
     }
 
@@ -54,7 +55,7 @@ public class FavoriteTripController {
      */
     @Operation(summary = "Remove a trip from favorites", description = "Removes a trip with the specified ID from favorites.")
     @DeleteMapping()
-    public ResponseEntity<String> deleteFromFavourite(@Parameter(description = "Trip ID") @RequestParam("tripId") Long id) {
+    public ResponseEntity<String> deleteFromFavourite(@Parameter(description = "Trip ID") @RequestParam("tripId") @Min(1) Long id) {
         return favoriteTripService.deleteFromFavourite(id);
     }
 
@@ -67,8 +68,8 @@ public class FavoriteTripController {
     @Operation(summary = "Change the position of a trip in the favorites list", description = "Allows moving a trip to a new position in the favorites list.")
     @PutMapping("/drag-and-drop")
     public ResponseEntity<String> dragAndDrop(
-            @Parameter(description = "Trip ID") @RequestParam(value = "tripId") Long tripId,
-            @Parameter(description = "New position") @RequestParam(value = "newPosition") Long newPosition) {
+            @Parameter(description = "Trip ID") @RequestParam(value = "tripId") @Min(1) Long tripId,
+            @Parameter(description = "New position") @RequestParam(value = "newPosition") @Min(1) Long newPosition) {
         return favoriteTripService.dragAndDrop(tripId, newPosition);
     }
 

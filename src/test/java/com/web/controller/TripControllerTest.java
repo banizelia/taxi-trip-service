@@ -8,13 +8,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -44,15 +41,15 @@ class TripControllerTest {
         Integer page = 0;
         Integer pageSize = 20;
 
-        List<Trip> expectedTrips = Arrays.asList(new Trip(), new Trip());
-        ResponseEntity<List<Trip>> expectedResponse = ResponseEntity.ok(expectedTrips);
+        Page<Trip> expectedTrips = Page.empty();
+        ResponseEntity<Page<Trip>> expectedResponse = ResponseEntity.ok(expectedTrips);
 
         when(tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
                 direction, sortBy, page, pageSize))
                 .thenReturn(expectedResponse);
 
         // Act
-        ResponseEntity<List<Trip>> actualResponse = tripController.filterTrips(
+        ResponseEntity<Page<Trip>> actualResponse = tripController.filterTrips(
                 startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
                 direction, sortBy, page, pageSize);
 
@@ -91,21 +88,21 @@ class TripControllerTest {
         Integer page = 0;
         Integer pageSize = 20;
 
-        List<Trip> emptyList = Collections.emptyList();
-        ResponseEntity<List<Trip>> expectedResponse = ResponseEntity.ok(emptyList);
+        Page<Trip> emptyList = Page.empty();
+        ResponseEntity<Page<Trip>> expectedResponse = ResponseEntity.ok(emptyList);
 
         when(tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
                 direction, sortBy, page, pageSize))
                 .thenReturn(expectedResponse);
 
         // Act
-        ResponseEntity<List<Trip>> actualResponse = tripController.filterTrips(
+        ResponseEntity<Page<Trip>> actualResponse = tripController.filterTrips(
                 startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
                 direction, sortBy, page, pageSize);
 
         // Assert
         assertEquals(expectedResponse, actualResponse);
-        assertEquals(0, actualResponse.getBody().size());
+        assertEquals(0, actualResponse.getBody().getSize());
         verify(tripService).filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
                 direction, sortBy, page, pageSize);
     }

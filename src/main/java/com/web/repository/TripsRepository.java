@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 
 @Repository
 public interface TripsRepository extends JpaRepository<Trip, Long> {
-
     @Query("SELECT t FROM Trip t WHERE " +
             " (t.pickupDatetime BETWEEN :startDateTime AND :endDateTime) AND " +
             " (t.weather.averageWindSpeed BETWEEN :minWindSpeed AND :maxWindSpeed)")

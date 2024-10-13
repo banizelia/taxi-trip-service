@@ -10,16 +10,9 @@ import java.util.List;
 @Entity
 @Table(name = "weather_observations")
 public class Weather {
-
-    /**
-     * List of trips associated with the current weather conditions.
-     */
     @OneToMany(mappedBy = "weather")
     private List<Trip> trips;
 
-    /**
-     * Weather record ID (primary key).
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "weather_id")

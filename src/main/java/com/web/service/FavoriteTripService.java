@@ -6,7 +6,6 @@ import com.web.repository.FavoriteTripRepository;
 import com.web.repository.TripsRepository;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

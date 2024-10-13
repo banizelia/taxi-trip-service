@@ -16,19 +16,11 @@ import java.util.stream.Collectors;
  * from Trip, FavoriteTrip, and Weather models.
  */
 public class ColumnAnnotatedFields {
-
-    // Cached sets of fields for different models
     private static final Set<String> TRIP_FIELDS = new HashSet<>();
     private static final Set<String> FAVORITE_TRIP_FIELDS = new HashSet<>();
     private static final Set<String> WEATHER_FIELDS = new HashSet<>();
 
-    /**
-     * Returns a set of Trip model fields annotated with @Column.
-     *
-     * @return Set of Trip field names
-     */
     public static Set<String> getTripFields() {
-        // Initialize the cached set if it's empty
         if (TRIP_FIELDS.isEmpty()) {
             TRIP_FIELDS.addAll(Arrays.stream(Trip.class.getDeclaredFields())
                     .filter(field -> field.isAnnotationPresent(Column.class))
@@ -39,13 +31,7 @@ public class ColumnAnnotatedFields {
         return TRIP_FIELDS;
     }
 
-    /**
-     * Returns a set of Weather model fields annotated with @Column.
-     *
-     * @return Set of Weather field names
-     */
     public static Set<String> getWeatherFields() {
-        // Initialize the cached set if it's empty
         if (WEATHER_FIELDS.isEmpty()) {
             WEATHER_FIELDS.addAll(Arrays.stream(Weather.class.getDeclaredFields())
                     .filter(field -> field.isAnnotationPresent(Column.class))
@@ -56,13 +42,7 @@ public class ColumnAnnotatedFields {
         return WEATHER_FIELDS;
     }
 
-    /**
-     * Returns a set of FavoriteTrip model fields annotated with @Column.
-     *
-     * @return Set of FavoriteTrip field names
-     */
     public static Set<String> getFavoriteTripFields() {
-        // Initialize the cached set if it's empty
         if (FAVORITE_TRIP_FIELDS.isEmpty()) {
             FAVORITE_TRIP_FIELDS.addAll(Arrays.stream(FavoriteTrip.class.getDeclaredFields())
                     .filter(field -> field.isAnnotationPresent(Column.class))

@@ -15,16 +15,10 @@ public class FavoriteTrip {
     @Version
     private Long version;
 
-    /**
-     * Relationship with the Trip model, representing the trip that is in favorites.
-     */
     @OneToOne(mappedBy = "favoriteTrip", fetch = FetchType.LAZY)
     @JoinColumn(name = "trip_id")
     private Trip trip;
 
-    /**
-     * Favorite trip identifier (primary key).
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

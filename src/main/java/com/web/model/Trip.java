@@ -13,26 +13,16 @@ import java.time.*;
 @Entity
 @Table(name = "trips")
 public class Trip {
-
-    /**
-     * Relationship with the Weather model. Represents weather information at the time of the trip.
-     */
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pickup_date", referencedColumnName = "date", insertable = false, updatable = false)
     private Weather weather;
 
-    /**
-     * Relationship with the FavoriteTrip model. Indicates if the trip is in favorites.
-     */
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id", referencedColumnName = "trip_id", insertable = false, updatable = false)
     private FavoriteTrip favoriteTrip;
 
-    /**
-     * Trip identifier (primary key).
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

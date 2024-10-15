@@ -1,15 +1,30 @@
-package com.model;
+package com.web.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import java.time.*;
 
+/**
+ * Trip model, including information about the time, place, and payment of the trip,
+ * as well as related information about weather and favorite trips.
+ */
 @Entity
 @Table(name = "trips")
 public class Trip {
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pickup_date", referencedColumnName = "date", insertable = false, updatable = false)
+    private Weather weather;
 
-    @Transient
-    private double averageWindSpeed;
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", referencedColumnName = "trip_id", insertable = false, updatable = false)
+    private FavoriteTrip favoriteTrip;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -17,10 +32,11 @@ public class Trip {
     private String vendorId;
 
     @Column(name = "pickup_datetime")
-    private String pickupDatetime;
+    private LocalDateTime pickupDatetime;
 
     @Column(name = "dropoff_datetime")
-    private String dropoffDatetime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime dropoffDatetime;
 
     @Column(name = "passenger_count")
     private Integer passengerCount;
@@ -70,21 +86,13 @@ public class Trip {
     @Column(name = "airport_fee")
     private Double airportFee;
 
-    public Double getAverageWindSpeed() {
-        return averageWindSpeed;
+    @Column(name = "pickup_date", insertable = false, updatable = false)
+    private LocalDate pickupDate;
+
+    public Trip() {
     }
 
-    public void setAverageWindSpeed(Double averageWindSpeed) {
-        this.averageWindSpeed = averageWindSpeed;
-    }
-
-    public Double getTipAmount() {
-        return tipAmount;
-    }
-
-    public void setTipAmount(Double tipAmount) {
-        this.tipAmount = tipAmount;
-    }
+    // Getters and setters
 
     public Long getId() {
         return id;
@@ -92,6 +100,14 @@ public class Trip {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Weather getWeather() {
+        return weather;
+    }
+
+    public void setWeather(Weather weather) {
+        this.weather = weather;
     }
 
     public String getVendorId() {
@@ -102,19 +118,19 @@ public class Trip {
         this.vendorId = vendorId;
     }
 
-    public String getPickupDatetime() {
+    public LocalDateTime getPickupDatetime() {
         return pickupDatetime;
     }
 
-    public void setPickupDatetime(String pickupDatetime) {
+    public void setPickupDatetime(LocalDateTime pickupDatetime) {
         this.pickupDatetime = pickupDatetime;
     }
 
-    public String getDropoffDatetime() {
+    public LocalDateTime getDropoffDatetime() {
         return dropoffDatetime;
     }
 
-    public void setDropoffDatetime(String dropoffDatetime) {
+    public void setDropoffDatetime(LocalDateTime dropoffDatetime) {
         this.dropoffDatetime = dropoffDatetime;
     }
 
@@ -198,6 +214,14 @@ public class Trip {
         this.mtaTax = mtaTax;
     }
 
+    public Double getTipAmount() {
+        return tipAmount;
+    }
+
+    public void setTipAmount(Double tipAmount) {
+        this.tipAmount = tipAmount;
+    }
+
     public Double getTollsAmount() {
         return tollsAmount;
     }
@@ -223,7 +247,7 @@ public class Trip {
     }
 
     public Double getCongestionSurcharge() {
-        return congestionSurcharge;
+        return congestionSurcharge != null ? congestionSurcharge : 0.0;
     }
 
     public void setCongestionSurcharge(Double congestionSurcharge) {
@@ -231,10 +255,34 @@ public class Trip {
     }
 
     public Double getAirportFee() {
-        return airportFee;
+        return airportFee != null ? airportFee : 0.0;
     }
 
     public void setAirportFee(Double airportFee) {
         this.airportFee = airportFee;
+    }
+
+    public LocalDate getPickupDate() {
+        return pickupDate;
+    }
+
+    public void setPickupDate(LocalDate pickupDate) {
+        this.pickupDate = pickupDate;
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void setPickupDate() {
+        if (pickupDatetime != null) {
+            this.pickupDate = pickupDatetime.toLocalDate();
+        }
+    }
+
+    public FavoriteTrip getFavoriteTrip() {
+        return favoriteTrip;
+    }
+
+    public void setFavoriteTrip(FavoriteTrip favoriteTrip) {
+        this.favoriteTrip = favoriteTrip;
     }
 }

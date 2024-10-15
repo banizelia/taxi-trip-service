@@ -10,6 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,35 +27,40 @@ import java.util.Set;
 @Service
 public class TripService {
     private final TripsRepository tripsRepository;
+    private final PagedResourcesAssembler<Trip> pagedResourcesAssembler;
 
-    public TripService(TripsRepository tripsRepository) {
+    public TripService(TripsRepository tripsRepository, PagedResourcesAssembler<Trip> pagedResourcesAssembler) {
         this.tripsRepository = tripsRepository;
+        this.pagedResourcesAssembler = pagedResourcesAssembler;
     }
 
     /**
      * Filters and retrieves trips based on various criteria.
      *
      * @param startDateTime Start date and time for filtering trips.
-     * @param endDateTime End date and time for filtering trips.
-     * @param minWindSpeed Minimum wind speed for filtering trips.
-     * @param maxWindSpeed Maximum wind speed for filtering trips.
-     * @param direction Sorting direction (asc or desc).
-     * @param sortBy Field to sort by.
-     * @param page Page number for pagination.
-     * @param pageSize Page size for pagination.
+     * @param endDateTime   End date and time for filtering trips.
+     * @param minWindSpeed  Minimum wind speed for filtering trips.
+     * @param maxWindSpeed  Maximum wind speed for filtering trips.
+     * @param direction     Sorting direction (asc or desc).
+     * @param sortBy        Field to sort by.
+     * @param page          Page number for pagination.
+     * @param pageSize      Page size for pagination.
      * @return ResponseEntity containing a list of filtered trips.
      * @throws IllegalArgumentException if input parameters are invalid.
      */
-    public ResponseEntity<Page<Trip>> filter(LocalDateTime startDateTime, LocalDateTime endDateTime,
-                              Double minWindSpeed, Double maxWindSpeed,
-                              String direction, String sortBy,
-                              Integer page, Integer pageSize) {
+    public ResponseEntity<PagedModel<EntityModel<Trip>>> filter(LocalDateTime startDateTime, LocalDateTime endDateTime,
+                                                                Double minWindSpeed, Double maxWindSpeed,
+                                                                String direction, String sortBy,
+                                                                Integer page, Integer pageSize) {
         validateFilterParams(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy);
 
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         Pageable pageable = PageRequest.of(page, pageSize, sort);
 
-        return ResponseEntity.ok(tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable));
+        Page<Trip> trips = tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
+        PagedModel<EntityModel<Trip>> pagedModel = pagedResourcesAssembler.toModel(trips);
+
+        return ResponseEntity.ok(pagedModel);
     }
 
     private void validateFilterParams(LocalDateTime startDateTime, LocalDateTime endDateTime,

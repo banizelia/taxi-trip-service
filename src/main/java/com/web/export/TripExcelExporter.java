@@ -70,13 +70,12 @@ public class TripExcelExporter {
                 currentBatch = tripsRepository.findAll(pageable).getContent();
 
                 for (Trip trip : currentBatch) {
-                    if (rowIdx >= MAX_ROWS_PER_SHEET) {
+                    if (rowIdx > MAX_ROWS_PER_SHEET) {
                         sheetCount++;
                         sheet = workbook.createSheet(SHEET + sheetCount);
                         createHeader(sheet);
                         rowIdx = 1;
                     }
-
                     createRow(sheet, rowIdx++, trip);
                 }
 
@@ -86,7 +85,7 @@ public class TripExcelExporter {
 
                 pageable = pageable.next();
 
-            } while (!currentBatch.isEmpty() && sheetCount < sheetLimit);
+            } while (!currentBatch.isEmpty() && sheetCount <= sheetLimit);
 
             workbook.write(out);
 

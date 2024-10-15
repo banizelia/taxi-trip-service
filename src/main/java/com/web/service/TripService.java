@@ -95,10 +95,6 @@ public class TripService {
      * @throws IllegalArgumentException if sheetLimit is less than one.
      */
     public ResponseEntity<Resource> download(Integer sheetLimit) {
-        if (sheetLimit < 1){
-            throw new IllegalArgumentException("sheetLimit cannot be less than one");
-        }
-
         String filename = "trips.xlsx";
         InputStreamResource file = new InputStreamResource(TripExcelExporter.tripsToExcel(tripsRepository, sheetLimit));
 

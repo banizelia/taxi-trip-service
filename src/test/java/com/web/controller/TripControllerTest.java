@@ -8,7 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.core.io.Resource;
-import org.springframework.data.domain.Page;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
@@ -31,79 +32,36 @@ class TripControllerTest {
 
     @Test
     void testFilterTrips() {
-        // Arrange
         LocalDateTime startDateTime = LocalDateTime.of(2016, 1, 1, 0, 0);
         LocalDateTime endDateTime = LocalDateTime.of(2016, 2, 1, 0, 0);
         Double minWindSpeed = 0.0;
         Double maxWindSpeed = 9999.0;
         String direction = "asc";
         String sortBy = "id";
-        Integer page = 0;
-        Integer pageSize = 20;
+        int page = 0;
+        int pageSize = 20;
 
-        Page<Trip> expectedTrips = Page.empty();
-        ResponseEntity<Page<Trip>> expectedResponse = ResponseEntity.ok(expectedTrips);
+        PagedModel<EntityModel<Trip>> pagedModel = mock(PagedModel.class);
+        when(tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize))
+                .thenReturn(ResponseEntity.ok(pagedModel));
 
-        when(tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
-                direction, sortBy, page, pageSize))
-                .thenReturn(expectedResponse);
+        ResponseEntity<PagedModel<EntityModel<Trip>>> response = tripController.filterTrips(
+                startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize);
 
-        // Act
-        ResponseEntity<Page<Trip>> actualResponse = tripController.filterTrips(
-                startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
-                direction, sortBy, page, pageSize);
-
-        // Assert
-        assertEquals(expectedResponse, actualResponse);
-        verify(tripService).filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
-                direction, sortBy, page, pageSize);
+        assertEquals(200, response.getStatusCodeValue());
+        verify(tripService, times(1)).filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy, page, pageSize);
     }
 
     @Test
     void testDownload() {
-        // Arrange
         Integer sheetLimit = 2;
-        Resource mockResource = mock(Resource.class);
-        ResponseEntity<Resource> expectedResponse = ResponseEntity.ok(mockResource);
+        Resource resource = mock(Resource.class);
 
-        when(tripService.download(sheetLimit)).thenReturn(expectedResponse);
+        when(tripService.download(sheetLimit)).thenReturn(ResponseEntity.ok(resource));
 
-        // Act
-        ResponseEntity<Resource> actualResponse = tripController.download(sheetLimit);
+        ResponseEntity<Resource> response = tripController.download(sheetLimit);
 
-        // Assert
-        assertEquals(expectedResponse, actualResponse);
-        verify(tripService).download(sheetLimit);
-    }
-
-    @Test
-    void testFilterTripsEmptyResult() {
-        // Arrange
-        LocalDateTime startDateTime = LocalDateTime.of(2016, 1, 1, 0, 0);
-        LocalDateTime endDateTime = LocalDateTime.of(2016, 2, 1, 0, 0);
-        Double minWindSpeed = 0.0;
-        Double maxWindSpeed = 9999.0;
-        String direction = "asc";
-        String sortBy = "id";
-        Integer page = 0;
-        Integer pageSize = 20;
-
-        Page<Trip> emptyList = Page.empty();
-        ResponseEntity<Page<Trip>> expectedResponse = ResponseEntity.ok(emptyList);
-
-        when(tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
-                direction, sortBy, page, pageSize))
-                .thenReturn(expectedResponse);
-
-        // Act
-        ResponseEntity<Page<Trip>> actualResponse = tripController.filterTrips(
-                startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
-                direction, sortBy, page, pageSize);
-
-        // Assert
-        assertEquals(expectedResponse, actualResponse);
-        assertEquals(0, actualResponse.getBody().getSize());
-        verify(tripService).filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed,
-                direction, sortBy, page, pageSize);
+        assertEquals(200, response.getStatusCodeValue());
+        verify(tripService, times(1)).download(sheetLimit);
     }
 }

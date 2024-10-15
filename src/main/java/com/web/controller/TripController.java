@@ -63,7 +63,7 @@ public class TripController {
 
     @Operation(summary = "Export trips in Excel format", description = "Exports the list of trips in xlsx format, with the option to set a limit on the number of sheets.")
     @GetMapping("/download")
-    public ResponseEntity<Resource> download(@Parameter(description = "Sheet limit") @RequestParam(value = "sheetLimit", defaultValue = "2") Integer sheetLimit) {
+    public ResponseEntity<Resource> download(@Parameter(description = "Sheet limit") @RequestParam(value = "sheetLimit", defaultValue = "2") @Min(1) Integer sheetLimit) {
         return tripService.download(sheetLimit);
     }
 }

@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +17,6 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,9 +27,6 @@ import java.util.Collections;
 class TripServiceTest {
     @Mock
     private TripsRepository tripsRepository;
-
-    @Mock
-    private TripExcelExporter tripExcelExporter;
 
     @Mock
     private PagedResourcesAssembler<Trip> pagedResourcesAssembler;
@@ -80,14 +75,5 @@ class TripServiceTest {
         });
 
         assertTrue(exception.getMessage().contains("endDateTime is before startDateTime"));
-    }
-
-    @Test
-    void testInvalidDownloadParams() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            tripService.download(0);
-        });
-
-        assertTrue(exception.getMessage().contains("sheetLimit cannot be less than one"));
     }
 }

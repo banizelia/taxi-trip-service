@@ -33,12 +33,12 @@
 
 1. Клонируйте репозиторий проекта:
    ```bash
-   git clone https://github.com/ваш_репозиторий/название_проекта.git
+   git clone https://github.com/banizelia/taxi-trip-service.git
    ```
 
 2. Перейдите в директорию проекта:
    ```bash
-   cd название_проекта
+   cd taxi-trip-service
    ```
 
 3. Установите зависимости:
@@ -54,11 +54,21 @@
 
 5. Настройте параметры подключения к базе данных в файле `application.properties` (или `application.yml`):
    ```properties
+   # Database settings
    spring.datasource.url=jdbc:postgresql://localhost:5432/taxi_trip_service
    spring.datasource.username=your_db_username
    spring.datasource.password=your_db_password
    spring.jpa.hibernate.ddl-auto=update
-   spring.jpa.show-sql=true
+
+   # Flyway settings
+   spring.flyway.enabled=true
+   spring.flyway.baseline-on-migrate=true
+   spring.flyway.locations=classpath:db/migration
+
+   # Flyway configuration
+   spring.flyway.url=${spring.datasource.url}
+   spring.flyway.user=${spring.datasource.username}
+   spring.flyway.password=${spring.datasource.password}
    ```
 
 ## Запуск приложения

@@ -22,8 +22,10 @@ CREATE INDEX IF NOT EXISTS idx_weather_observations_date
     ON public.weather_observations USING btree
     (date ASC NULLS LAST);
 
--- Лучше заменить COPY на SQL-запрос с INSERT, если возможно, либо использовать стратегию для загрузки данных вне Flyway миграций.
+ALTER TABLE public.weather_observations
+ADD CONSTRAINT unique_weather_date UNIQUE (date);
 
+-- Лучше заменить COPY на SQL-запрос с INSERT, если возможно, либо использовать стратегию для загрузки данных вне Flyway миграций.
 INSERT INTO public.weather_observations
 (station_id, station_name, date, average_wind_speed, precipitation, snow_depth, snowfall, max_temperature, min_temperature, weather_id)
 VALUES

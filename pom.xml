@@ -88,7 +88,7 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>10.0.0</version>
                 <configuration>
-                    <url>jdbc:postgresql://localhost:5432/project</url>
+                    <url>jdbc:postgresql://localhost:5432/trips_db</url>
                     <user>postgres</user>
                     <password>12345678</password>
                     <locations>classpath:db/migration</locations>

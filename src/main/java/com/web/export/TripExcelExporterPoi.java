@@ -4,8 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import com.web.model.Trip;
 import com.web.repository.TripsRepository;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
@@ -17,7 +20,7 @@ import org.springframework.data.domain.Sort;
 /**
  * Utility class for exporting trip data to Excel file.
  */
-public class TripExcelExporter {
+public class TripExcelExporterPoi {
     private static final String[] HEADERS = {"id",
             "vendor_id",
             "pickup_datetime",
@@ -39,10 +42,11 @@ public class TripExcelExporter {
             "congestion_surcharge",
             "airport_fee",
             "pickup_date" };
-    private static final Logger logger = LoggerFactory.getLogger(TripExcelExporter.class);
+    private static final Logger logger = LoggerFactory.getLogger(TripExcelExporterFastExcel.class);
     private static final String SHEET = "trips_";
     private static final int MAX_ROWS_PER_SHEET = 1_000_000;
     private static final int BATCH_SIZE = 100_000;
+    private static final StopWatch watch = new StopWatch();
 
     /**
      * Exports trip data from the database to an Excel file.
@@ -51,11 +55,14 @@ public class TripExcelExporter {
      * @param sheetLimit maximum number of sheets in the Excel file
      * @return InputStream with the contents of the Excel file
      */
-    public static ByteArrayInputStream tripsToExcel(TripsRepository tripsRepository, Integer sheetLimit) {
-        long start = System.nanoTime()/1_000_000_000;
+    public static ByteArrayInputStream tripsToExcel(TripsRepository tripsRepository) {
+        watch.reset();
+        watch.start();
+        long lastSplitTime = watch.getTime();
 
-        try (SXSSFWorkbook workbook = createWorkbook();
-             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+            SXSSFWorkbook workbook = createWorkbook();
 
             int sheetCount = 1;
             int rowIdx = 1;
@@ -64,11 +71,9 @@ public class TripExcelExporter {
             createHeader(sheet);
 
             Pageable pageable = PageRequest.of(0, BATCH_SIZE, Sort.by(Sort.Direction.ASC, "id"));
-            List<Trip> currentBatch;
 
-            do {
-                currentBatch = tripsRepository.findAll(pageable).getContent();
-
+            List<Trip> currentBatch = tripsRepository.findAll(pageable).getContent();
+            while (!currentBatch.isEmpty()) {
                 for (Trip trip : currentBatch) {
                     if (rowIdx > MAX_ROWS_PER_SHEET) {
                         sheetCount++;
@@ -79,13 +84,17 @@ public class TripExcelExporter {
                     createRow(sheet, rowIdx++, trip);
                 }
 
-                long now = System.nanoTime()/1_000_000_000;
-                logger.info("Completed page # {} in {} seconds", pageable.getPageNumber(), (now - start));
-                start = now;
+                long currentTime = watch.getTime();
+                long splitTime = currentTime - lastSplitTime;
+                lastSplitTime = currentTime;
+                logger.info("Completed page # {} in {} seconds", pageable.getPageNumber(), splitTime / 1000.0);
 
                 pageable = pageable.next();
+                currentBatch = tripsRepository.findAll(pageable).getContent();
+            }
 
-            } while (!currentBatch.isEmpty() && sheetCount <= sheetLimit);
+            watch.stop();
+            logger.info("Total time taken: {} milliseconds", watch.getTime(TimeUnit.MILLISECONDS));
 
             workbook.write(out);
 
@@ -156,8 +165,8 @@ public class TripExcelExporter {
         row.createCell(15).setCellValue(trip.getTollsAmount());
         row.createCell(16).setCellValue(trip.getImprovementSurcharge());
         row.createCell(17).setCellValue(trip.getTotalAmount());
-        row.createCell(18).setCellValue(trip.getCongestionSurcharge());
-        row.createCell(19).setCellValue(trip.getAirportFee());
+        row.createCell(18).setCellValue("trip.getCongestionSurcharge()");//test
+        row.createCell(19).setCellValue("trip.getAirportFee()");//test
         row.createCell(20).setCellValue(trip.getPickupDate().toString());
     }
 }

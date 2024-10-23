@@ -1,18 +1,18 @@
 package com.web.service;
 
+import com.web.export.TripExcelExporterFastExcel;
 import com.web.model.Trip;
-import com.web.repository.TripsRepository;
-import com.web.export.TripExcelExporter;
+import com.web.model.dto.TripDto;
+import com.web.model.mapper.TripMapper;
 import com.web.model.reflection.ColumnAnnotatedFields;
+import com.web.repository.TripsRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,15 +24,10 @@ import java.util.Set;
 /**
  * Service for managing trip data.
  */
+@AllArgsConstructor
 @Service
 public class TripService {
-    private final TripsRepository tripsRepository;
-    private final PagedResourcesAssembler<Trip> pagedResourcesAssembler;
-
-    public TripService(TripsRepository tripsRepository, PagedResourcesAssembler<Trip> pagedResourcesAssembler) {
-        this.tripsRepository = tripsRepository;
-        this.pagedResourcesAssembler = pagedResourcesAssembler;
-    }
+    private TripsRepository tripsRepository;
 
     /**
      * Filters and retrieves trips based on various criteria.
@@ -48,19 +43,18 @@ public class TripService {
      * @return ResponseEntity containing a list of filtered trips.
      * @throws IllegalArgumentException if input parameters are invalid.
      */
-    public ResponseEntity<PagedModel<EntityModel<Trip>>> filter(LocalDateTime startDateTime, LocalDateTime endDateTime,
+    public Page<TripDto> filter(LocalDateTime startDateTime, LocalDateTime endDateTime,
                                                                 Double minWindSpeed, Double maxWindSpeed,
-                                                                String direction, String sortBy,
-                                                                Integer page, Integer pageSize) {
+                                                                Integer page, Integer size,
+                                                                String sortBy, String direction) {
         validateFilterParams(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy);
 
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
-        Pageable pageable = PageRequest.of(page, pageSize, sort);
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<Trip> trips = tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
-        PagedModel<EntityModel<Trip>> pagedModel = pagedResourcesAssembler.toModel(trips);
 
-        return ResponseEntity.ok(pagedModel);
+        return trips.map(TripMapper.INSTANCE::tripToTripDto);
     }
 
     private void validateFilterParams(LocalDateTime startDateTime, LocalDateTime endDateTime,
@@ -94,9 +88,9 @@ public class TripService {
      * @return ResponseEntity containing the Excel file as a Resource.
      * @throws IllegalArgumentException if sheetLimit is less than one.
      */
-    public ResponseEntity<Resource> download(Integer sheetLimit) {
+    public ResponseEntity<Resource> download() {
         String filename = "trips.xlsx";
-        InputStreamResource file = new InputStreamResource(TripExcelExporter.tripsToExcel(tripsRepository, sheetLimit));
+        InputStreamResource file = new InputStreamResource(TripExcelExporterFastExcel.tripsToExcel(tripsRepository));
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)

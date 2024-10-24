@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 /**
  * Utility class for exporting trip data to Excel file.
  */
+@Deprecated
 public class TripExcelExporterPoi {
     private static final String[] HEADERS = {"id",
             "vendor_id",

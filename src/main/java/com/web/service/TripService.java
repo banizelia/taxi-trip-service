@@ -7,16 +7,14 @@ import com.web.model.mapper.TripMapper;
 import com.web.model.reflection.ColumnAnnotatedFields;
 import com.web.repository.TripsRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,25 +26,13 @@ import java.util.Set;
 @Service
 public class TripService {
     private TripsRepository tripsRepository;
+    private TripExcelExporterFastExcel tripExcelExporterFastExcel;
 
-    /**
-     * Filters and retrieves trips based on various criteria.
-     *
-     * @param startDateTime Start date and time for filtering trips.
-     * @param endDateTime   End date and time for filtering trips.
-     * @param minWindSpeed  Minimum wind speed for filtering trips.
-     * @param maxWindSpeed  Maximum wind speed for filtering trips.
-     * @param direction     Sorting direction (asc or desc).
-     * @param sortBy        Field to sort by.
-     * @param page          Page number for pagination.
-     * @param pageSize      Page size for pagination.
-     * @return ResponseEntity containing a list of filtered trips.
-     * @throws IllegalArgumentException if input parameters are invalid.
-     */
+
     public Page<TripDto> filter(LocalDateTime startDateTime, LocalDateTime endDateTime,
-                                                                Double minWindSpeed, Double maxWindSpeed,
-                                                                Integer page, Integer size,
-                                                                String sortBy, String direction) {
+                                Double minWindSpeed, Double maxWindSpeed,
+                                Integer page, Integer size,
+                                String sortBy, String direction) {
         validateFilterParams(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, direction, sortBy);
 
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
@@ -81,20 +67,15 @@ public class TripService {
         }
     }
 
-    /**
-     * Downloads trip data as an Excel file.
-     *
-     * @param sheetLimit The maximum number of sheets in the Excel file.
-     * @return ResponseEntity containing the Excel file as a Resource.
-     * @throws IllegalArgumentException if sheetLimit is less than one.
-     */
-    public ResponseEntity<Resource> download() {
-        String filename = "trips.xlsx";
-        InputStreamResource file = new InputStreamResource(TripExcelExporterFastExcel.tripsToExcel(tripsRepository));
+    @Transactional(readOnly = true)
+    public StreamingResponseBody download() {
+        return out -> {
+            try (out) {
+                tripExcelExporterFastExcel.tripsToExcelStream(tripsRepository, out);
+            } catch (IOException e) {
+                throw new RuntimeException("Error exporting data to Excel: " + e.getMessage(), e);
+            }
+        };
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-                .body(file);
     }
 }

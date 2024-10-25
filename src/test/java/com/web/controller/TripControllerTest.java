@@ -1,7 +1,7 @@
 //package com.web.controller;
 //
 //import com.web.model.Trip;
-//import com.web.service.TripService;
+//import com.web.service.trip.TripService;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
 //import org.mockito.InjectMocks;

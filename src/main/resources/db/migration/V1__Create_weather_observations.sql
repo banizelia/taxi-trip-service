@@ -16,10 +16,6 @@ CREATE TABLE IF NOT EXISTS public.weather_observations
     CONSTRAINT weather_observations_date_unique UNIQUE (date)
 );
 
-CREATE INDEX IF NOT EXISTS idx_weather_observations_date
-    ON public.weather_observations USING btree
-    (date ASC NULLS LAST);
-
 ALTER TABLE public.weather_observations
 ADD CONSTRAINT unique_weather_date UNIQUE (date);
 

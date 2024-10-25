@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import com.web.model.Trip;
 import com.web.repository.TripsRepository;
 import org.apache.commons.lang3.time.StopWatch;

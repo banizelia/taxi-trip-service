@@ -1,7 +1,7 @@
 package com.web.controller;
 
 import com.web.model.dto.TripDto;
-import com.web.service.TripService;
+import com.web.service.trip.TripService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.Max;

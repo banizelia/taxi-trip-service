@@ -1,8 +1,8 @@
 package com.web.controller;
 
-import com.web.exceptions.TripNotFound;
+import com.web.exceptions.TripNotFoundException;
 import com.web.model.dto.TripDto;
-import com.web.service.FavoriteTripService;
+import com.web.service.favorite.FavoriteTripService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.persistence.OptimisticLockException;
@@ -63,7 +63,7 @@ public class FavoriteTripController {
         try {
             favoriteTripService.deleteFromFavourite(id);
             return ResponseEntity.ok("Trip deleted successfully");
-        } catch (TripNotFound e) {
+        } catch (TripNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error occurred while deleting from favorite trips: " + e.getMessage());
@@ -78,7 +78,7 @@ public class FavoriteTripController {
         try {
             favoriteTripService.dragAndDrop(tripId, newPosition);
             return ResponseEntity.ok("Position updated successfully");
-        } catch (TripNotFound e) {
+        } catch (TripNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -86,17 +86,6 @@ public class FavoriteTripController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict occurred while updating position");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while updating position: " + e.getMessage());
-        }
-    }
-
-    @Operation(summary = "Validate and correct the order in the favorites list")
-    @PutMapping("/validate-positions")
-    public ResponseEntity<String> validatePositions() {
-        try {
-            favoriteTripService.validatePositions();
-            return ResponseEntity.ok("Positions validated and repaired successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while validating positions: " + e.getMessage());
         }
     }
 }

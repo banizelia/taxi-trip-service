@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import com.web.model.Trip;
 import com.web.model.dto.TripDto;
-import com.web.model.mapper.TripMapper;
+import com.web.mapper.TripMapper;
 import com.web.repository.TripsRepository;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;

@@ -1,9 +1,8 @@
-package com.web.service;
+package com.web.service.trip.managment;
 
-import com.web.export.TripExcelExporterFastExcel;
+import com.web.mapper.TripMapper;
 import com.web.model.Trip;
 import com.web.model.dto.TripDto;
-import com.web.model.mapper.TripMapper;
 import com.web.model.reflection.ColumnAnnotatedFields;
 import com.web.repository.TripsRepository;
 import lombok.AllArgsConstructor;
@@ -12,24 +11,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import java.io.IOException;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Service for managing trip data.
- */
-@AllArgsConstructor
 @Service
-public class TripService {
+@AllArgsConstructor
+public class FilterTripService {
     private TripsRepository tripsRepository;
-    private TripExcelExporterFastExcel tripExcelExporterFastExcel;
 
-
-    public Page<TripDto> filter(LocalDateTime startDateTime, LocalDateTime endDateTime,
+    public Page<TripDto> execute(LocalDateTime startDateTime, LocalDateTime endDateTime,
                                 Double minWindSpeed, Double maxWindSpeed,
                                 Integer page, Integer size,
                                 String sortBy, String direction) {
@@ -65,17 +57,5 @@ public class TripService {
         if (!weatherAndTripAllowedField.contains(sortBy)) {
             throw new IllegalArgumentException("Invalid sort field: " + sortBy);
         }
-    }
-
-    @Transactional(readOnly = true)
-    public StreamingResponseBody download() {
-        return out -> {
-            try (out) {
-                tripExcelExporterFastExcel.tripsToExcelStream(tripsRepository, out);
-            } catch (IOException e) {
-                throw new RuntimeException("Error exporting data to Excel: " + e.getMessage(), e);
-            }
-        };
-
     }
 }

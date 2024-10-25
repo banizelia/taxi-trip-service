@@ -3,8 +3,8 @@
 //import com.web.model.FavoriteTrip;
 //import com.web.model.Trip;
 //import com.web.repository.FavoriteTripRepository;
-//import com.web.service.FavoriteTripService;
-//import com.web.service.TripService;
+//import com.web.service.favorite.FavoriteTripService;
+//import com.web.service.trip.TripService;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

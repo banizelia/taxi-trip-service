@@ -1,4 +1,4 @@
-package com.web.model.mapper;
+package com.web.mapper;
 
 import com.web.model.Trip;
 import com.web.model.dto.TripDto;

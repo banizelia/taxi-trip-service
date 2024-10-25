@@ -70,14 +70,12 @@ public class SaveFavoriteTripService {
     }
 
     private long calculateNextPosition(long maxPosition) {
-        long newPosition = maxPosition + POSITION_GAP;
-
-        // Если мы каким-то образом достигли максимума, принудительно выполняем ребалансировку
-        if (newPosition <= 0 || newPosition >= Long.MAX_VALUE) {
+        try {
+            long newPosition = Math.addExact(maxPosition, POSITION_GAP);
+            return newPosition;
+        } catch (ArithmeticException e) {
             sparsifier.sparsify();
-            newPosition = favoriteTripRepository.findMaxPosition() + POSITION_GAP;
+            return Math.addExact(favoriteTripRepository.findMaxPosition(), POSITION_GAP);
         }
-
-        return newPosition;
     }
 }

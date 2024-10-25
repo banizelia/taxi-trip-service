@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class SaveFavoriteTripService {
     private static final long INITIAL_POSITION = FavoriteTripEnum.INITIAL_POSITION.getValue();
     private static final long POSITION_GAP = FavoriteTripEnum.POSITION_GAP.getValue();
+    private static final double MIN_GAP = FavoriteTripEnum.MIN_GAP.getValue();
     private static final double REBALANCE_THRESHOLD_PERCENT = FavoriteTripEnum.REBALANCE_THRESHOLD_PERCENT.getValue();
 
     private FavoriteTripRepository favoriteTripRepository;
@@ -62,7 +63,7 @@ public class SaveFavoriteTripService {
         // Проверяем, не стали ли промежутки слишком маленькими
         if (totalCount > 0) {
             double averageGap = (double) maxPosition / totalCount;
-            return averageGap < POSITION_GAP * 0.5;
+            return averageGap < MIN_GAP;
         }
 
         return false;

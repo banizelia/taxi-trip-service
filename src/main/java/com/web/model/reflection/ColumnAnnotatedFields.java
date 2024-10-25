@@ -27,7 +27,6 @@ public class ColumnAnnotatedFields {
                     .map(Field::getName)
                     .collect(Collectors.toSet()));
         }
-
         return TRIP_FIELDS;
     }
 
@@ -38,7 +37,6 @@ public class ColumnAnnotatedFields {
                     .map(Field::getName)
                     .collect(Collectors.toSet()));
         }
-
         return WEATHER_FIELDS;
     }
 
@@ -49,7 +47,6 @@ public class ColumnAnnotatedFields {
                     .map(Field::getName)
                     .collect(Collectors.toSet()));
         }
-
         return FAVORITE_TRIP_FIELDS;
     }
 }

@@ -16,7 +16,6 @@ public class DeleteFavoriteTripService {
 
     @Transactional
     public void execute(Long tripId) {
-
         Optional<FavoriteTrip> favoriteTripOptional = favoriteTripRepository.findByTripId(tripId);
 
         if (favoriteTripOptional.isEmpty()) {

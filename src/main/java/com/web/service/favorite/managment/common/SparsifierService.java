@@ -18,9 +18,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class SparsifierService {
     private static final long POSITION_GAP = FavoriteTripEnum.POSITION_GAP.getValue();
 
-    private static final long INITIAL_POSITION = FavoriteTripEnum.INITIAL_POSITION.getValue();
-    private static final int BATCH_SIZE = 10_000;
-
     private FavoriteTripRepository favoriteTripRepository;
 
     @Transactional

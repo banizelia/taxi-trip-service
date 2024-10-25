@@ -76,7 +76,7 @@ public class TripExcelExporterFastExcel {
         return sheet;
     }
 
-    private static void writeHeaders(Worksheet sheet) throws IOException {
+    private static void writeHeaders(Worksheet sheet){
         for (int i = 0; i < HEADERS.length; i++) {
             sheet.value(0, i, HEADERS[i]);
         }

@@ -15,6 +15,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class DragAndDropFavoriteTripService {
     private static final long POSITION_GAP = FavoriteTripEnum.POSITION_GAP.getValue();
+    private static final long MIN_GAP = FavoriteTripEnum.MIN_GAP.getValue();
 
     private FavoriteTripRepository favoriteTripRepository;
     private SparsifierService sparsifier;
@@ -38,12 +39,12 @@ public class DragAndDropFavoriteTripService {
         Long prevPosition = favoriteTripRepository.findPositionByIndex(targetPosition - 1).orElse(0L);
         Long nextPosition = favoriteTripRepository.findPositionByIndex(targetPosition).orElse(POSITION_GAP);
 
-        if ((nextPosition - prevPosition) < POSITION_GAP * 0.5) {
+        if ((nextPosition - prevPosition) < MIN_GAP) {
             sparsifier.sparsify();
-        }
 
-        prevPosition = favoriteTripRepository.findPositionByIndex(targetPosition - 1).orElse(0L);
-        nextPosition = favoriteTripRepository.findPositionByIndex(targetPosition).orElse(POSITION_GAP);
+            prevPosition = favoriteTripRepository.findPositionByIndex(targetPosition - 1).orElse(0L);
+            nextPosition = favoriteTripRepository.findPositionByIndex(targetPosition).orElse(POSITION_GAP);
+        }
 
         long newPosition = prevPosition + (nextPosition - prevPosition) / 2;
 

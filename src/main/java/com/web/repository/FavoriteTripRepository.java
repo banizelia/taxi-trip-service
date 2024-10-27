@@ -21,8 +21,8 @@ public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long
 
     Optional<FavoriteTrip> findByTripId(Long id);
 
-    @Query(value = " SELECT position FROM favorite_trip WHERE trip_id = :trip_id")
-    Optional<Long> findPositionByIndex(@Param("trip_id") Long tripId);
+    @Query("SELECT ft.position FROM FavoriteTrip ft WHERE ft.tripId = :tripId")
+    Optional<Long> findPositionByIndex(@Param("tripId") Long tripId);
 
     List<FavoriteTrip> findAllByOrderByPositionAsc();
 }

@@ -2,9 +2,7 @@ package com.web.repository;
 
 import com.web.model.FavoriteTrip;
 import com.web.model.Trip;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -20,7 +18,7 @@ public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long
     Long findMaxPosition();
 
     Optional<FavoriteTrip> findByTripId(Long id);
-
+    
     @Query("SELECT ft.position FROM FavoriteTrip ft WHERE ft.tripId = :tripId")
     Optional<Long> findPositionByIndex(@Param("tripId") Long tripId);
 

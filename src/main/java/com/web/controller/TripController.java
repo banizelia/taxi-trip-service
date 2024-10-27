@@ -2,6 +2,7 @@ package com.web.controller;
 
 import com.web.model.dto.TripDto;
 import com.web.service.trip.TripService;
+import com.web.service.trip.managment.DownloadTripService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.Max;
@@ -9,7 +10,6 @@ import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -82,10 +85,9 @@ public class TripController {
         }
     }
 
-    @Operation(summary = "Export trips in Excel format", description = "Exports the list of trips in xlsx format, with the option to set a limit on the number of sheets.")
+    @Operation(summary = "Export trips in Excel format")
     @GetMapping("/download")
-    public ResponseEntity<Resource> download(@Parameter(description = "Filename") @RequestParam(required = false, defaultValue = "trips") String filename) {
-
+    public ResponseEntity<StreamingResponseBody> download(@Parameter(description = "Filename") @RequestParam(required = false, defaultValue = "trips") String filename) {
         if (!filename.matches("[a-zA-Z0-9_-]+")) {
             return ResponseEntity.badRequest().build();
         }

@@ -1,109 +1,215 @@
-//package com.web.controller;
-//
-//import com.web.model.Trip;
-//import com.web.service.favorite.FavoriteTripService;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.MockitoAnnotations;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.test.web.servlet.MockMvc;
-//import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-//
-//import java.util.List;
-//
-//import static org.mockito.ArgumentMatchers.anyLong;
-//import static org.mockito.Mockito.when;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-//
-//class FavoriteTripControllerTest {
-//
-//    @Mock
-//    private FavoriteTripService favoriteTripService;
-//
-//    @InjectMocks
-//    private FavoriteTripController favoriteTripController;
-//
-//    private MockMvc mockMvc;
-//
-//    @BeforeEach
-//    void setUp() {
-//        MockitoAnnotations.openMocks(this);
-//        mockMvc = MockMvcBuilders.standaloneSetup(favoriteTripController).build();
-//    }
-//
-//    @Test
-//    void getFavouriteTrips_ReturnsListOfTrips() throws Exception {
-//        List<Trip> trips = List.of(new Trip(), new Trip());
-//        when(favoriteTripService.getFavouriteTrips()).thenReturn(ResponseEntity.ok(trips));
-//
-//        mockMvc.perform(get("/api/v1/favorite-trips"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.length()").value(trips.size()));
-//    }
-//
-//    @Test
-//    void saveToFavourite_Success() throws Exception {
-//        when(favoriteTripService.saveToFavourite(anyLong())).thenReturn(ResponseEntity.status(HttpStatus.CREATED).body("Trip added to favorites"));
-//
-//        mockMvc.perform(put("/api/v1/favorite-trips/")
-//                        .param("tripId", "1"))
-//                .andExpect(status().isCreated())
-//                .andExpect(content().string("Trip added to favorites"));
-//    }
-//
-//    @Test
-//    void saveToFavourite_TripAlreadyExists_ReturnsBadRequest() throws Exception {
-//        when(favoriteTripService.saveToFavourite(anyLong())).thenReturn(ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Trip already in the table"));
-//
-//        mockMvc.perform(put("/api/v1/favorite-trips/")
-//                        .param("tripId", "1"))
-//                .andExpect(status().isBadRequest())
-//                .andExpect(content().string("Trip already in the table"));
-//    }
-//
-//    @Test
-//    void deleteFromFavourite_Success() throws Exception {
-//        when(favoriteTripService.deleteFromFavourite(anyLong())).thenReturn(ResponseEntity.ok("Trip deleted successfully"));
-//
-//        mockMvc.perform(delete("/api/v1/favorite-trips")
-//                        .param("tripId", "1"))
-//                .andExpect(status().isOk())
-//                .andExpect(content().string("Trip deleted successfully"));
-//    }
-//
-//    @Test
-//    void deleteFromFavourite_TripNotFound_ReturnsNotFound() throws Exception {
-//        when(favoriteTripService.deleteFromFavourite(anyLong())).thenReturn(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Trip not found"));
-//
-//        mockMvc.perform(delete("/api/v1/favorite-trips")
-//                        .param("tripId", "1"))
-//                .andExpect(status().isNotFound())
-//                .andExpect(content().string("Trip not found"));
-//    }
-//
-//    @Test
-//    void dragAndDrop_Success() throws Exception {
-//        when(favoriteTripService.dragAndDrop(anyLong(), anyLong())).thenReturn(ResponseEntity.ok("Position updated successfully"));
-//
-//        mockMvc.perform(put("/api/v1/favorite-trips/drag-and-drop")
-//                        .param("tripId", "1")
-//                        .param("newPosition", "2"))
-//                .andExpect(status().isOk())
-//                .andExpect(content().string("Position updated successfully"));
-//    }
-//
-//    @Test
-//    void dragAndDrop_TripNotFound_ReturnsNotFound() throws Exception {
-//        when(favoriteTripService.dragAndDrop(anyLong(), anyLong())).thenReturn(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Trip not found"));
-//
-//        mockMvc.perform(put("/api/v1/favorite-trips/drag-and-drop")
-//                        .param("tripId", "1")
-//                        .param("newPosition", "2"))
-//                .andExpect(status().isNotFound())
-//                .andExpect(content().string("Trip not found"));
-//    }
-//}
+package com.web.controller;
+
+import com.web.exceptions.TripNotFoundException;
+import com.web.model.dto.TripDto;
+import com.web.service.favorite.FavoriteTripService;
+import jakarta.persistence.OptimisticLockException;
+import org.apache.coyote.BadRequestException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class FavoriteTripControllerTest {
+
+    @Mock
+    private FavoriteTripService favoriteTripService;
+
+    @InjectMocks
+    private FavoriteTripController favoriteTripController;
+
+    private List<TripDto> mockTrips;
+
+    @BeforeEach
+    void setUp() {
+        mockTrips = Arrays.asList(
+                new TripDto(), // Заполните необходимыми данными
+                new TripDto()
+        );
+    }
+
+    @Test
+    void getFavouriteTrips_Success() {
+        // Arrange
+        when(favoriteTripService.getFavouriteTrips()).thenReturn(mockTrips);
+
+        // Act
+        ResponseEntity<List<TripDto>> response = favoriteTripController.getFavouriteTrips();
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(mockTrips, response.getBody());
+        verify(favoriteTripService).getFavouriteTrips();
+    }
+
+    @Test
+    void getFavouriteTrips_WhenExceptionThrown_ReturnsInternalServerError() {
+        // Arrange
+        when(favoriteTripService.getFavouriteTrips()).thenThrow(new RuntimeException());
+
+        // Act
+        ResponseEntity<List<TripDto>> response = favoriteTripController.getFavouriteTrips();
+
+        // Assert
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertNull(response.getBody());
+        verify(favoriteTripService).getFavouriteTrips();
+    }
+
+    @Test
+    void saveToFavourite_Success() throws BadRequestException {
+        // Arrange
+        Long tripId = 1L;
+        doNothing().when(favoriteTripService).saveToFavourite(tripId);
+
+        // Act
+        ResponseEntity<String> response = favoriteTripController.saveToFavourite(tripId);
+
+        // Assert
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals("Trip added to favorites", response.getBody());
+        verify(favoriteTripService).saveToFavourite(tripId);
+    }
+
+    @Test
+    void saveToFavourite_WhenBadRequestException_ReturnsBadRequest() throws BadRequestException {
+        // Arrange
+        Long tripId = 1L;
+        String errorMessage = "Invalid request";
+        doThrow(new BadRequestException(errorMessage)).when(favoriteTripService).saveToFavourite(tripId);
+
+        // Act
+        ResponseEntity<String> response = favoriteTripController.saveToFavourite(tripId);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(errorMessage, response.getBody());
+        verify(favoriteTripService).saveToFavourite(tripId);
+    }
+
+    @Test
+    void saveToFavourite_WhenOptimisticLockException_ReturnsConflict() throws BadRequestException {
+        // Arrange
+        Long tripId = 1L;
+        doThrow(new OptimisticLockException()).when(favoriteTripService).saveToFavourite(tripId);
+
+        // Act
+        ResponseEntity<String> response = favoriteTripController.saveToFavourite(tripId);
+
+        // Assert
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertEquals("Conflict occurred while saving the trip", response.getBody());
+        verify(favoriteTripService).saveToFavourite(tripId);
+    }
+
+    @Test
+    void deleteFromFavourite_Success() throws TripNotFoundException {
+        // Arrange
+        Long tripId = 1L;
+        doNothing().when(favoriteTripService).deleteFromFavourite(tripId);
+
+        // Act
+        ResponseEntity<String> response = favoriteTripController.deleteFromFavourite(tripId);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Trip deleted successfully", response.getBody());
+        verify(favoriteTripService).deleteFromFavourite(tripId);
+    }
+
+    @Test
+    void deleteFromFavourite_WhenTripNotFound_ReturnsNotFound() throws TripNotFoundException {
+        // Arrange
+        Long tripId = 1L;
+        String errorMessage = "Trip not found";
+        doThrow(new TripNotFoundException(errorMessage)).when(favoriteTripService).deleteFromFavourite(tripId);
+
+        // Act
+        ResponseEntity<String> response = favoriteTripController.deleteFromFavourite(tripId);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(errorMessage, response.getBody());
+        verify(favoriteTripService).deleteFromFavourite(tripId);
+    }
+
+    @Test
+    void dragAndDrop_Success() throws BadRequestException, TripNotFoundException {
+        // Arrange
+        Long tripId = 1L;
+        Long newPosition = 2L;
+        doNothing().when(favoriteTripService).dragAndDrop(tripId, newPosition);
+
+        // Act
+        ResponseEntity<String> response = favoriteTripController.dragAndDrop(tripId, newPosition);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Position updated successfully", response.getBody());
+        verify(favoriteTripService).dragAndDrop(tripId, newPosition);
+    }
+
+    @Test
+    void dragAndDrop_WhenTripNotFound_ReturnsNotFound() throws BadRequestException, TripNotFoundException {
+        // Arrange
+        Long tripId = 1L;
+        Long newPosition = 2L;
+        String errorMessage = "Trip not found";
+        doThrow(new TripNotFoundException(errorMessage))
+                .when(favoriteTripService).dragAndDrop(tripId, newPosition);
+
+        // Act
+        ResponseEntity<String> response = favoriteTripController.dragAndDrop(tripId, newPosition);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(errorMessage, response.getBody());
+        verify(favoriteTripService).dragAndDrop(tripId, newPosition);
+    }
+
+    @Test
+    void dragAndDrop_WhenBadRequest_ReturnsBadRequest() throws BadRequestException, TripNotFoundException {
+        // Arrange
+        Long tripId = 1L;
+        Long newPosition = 2L;
+        String errorMessage = "Invalid position";
+        doThrow(new BadRequestException(errorMessage))
+                .when(favoriteTripService).dragAndDrop(tripId, newPosition);
+
+        // Act
+        ResponseEntity<String> response = favoriteTripController.dragAndDrop(tripId, newPosition);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(errorMessage, response.getBody());
+        verify(favoriteTripService).dragAndDrop(tripId, newPosition);
+    }
+
+    @Test
+    void dragAndDrop_WhenOptimisticLockException_ReturnsConflict() throws BadRequestException, TripNotFoundException {
+        // Arrange
+        Long tripId = 1L;
+        Long newPosition = 2L;
+        doThrow(new OptimisticLockException())
+                .when(favoriteTripService).dragAndDrop(tripId, newPosition);
+
+        // Act
+        ResponseEntity<String> response = favoriteTripController.dragAndDrop(tripId, newPosition);
+
+        // Assert
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertEquals("Conflict occurred while updating position", response.getBody());
+        verify(favoriteTripService).dragAndDrop(tripId, newPosition);
+    }
+}

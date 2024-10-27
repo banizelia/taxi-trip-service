@@ -1,15 +1,12 @@
 package com.web.service.trip;
 
-import com.web.export.TripExcelExporterFastExcel;
 import com.web.model.dto.TripDto;
-import com.web.repository.TripsRepository;
 import com.web.service.trip.managment.DownloadTripService;
 import com.web.service.trip.managment.FilterTripService;
 import lombok.AllArgsConstructor;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import java.time.LocalDateTime;
 
 /**
@@ -20,9 +17,6 @@ import java.time.LocalDateTime;
 public class TripService {
     private FilterTripService filterTripService;
     private DownloadTripService downloadTripService;
-    private TripExcelExporterFastExcel tripExcelExporterFastExcel;
-    private TripsRepository tripsRepository;
-
 
     public Page<TripDto> filter(LocalDateTime startDateTime, LocalDateTime endDateTime,
                                 Double minWindSpeed, Double maxWindSpeed,
@@ -31,9 +25,7 @@ public class TripService {
         return filterTripService.execute(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, page, size, sortBy, direction);
     }
 
-
-    @Transactional(readOnly = true)
-    public Resource download() {
+    public StreamingResponseBody download() {
         return downloadTripService.execute();
     }
 }

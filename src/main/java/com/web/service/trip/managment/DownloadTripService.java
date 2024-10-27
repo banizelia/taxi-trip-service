@@ -12,15 +12,14 @@ import java.io.IOException;
 @AllArgsConstructor
 public class DownloadTripService {
     private TripExcelExporterFastExcel tripExcelExporterFastExcel;
-    private TripsRepository tripsRepository;
 
     @Transactional(readOnly = true)
     public StreamingResponseBody execute() {
         return out -> {
-            try (out) {
-                tripExcelExporterFastExcel.tripsToExcelStream(tripsRepository, out);
+            try {
+                tripExcelExporterFastExcel.tripsToExcelStream(out);
             } catch (IOException e) {
-                throw new RuntimeException("Error exporting data to Excel: " + e.getMessage(), e);
+                throw new IllegalStateException("Error exporting data to Excel: " + e.getMessage(), e);
             }
         };
     }

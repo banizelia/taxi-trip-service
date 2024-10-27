@@ -71,11 +71,14 @@ public class SaveFavoriteTripService {
 
     private long calculateNextPosition(long maxPosition) {
         try {
-            long newPosition = Math.addExact(maxPosition, POSITION_GAP);
-            return newPosition;
+            return Math.addExact(maxPosition, POSITION_GAP);
         } catch (ArithmeticException e) {
             sparsifier.sparsify();
-            return Math.addExact(favoriteTripRepository.findMaxPosition(), POSITION_GAP);
+            try {
+                return Math.addExact(favoriteTripRepository.findMaxPosition(), POSITION_GAP);
+            } catch (ArithmeticException ex) {
+                throw new IllegalStateException("Unable to calculate next position even after sparsification");
+            }
         }
     }
 }

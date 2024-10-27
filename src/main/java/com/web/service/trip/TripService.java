@@ -18,8 +18,6 @@ public class TripService {
     private FilterTripService filterTripService;
     private DownloadTripService downloadTripService;
 
-
-
     public Page<TripDto> filter(LocalDateTime startDateTime, LocalDateTime endDateTime,
                                 Double minWindSpeed, Double maxWindSpeed,
                                 Integer page, Integer size,

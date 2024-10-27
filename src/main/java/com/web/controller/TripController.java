@@ -2,6 +2,7 @@ package com.web.controller;
 
 import com.web.model.dto.TripDto;
 import com.web.service.trip.TripService;
+import com.web.service.trip.managment.DownloadTripService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.Max;
@@ -84,7 +85,7 @@ public class TripController {
         }
     }
 
-    @Operation(summary = "Export trips in Excel format", description = "Exports the list of trips in xlsx format, with the option to set a limit on the number of sheets.")
+    @Operation(summary = "Export trips in Excel format")
     @GetMapping("/download")
     public ResponseEntity<StreamingResponseBody> download(@Parameter(description = "Filename") @RequestParam(required = false, defaultValue = "trips") String filename) {
 
@@ -92,18 +93,11 @@ public class TripController {
             return ResponseEntity.badRequest().build();
         }
 
-        filename = String.format("%s_%s.xlsx", filename, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss")));
+        filename = String.format("%s_%s.xlsx", filename, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")));
 
-        try {
-            StreamingResponseBody stream = tripService.download();
-
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + URLEncoder.encode(filename, StandardCharsets.UTF_8))
-                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                    .body(stream);
-        } catch (Exception e) {
-            logger.error("Error during file download", e);
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .body(tripService.download());
     }
 }

@@ -18,8 +18,7 @@ public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long
     Long findMaxPosition();
 
     Optional<FavoriteTrip> findByTripId(Long id);
-
-//    @Query(value = " SELECT position FROM favorite_trip WHERE trip_id = :trip_id")
+    
     @Query("SELECT ft.position FROM FavoriteTrip ft WHERE ft.tripId = :tripId")
     Optional<Long> findPositionByIndex(@Param("tripId") Long tripId);
 

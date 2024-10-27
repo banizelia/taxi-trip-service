@@ -88,7 +88,6 @@ public class TripController {
     @Operation(summary = "Export trips in Excel format")
     @GetMapping("/download")
     public ResponseEntity<StreamingResponseBody> download(@Parameter(description = "Filename") @RequestParam(required = false, defaultValue = "trips") String filename) {
-
         if (!filename.matches("[a-zA-Z0-9_-]+")) {
             return ResponseEntity.badRequest().build();
         }

@@ -16,7 +16,7 @@ public class DownloadTripService {
     @Transactional(readOnly = true)
     public StreamingResponseBody execute() {
         return out -> {
-            try {
+            try (out) {
                 tripExcelExporterFastExcel.tripsToExcelStream(out);
             } catch (IOException e) {
                 throw new IllegalStateException("Error exporting data to Excel: " + e.getMessage(), e);

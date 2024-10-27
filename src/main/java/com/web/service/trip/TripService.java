@@ -22,7 +22,6 @@ public class TripService {
                                 Double minWindSpeed, Double maxWindSpeed,
                                 Integer page, Integer size,
                                 String sortBy, String direction) {
-
         return filterTripService.execute(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, page, size, sortBy, direction);
     }
 

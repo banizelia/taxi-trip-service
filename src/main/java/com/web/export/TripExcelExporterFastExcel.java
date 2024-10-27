@@ -48,6 +48,7 @@ public class TripExcelExporterFastExcel {
         Worksheet currentSheet = createNewSheet(workbook, 1);
 
         Iterator<Trip> tripIterator = tripsRepository.findAllStream(BATCH_SIZE).iterator();
+
         while (tripIterator.hasNext()) {
             TripDto trip = TripMapper.INSTANCE.tripToTripDto(tripIterator.next());
 
@@ -70,6 +71,8 @@ public class TripExcelExporterFastExcel {
 
         watch.stop();
         logger.info("Total export time: {} seconds", watch.getTime(TimeUnit.SECONDS));
+
+        workbook.finish();
     }
 
     private static Worksheet createNewSheet(Workbook workbook, int sheetNumber) throws IOException {

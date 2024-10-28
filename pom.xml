@@ -69,11 +69,6 @@
             <artifactId>fastexcel</artifactId>
             <version>${fast.excel.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.dhatim</groupId>
-            <artifactId>fastexcel-reader</artifactId>
-            <version>${fast.excel.version}</version>
-        </dependency>
         <!--Poi-->
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -98,11 +93,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
             <scope>test</scope>
         </dependency>
 

@@ -82,7 +82,7 @@ public class TripExcelExporterFastExcel {
         outputStream.flush();
     }
 
-    private static Worksheet createNewSheet(Workbook workbook, int sheetNumber) throws IOException {
+    private static Worksheet createNewSheet(Workbook workbook, int sheetNumber) {
         Worksheet sheet = workbook.newWorksheet(SHEET_PREFIX + sheetNumber);
         writeHeaders(sheet);
         return sheet;

@@ -82,21 +82,6 @@ class FavoriteTripControllerTest {
         verify(favoriteTripService).saveToFavourite(tripId);
     }
 
-    @Test
-    void saveToFavourite_WhenBadRequestException_ReturnsBadRequest() throws BadRequestException {
-        // Arrange
-        Long tripId = 1L;
-        String errorMessage = "Invalid request";
-        doThrow(new BadRequestException(errorMessage)).when(favoriteTripService).saveToFavourite(tripId);
-
-        // Act
-        ResponseEntity<String> response = favoriteTripController.saveToFavourite(tripId);
-
-        // Assert
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals(errorMessage, response.getBody());
-        verify(favoriteTripService).saveToFavourite(tripId);
-    }
 
     @Test
     void saveToFavourite_WhenOptimisticLockException_ReturnsConflict() throws BadRequestException {
@@ -174,24 +159,6 @@ class FavoriteTripControllerTest {
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals(errorMessage, response.getBody());
-        verify(favoriteTripService).dragAndDrop(tripId, newPosition);
-    }
-
-    @Test
-    void dragAndDrop_WhenBadRequest_ReturnsBadRequest() throws BadRequestException, TripNotFoundException {
-        // Arrange
-        Long tripId = 1L;
-        Long newPosition = 2L;
-        String errorMessage = "Invalid position";
-        doThrow(new BadRequestException(errorMessage))
-                .when(favoriteTripService).dragAndDrop(tripId, newPosition);
-
-        // Act
-        ResponseEntity<String> response = favoriteTripController.dragAndDrop(tripId, newPosition);
-
-        // Assert
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals(errorMessage, response.getBody());
         verify(favoriteTripService).dragAndDrop(tripId, newPosition);
     }

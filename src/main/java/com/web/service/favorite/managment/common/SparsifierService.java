@@ -5,7 +5,6 @@ import com.web.model.enums.FavoriteTripEnum;
 import com.web.repository.FavoriteTripRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -13,7 +12,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 
 @Service
-@NoArgsConstructor
 @AllArgsConstructor
 public class SparsifierService {
     private static final long POSITION_GAP = FavoriteTripEnum.POSITION_GAP.getValue();
@@ -22,7 +20,7 @@ public class SparsifierService {
 
     @Transactional
     public void sparsify() {
-        List<FavoriteTrip> trips = favoriteTripRepository.findAllByOrderByPositionAsc();
+        List<FavoriteTrip> trips = favoriteTripRepository.getFavouriteTripsByPositionAsc();
 
         if (!trips.isEmpty()) {
             AtomicLong currentPosition = new AtomicLong(FavoriteTripEnum.INITIAL_POSITION.getValue());
@@ -36,4 +34,31 @@ public class SparsifierService {
         }
     }
 
+    @Transactional
+    public void sparsifyInRange(long startPosition, long endPosition) {
+        // Получаем все элементы в указанном диапазоне позиций
+        List<FavoriteTrip> tripsInRange =
+                favoriteTripRepository.findAllByPositionBetweenOrderByPositionAsc(startPosition, endPosition);
+
+        if (!tripsInRange.isEmpty()) {
+
+
+            final long newGap;
+
+            if (tripsInRange.size() > 1) {
+                newGap = (endPosition - startPosition) / (tripsInRange.size() - 1);
+            } else {
+                newGap = POSITION_GAP;
+            }
+
+            // Распределяем позиции равномерно в заданном диапазоне
+            AtomicLong currentPosition = new AtomicLong(startPosition);
+            tripsInRange.forEach(trip -> {
+                trip.setPosition(currentPosition.get());
+                currentPosition.addAndGet(newGap);
+            });
+
+            favoriteTripRepository.saveAll(tripsInRange);
+        }
+    }
 }

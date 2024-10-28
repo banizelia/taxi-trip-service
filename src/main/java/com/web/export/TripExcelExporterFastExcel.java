@@ -2,6 +2,7 @@ package com.web.export;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import com.web.mapper.TripMapper;
@@ -33,7 +34,7 @@ public class TripExcelExporterFastExcel {
             "airport_fee"};
     private static final String SHEET_PREFIX = "trips_";
     private static final int MAX_ROWS_PER_SHEET = 1_000_000;
-    private static final int BATCH_SIZE = 10_000;
+    private static final int BATCH_SIZE = 100_000;
 
     public void tripsToExcelStream(OutputStream outputStream) throws IOException {
         // Для логгирования
@@ -43,6 +44,7 @@ public class TripExcelExporterFastExcel {
         long lastSplitTime = watch.getTime();
 
         Workbook workbook = new Workbook(outputStream, "Trips Export", "1.0");
+//        workbook.setCompressionLevel(9);
         int totalPages = 0;
         int currentRow = 1;
         Worksheet currentSheet = createNewSheet(workbook, 1);
@@ -53,6 +55,10 @@ public class TripExcelExporterFastExcel {
             TripDto trip = TripMapper.INSTANCE.tripToTripDto(tripIterator.next());
 
             if (currentRow > MAX_ROWS_PER_SHEET) {
+                currentSheet.flush();
+                currentSheet.finish();
+                outputStream.flush();
+
                 currentSheet = createNewSheet(workbook, ++totalPages);
                 currentRow = 1;
             }
@@ -73,6 +79,7 @@ public class TripExcelExporterFastExcel {
         logger.info("Total export time: {} seconds", watch.getTime(TimeUnit.SECONDS));
 
         workbook.finish();
+        outputStream.flush();
     }
 
     private static Worksheet createNewSheet(Workbook workbook, int sheetNumber) throws IOException {

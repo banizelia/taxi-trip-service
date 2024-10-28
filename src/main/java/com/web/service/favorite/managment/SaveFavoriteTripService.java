@@ -8,7 +8,6 @@ import com.web.repository.FavoriteTripRepository;
 import com.web.repository.TripsRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 public class SaveFavoriteTripService {
     private static final long INITIAL_POSITION = FavoriteTripEnum.INITIAL_POSITION.getValue();
     private static final long POSITION_GAP = FavoriteTripEnum.POSITION_GAP.getValue();
-    private static final double MIN_GAP = FavoriteTripEnum.MIN_GAP.getValue();
     private static final double REBALANCE_THRESHOLD_PERCENT = FavoriteTripEnum.REBALANCE_THRESHOLD_PERCENT.getValue();
 
     private FavoriteTripRepository favoriteTripRepository;
@@ -24,25 +22,19 @@ public class SaveFavoriteTripService {
     private SparsifierService sparsifier;
 
     @Transactional
-    public synchronized void execute(Long tripId) throws BadRequestException {
+    public synchronized void execute(Long tripId){
         if (favoriteTripRepository.findByTripId(tripId).isPresent()) {
-            throw new BadRequestException("Trip already in the table");
+            throw new IllegalArgumentException("Trip already in the table");
         }
 
         if (!tripsRepository.existsById(tripId)) {
             throw new TripNotFoundException("Such trip doesn't exist");
         }
 
-        Long maxPosition = favoriteTripRepository.findMaxPosition();
-        Long totalCount = favoriteTripRepository.count();
-
-        if (needsRebalancing(maxPosition, totalCount)) {
-            sparsifier.sparsify();
-            maxPosition = favoriteTripRepository.findMaxPosition();
-        }
-
         FavoriteTrip favoriteTrip = new FavoriteTrip();
         favoriteTrip.setTripId(tripId);
+
+        long maxPosition = favoriteTripRepository.findMaxPosition();
 
         if (maxPosition == 0) {
             favoriteTrip.setPosition(INITIAL_POSITION);
@@ -54,31 +46,16 @@ public class SaveFavoriteTripService {
         favoriteTripRepository.save(favoriteTrip);
     }
 
-    private boolean needsRebalancing(long maxPosition, long totalCount) {
-        // Проверяем, достигли ли мы порога использования доступного диапазона
-        if (maxPosition >= Long.MAX_VALUE * REBALANCE_THRESHOLD_PERCENT/100) {
-            return true;
-        }
-
-        // Проверяем, не стали ли промежутки слишком маленькими
-        if (totalCount > 0) {
-            double averageGap = (double) maxPosition / totalCount;
-            return averageGap < MIN_GAP;
-        }
-
-        return false;
-    }
-
     private long calculateNextPosition(long maxPosition) {
+        if (maxPosition > Long.MAX_VALUE * REBALANCE_THRESHOLD_PERCENT / 100){
+            sparsifier.sparsify();
+        }
+
         try {
             return Math.addExact(maxPosition, POSITION_GAP);
         } catch (ArithmeticException e) {
             sparsifier.sparsify();
-            try {
-                return Math.addExact(favoriteTripRepository.findMaxPosition(), POSITION_GAP);
-            } catch (ArithmeticException ex) {
-                throw new IllegalStateException("Unable to calculate next position even after sparsification");
-            }
+            throw new IllegalStateException("Unable to calculate next position even after sparsification");
         }
     }
 }

@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +44,7 @@ public class FavoriteTripController {
         try {
             favoriteTripService.saveToFavourite(id);
             return ResponseEntity.status(HttpStatus.CREATED).body("Trip added to favorites");
-        } catch (BadRequestException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (OptimisticLockException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict occurred while saving the trip");
@@ -79,7 +78,7 @@ public class FavoriteTripController {
             return ResponseEntity.ok("Position updated successfully");
         } catch (TripNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (BadRequestException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (OptimisticLockException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict occurred while updating position");

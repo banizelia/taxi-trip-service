@@ -6,7 +6,6 @@ import com.web.service.favorite.managment.GetFavoriteTripService;
 import com.web.service.favorite.managment.SaveFavoriteTripService;
 import com.web.service.favorite.managment.DragAndDropFavoriteTripService;
 import lombok.AllArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class FavoriteTripService {
         return getFavoriteTripService.execute();
     }
 
-    public void saveToFavourite(Long tripId) throws BadRequestException {
+    public void saveToFavourite(Long tripId) {
         saveFavoriteTripService.execute(tripId);
     }
 
@@ -34,7 +33,7 @@ public class FavoriteTripService {
         deleteFavoriteTripService.execute(tripId);
     }
 
-    public void dragAndDrop(Long tripId, Long newPosition) throws BadRequestException {
+    public void dragAndDrop(Long tripId, Long newPosition) {
         dragAndDropFavoriteTripService.execute(tripId, newPosition);
     }
 }

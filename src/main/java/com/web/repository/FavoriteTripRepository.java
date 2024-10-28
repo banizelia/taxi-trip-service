@@ -12,15 +12,25 @@ import java.util.Optional;
 @Repository
 public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long> {
     @Query("SELECT t FROM Trip t JOIN FavoriteTrip ft ON t.id = ft.tripId ORDER BY ft.position")
-    List<Trip> getFavouriteTrips();
+    List<Trip> getTripsByPositionAsc();
+
+    @Query("SELECT ft FROM FavoriteTrip ft ORDER BY ft.position ASC")
+    List<FavoriteTrip> getFavouriteTripsByPositionAsc();
+
+    @Query("SELECT ft FROM FavoriteTrip ft WHERE ft.position BETWEEN :startPosition AND :endPosition ORDER BY ft.position ASC")
+    List<FavoriteTrip> findAllByPositionBetweenOrderByPositionAsc(
+            @Param("startPosition") long startPosition,
+            @Param("endPosition") long endPosition
+    );
 
     @Query("SELECT COALESCE(MAX(ft.position), 0) FROM FavoriteTrip ft")
     Long findMaxPosition();
 
-    Optional<FavoriteTrip> findByTripId(Long id);
-    
-    @Query("SELECT ft.position FROM FavoriteTrip ft WHERE ft.tripId = :tripId")
-    Optional<Long> findPositionByIndex(@Param("tripId") Long tripId);
+    @Query("SELECT MIN(ft.position) FROM FavoriteTrip ft")
+    Optional<Long> findMinPosition();
 
-    List<FavoriteTrip> findAllByOrderByPositionAsc();
+    @Query("SELECT ft.position FROM FavoriteTrip ft ORDER BY ft.position ASC OFFSET :index ROWS FETCH FIRST 1 ROWS ONLY")
+    Optional<Long> findPositionByIndex(@Param("index") Long index);
+
+    Optional<FavoriteTrip> findByTripId(Long id);
 }

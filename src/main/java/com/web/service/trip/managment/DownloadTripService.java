@@ -1,7 +1,6 @@
 package com.web.service.trip.managment;
 
 import com.web.export.TripExcelExporterFastExcel;
-import com.web.repository.TripsRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

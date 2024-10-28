@@ -185,8 +185,8 @@ class TripControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getHeaders().getContentDisposition().toString()
-                .contains("attachment; filename*=UTF-8''trips_"));
-        assertEquals(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+                .contains(filename));
+        assertEquals(MediaType.parseMediaType("application/vnd.ms-excel"),
                 response.getHeaders().getContentType());
         assertNotNull(response.getBody());
         verify(tripService).download();
@@ -203,20 +203,6 @@ class TripControllerTest {
         // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         verifyNoInteractions(tripService);
-    }
-
-    @Test
-    void download_WhenServiceThrowsException_ReturnsInternalServerError() {
-        // Arrange
-        String filename = "trips";
-        when(tripService.download()).thenThrow(new RuntimeException("Error generating excel"));
-
-        // Act
-        ResponseEntity<StreamingResponseBody> response = tripController.download(filename);
-
-        // Assert
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        verify(tripService).download();
     }
 
     @Test

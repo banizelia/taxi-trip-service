@@ -16,13 +16,8 @@ public class DeleteFavoriteTripService {
 
     @Transactional
     public void execute(Long tripId) {
-        Optional<FavoriteTrip> favoriteTripOptional = favoriteTripRepository.findByTripId(tripId);
-
-        if (favoriteTripOptional.isEmpty()) {
-            throw new TripNotFoundException("Trip not found");
-        }
-
-        FavoriteTrip favoriteTrip = favoriteTripOptional.get();
+        FavoriteTrip favoriteTrip = favoriteTripRepository.findByTripId(tripId)
+                .orElseThrow(() -> new TripNotFoundException("Trip not found"));
 
         favoriteTripRepository.delete(favoriteTrip);
     }

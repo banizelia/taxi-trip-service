@@ -15,7 +15,7 @@ public class GetFavoriteTripService {
     private FavoriteTripRepository favoriteTripRepository;
 
     public List<TripDto> execute() {
-        List<Trip> favoriteTrips = favoriteTripRepository.getFavouriteTrips();
+        List<Trip> favoriteTrips = favoriteTripRepository.getTripsByPositionAsc();
         return favoriteTrips.stream()
                 .map(TripMapper.INSTANCE::tripToTripDto)
                 .toList();

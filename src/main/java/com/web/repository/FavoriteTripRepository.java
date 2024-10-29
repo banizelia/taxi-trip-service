@@ -24,7 +24,7 @@ public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long
     );
 
     @Query("SELECT COALESCE(MAX(ft.position), 0) FROM FavoriteTrip ft")
-    Long findMaxPosition();
+    Optional<Long> findMaxPosition();
 
     @Query("SELECT MIN(ft.position) FROM FavoriteTrip ft")
     Optional<Long> findMinPosition();

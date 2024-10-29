@@ -21,12 +21,12 @@ public class SparsifierService {
 
     @Transactional
     public long sparsifyAndGetMaxPosition() {
-        long maxPosition = favoriteTripRepository.findMaxPosition();
+        long maxPosition = favoriteTripRepository.findMaxPosition().orElse(0L);
 
         if (maxPosition > Long.MAX_VALUE * REBALANCE_THRESHOLD_PERCENT / 100){
             sparsify();
 
-            maxPosition = favoriteTripRepository.findMaxPosition();
+            maxPosition = favoriteTripRepository.findMaxPosition().orElse(0L);
             if (maxPosition > Long.MAX_VALUE * REBALANCE_THRESHOLD_PERCENT / 100){
                 throw new IllegalStateException("Unable to calculate next position even after sparsification");
             }

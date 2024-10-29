@@ -65,7 +65,7 @@ class SaveFavoriteTripServiceTest {
         Long tripId = 1L;
         when(favoriteTripRepository.findByTripId(tripId)).thenReturn(Optional.empty());
         when(tripsRepository.existsById(tripId)).thenReturn(true);
-        when(favoriteTripRepository.findMaxPosition()).thenReturn(0L);
+        when(favoriteTripRepository.findMaxPosition().get()).thenReturn(0L);
 
         // Act
         saveFavoriteTripService.execute(tripId);
@@ -82,7 +82,7 @@ class SaveFavoriteTripServiceTest {
         long maxPosition = Long.MAX_VALUE - 1;
         when(favoriteTripRepository.findByTripId(tripId)).thenReturn(Optional.empty());
         when(tripsRepository.existsById(tripId)).thenReturn(true);
-        when(favoriteTripRepository.findMaxPosition()).thenReturn(maxPosition);
+        when(favoriteTripRepository.findMaxPosition().get()).thenReturn(maxPosition);
 
         doThrow(ArithmeticException.class).when(favoriteTripRepository).save(any(FavoriteTrip.class));
 

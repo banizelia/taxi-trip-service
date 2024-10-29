@@ -15,7 +15,6 @@ public class DragAndDropFavoriteTripService {
     private static final long POSITION_GAP = FavoriteTripEnum.POSITION_GAP.getValue();
     private static final long MIN_GAP = FavoriteTripEnum.MIN_GAP.getValue();
     private static final long INITIAL_POSITION = FavoriteTripEnum.INITIAL_POSITION.getValue();
-    private static final long REBALANCE_THRESHOLD_PERCENT = FavoriteTripEnum.REBALANCE_THRESHOLD_PERCENT.getValue();
 
     private FavoriteTripRepository favoriteTripRepository;
     private SparsifierService sparsifier;
@@ -27,37 +26,34 @@ public class DragAndDropFavoriteTripService {
 
         long totalCount = favoriteTripRepository.count();
 
-        if (targetPosition < 1 || targetPosition > totalCount) {
+        if (targetPosition < 1 ) {
             throw new IllegalArgumentException("Target position is out of bounds");
         }
 
-        Long maxPosition = favoriteTripRepository.findMaxPosition();
-        boolean wasFullRebalance = false;
-
-        if (maxPosition >= Long.MAX_VALUE * REBALANCE_THRESHOLD_PERCENT / 100) {
-            sparsifier.sparsify();
-            wasFullRebalance = true;
+        if (targetPosition > totalCount){
+            favoriteTrip.setPosition(sparsifier.sparsifyAndGetMaxPosition() + POSITION_GAP);
+            favoriteTripRepository.save(favoriteTrip);
+            return;
         }
 
-        favoriteTrip.setPosition(calculateNewPosition(targetPosition, wasFullRebalance));
+        favoriteTrip.setPosition(calculateNewPosition(targetPosition));
 
         favoriteTripRepository.save(favoriteTrip);
     }
 
-    private long calculateNewPosition(long targetPosition, boolean wasFullRebalance){
+    private long calculateNewPosition(long targetPosition){
         if (targetPosition == 1) {
-            return calculateFirstPosition(wasFullRebalance);
+            return calculateFirstPosition();
         } else {
-            return calculateMiddlePosition(targetPosition, wasFullRebalance);
+            return calculateMiddlePosition(targetPosition);
         }
     }
 
-    private long calculateFirstPosition(boolean wasFullRebalance) {
+    private long calculateFirstPosition() {
 
         long firstPosition = favoriteTripRepository.findMinPosition().orElse(INITIAL_POSITION);
 
-        if (!wasFullRebalance && firstPosition < MIN_GAP) {
-            // Разрежаем только начальную часть списка
+        if (firstPosition < MIN_GAP) {
             sparsifier.sparsifyInRange(0, firstPosition + POSITION_GAP * 2);
             firstPosition = favoriteTripRepository.findMinPosition().orElse(INITIAL_POSITION);
         }
@@ -65,13 +61,13 @@ public class DragAndDropFavoriteTripService {
         return firstPosition / 2;
     }
 
-    private long calculateMiddlePosition(long targetPosition, boolean wasFullRebalance) {
+    private long calculateMiddlePosition(long targetPosition) {
 
         long prevPosition = favoriteTripRepository.findPositionByIndex(targetPosition - 2).orElse(0L);
         long nextPosition = favoriteTripRepository.findPositionByIndex(targetPosition - 1)
                 .orElse(prevPosition + POSITION_GAP);
 
-        if (!wasFullRebalance && (nextPosition - prevPosition) < MIN_GAP) {
+        if ((nextPosition - prevPosition) < MIN_GAP) {
             long rangeStart = Math.max(0, prevPosition - POSITION_GAP);
             long rangeEnd = nextPosition + POSITION_GAP * 2;
 
@@ -82,9 +78,5 @@ public class DragAndDropFavoriteTripService {
         }
 
         return prevPosition + (nextPosition - prevPosition) / 2;
-    }
-
-    private boolean needsRebalancing(long gap) {
-        return gap < MIN_GAP || gap >= Long.MAX_VALUE * REBALANCE_THRESHOLD_PERCENT / 100;
     }
 }

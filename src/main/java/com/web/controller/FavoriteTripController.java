@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -44,12 +43,10 @@ public class FavoriteTripController {
         try {
             favoriteTripService.saveToFavourite(id);
             return ResponseEntity.status(HttpStatus.CREATED).body("Trip added to favorites");
-        } catch (IllegalArgumentException e) {
+        } catch (TripNotFoundException | IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (OptimisticLockException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict occurred while saving the trip");
-        } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Data integrity violation occurred");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while saving to favorite trips: " + e.getMessage());
         }
@@ -61,7 +58,7 @@ public class FavoriteTripController {
         try {
             favoriteTripService.deleteFromFavourite(id);
             return ResponseEntity.ok("Trip deleted successfully");
-        } catch (TripNotFoundException e) {
+        } catch (TripNotFoundException | IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error occurred while deleting from favorite trips: " + e.getMessage());

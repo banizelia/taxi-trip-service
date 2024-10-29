@@ -15,8 +15,25 @@ import java.util.concurrent.atomic.AtomicLong;
 @AllArgsConstructor
 public class SparsifierService {
     private static final long POSITION_GAP = FavoriteTripEnum.POSITION_GAP.getValue();
+    private static final double REBALANCE_THRESHOLD_PERCENT = FavoriteTripEnum.REBALANCE_THRESHOLD_PERCENT.getValue();
 
     private FavoriteTripRepository favoriteTripRepository;
+
+    @Transactional
+    public long sparsifyAndGetMaxPosition() {
+        long maxPosition = favoriteTripRepository.findMaxPosition();
+
+        if (maxPosition > Long.MAX_VALUE * REBALANCE_THRESHOLD_PERCENT / 100){
+            sparsify();
+
+            maxPosition = favoriteTripRepository.findMaxPosition();
+            if (maxPosition > Long.MAX_VALUE * REBALANCE_THRESHOLD_PERCENT / 100){
+                throw new IllegalStateException("Unable to calculate next position even after sparsification");
+            }
+        }
+
+        return maxPosition;
+    }
 
     @Transactional
     public void sparsify() {
@@ -36,12 +53,9 @@ public class SparsifierService {
 
     @Transactional
     public void sparsifyInRange(long startPosition, long endPosition) {
-        // Получаем все элементы в указанном диапазоне позиций
-        List<FavoriteTrip> tripsInRange =
-                favoriteTripRepository.findAllByPositionBetweenOrderByPositionAsc(startPosition, endPosition);
+        List<FavoriteTrip> tripsInRange = favoriteTripRepository.findAllByPositionBetweenOrderByPositionAsc(startPosition, endPosition);
 
         if (!tripsInRange.isEmpty()) {
-
 
             final long newGap;
 

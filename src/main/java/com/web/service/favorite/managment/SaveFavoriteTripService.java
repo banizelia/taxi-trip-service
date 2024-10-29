@@ -34,28 +34,14 @@ public class SaveFavoriteTripService {
         FavoriteTrip favoriteTrip = new FavoriteTrip();
         favoriteTrip.setTripId(tripId);
 
-        long maxPosition = favoriteTripRepository.findMaxPosition();
+        long maxPosition = sparsifier.sparsifyAndGetMaxPosition();
 
         if (maxPosition == 0) {
             favoriteTrip.setPosition(INITIAL_POSITION);
         } else {
-            long newPosition = calculateNextPosition(maxPosition);
-            favoriteTrip.setPosition(newPosition);
+            favoriteTrip.setPosition(maxPosition+INITIAL_POSITION);
         }
 
         favoriteTripRepository.save(favoriteTrip);
-    }
-
-    private long calculateNextPosition(long maxPosition) {
-        if (maxPosition > Long.MAX_VALUE * REBALANCE_THRESHOLD_PERCENT / 100){
-            sparsifier.sparsify();
-        }
-
-        try {
-            return Math.addExact(maxPosition, POSITION_GAP);
-        } catch (ArithmeticException e) {
-            sparsifier.sparsify();
-            throw new IllegalStateException("Unable to calculate next position even after sparsification");
-        }
     }
 }

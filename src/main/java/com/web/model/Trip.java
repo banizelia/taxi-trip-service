@@ -92,14 +92,5 @@ public class Trip {
     private Double airportFee;
 
     @Column(name = "pickup_date")
-//    @Column(name = "pickup_date", columnDefinition = "DATE GENERATED ALWAYS AS (date(pickup_datetime)) STORED")
     private LocalDate pickupDate;
-
-//    @PrePersist
-//    @PreUpdate
-//    public void setPickupDate() {
-//        if (pickupDatetime != null) {
-//            this.pickupDate = pickupDatetime.toLocalDate();
-//        }
-//    }
 }

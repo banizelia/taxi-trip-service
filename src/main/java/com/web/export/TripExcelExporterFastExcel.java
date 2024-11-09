@@ -2,7 +2,6 @@ package com.web.export;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import com.web.mapper.TripMapper;
@@ -10,21 +9,20 @@ import com.web.model.Trip;
 import com.web.model.dto.TripDto;
 import com.web.repository.TripsRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 @Transactional(readOnly = true)
 public class TripExcelExporterFastExcel {
     private TripsRepository tripsRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(TripExcelExporterFastExcel.class);
     private static final String[] HEADERS = {"id", "vendor_id", "pickup_datetime",
             "dropoff_datetime", "passenger_count", "trip_distance",
             "rate_code_id", "store_and_fwd_flag", "pickup_location_id",
@@ -44,7 +42,6 @@ public class TripExcelExporterFastExcel {
         long lastSplitTime = watch.getTime();
 
         Workbook workbook = new Workbook(outputStream, "Trips Export", "1.0");
-//        workbook.setCompressionLevel(9);
         int totalPages = 0;
         int currentRow = 1;
         Worksheet currentSheet = createNewSheet(workbook, 1);
@@ -55,7 +52,7 @@ public class TripExcelExporterFastExcel {
             TripDto trip = TripMapper.INSTANCE.tripToTripDto(tripIterator.next());
 
             if (currentRow > MAX_ROWS_PER_SHEET) {
-                currentSheet.flush();
+//                 стоит ли добавлять (currentSheet.flush())
                 currentSheet.finish();
                 outputStream.flush();
 
@@ -70,13 +67,13 @@ public class TripExcelExporterFastExcel {
                 Runtime rt = Runtime.getRuntime();
                 long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
                 long currentTime = watch.getTime();
-                logger.info("batch # {} comleted in {} seconds, memory usage: {}", batchCounter++,(currentTime - lastSplitTime) / 1000.0 , usedMB);
+                log.info("batch # {} comleted in {} seconds, memory usage: {}", batchCounter++,(currentTime - lastSplitTime) / 1000.0 , usedMB);
                 lastSplitTime = currentTime;
             }
         }
 
         watch.stop();
-        logger.info("Total export time: {} seconds", watch.getTime(TimeUnit.SECONDS));
+        log.info("Total export time: {} seconds", watch.getTime(TimeUnit.SECONDS));
 
         workbook.finish();
         outputStream.flush();

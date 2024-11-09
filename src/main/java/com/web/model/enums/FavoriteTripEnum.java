@@ -1,10 +1,13 @@
 package com.web.model.enums;
 
 public enum FavoriteTripEnum {
-    REBALANCE_THRESHOLD_PERCENT(80L), // in %
-    POSITION_GAP(1_000L),
-    MIN_GAP(100L),
-    INITIAL_POSITION(1_000L);
+    // Если список достигнет % от MAX_VALUE, произойдет ребалансировка
+    REBALANCE_THRESHOLD_PERCENT(80L),
+
+    POSITION_GAP(10_000_000L),
+    INITIAL_POSITION(10_000_000L),
+
+    MIN_GAP(100L);
 
     private final long value;
 

@@ -7,19 +7,22 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import com.web.model.Trip;
 import com.web.repository.TripsRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 /**
  * Utility class for exporting trip data to Excel file.
+ * @deprecated (switched to FastExcel)
  */
-@Deprecated
+@Slf4j
+@RequiredArgsConstructor
+@Deprecated(forRemoval = true)
 public class TripExcelExporterPoi {
     private static final String[] HEADERS = {"id",
             "vendor_id",
@@ -42,7 +45,6 @@ public class TripExcelExporterPoi {
             "congestion_surcharge",
             "airport_fee",
             "pickup_date" };
-    private static final Logger logger = LoggerFactory.getLogger(TripExcelExporterFastExcel.class);
     private static final String SHEET = "trips_";
     private static final int MAX_ROWS_PER_SHEET = 1_000_000;
     private static final int BATCH_SIZE = 100_000;
@@ -87,14 +89,14 @@ public class TripExcelExporterPoi {
                 long currentTime = watch.getTime();
                 long splitTime = currentTime - lastSplitTime;
                 lastSplitTime = currentTime;
-                logger.info("Completed page # {} in {} seconds", pageable.getPageNumber(), splitTime / 1000.0);
+                log.info("Completed page # {} in {} seconds", pageable.getPageNumber(), splitTime / 1000.0);
 
                 pageable = pageable.next();
                 currentBatch = tripsRepository.findAll(pageable).getContent();
             }
 
             watch.stop();
-            logger.info("Total time taken: {} milliseconds", watch.getTime(TimeUnit.MILLISECONDS));
+            log.info("Total time taken: {} milliseconds", watch.getTime(TimeUnit.MILLISECONDS));
 
             workbook.write(out);
 

@@ -2,14 +2,11 @@ package com.web.controller;
 
 import com.web.model.dto.TripDto;
 import com.web.service.trip.TripService;
-import com.web.service.trip.managment.DownloadTripService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
@@ -25,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -40,8 +35,6 @@ import java.time.format.DateTimeFormatter;
 @RestController
 @RequestMapping("/api/v1/trips")
 public class TripController {
-    private static final Logger logger = LoggerFactory.getLogger(TripController.class);
-
     private TripService tripService;
     private PagedResourcesAssembler<TripDto> pagedResourcesAssembler;
 

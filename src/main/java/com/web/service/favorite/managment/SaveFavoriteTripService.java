@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class SaveFavoriteTripService {
     private static final long INITIAL_POSITION = FavoriteTripEnum.INITIAL_POSITION.getValue();
-    private static final long POSITION_GAP = FavoriteTripEnum.POSITION_GAP.getValue();
-    private static final double REBALANCE_THRESHOLD_PERCENT = FavoriteTripEnum.REBALANCE_THRESHOLD_PERCENT.getValue();
 
     private FavoriteTripRepository favoriteTripRepository;
     private TripsRepository tripsRepository;
@@ -34,7 +32,7 @@ public class SaveFavoriteTripService {
         FavoriteTrip favoriteTrip = new FavoriteTrip();
         favoriteTrip.setTripId(tripId);
 
-        long maxPosition = sparsifier.sparsifyAndGetMaxPosition();
+        long maxPosition = sparsifier.getNextAvailablePosition();
 
         if (maxPosition == 0) {
             favoriteTrip.setPosition(INITIAL_POSITION);

@@ -112,4 +112,4 @@ INSERT INTO public.favorite_trips (trip_id, position, version) VALUES
 (96, 96, 0),
 (97, 97, 0),
 (98, 98, 0),
-(99, 99, 0),
+(99, 99, 0);

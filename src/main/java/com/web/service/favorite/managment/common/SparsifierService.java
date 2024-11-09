@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-
-
 @Service
 @AllArgsConstructor
 public class SparsifierService {
@@ -20,7 +18,7 @@ public class SparsifierService {
     private FavoriteTripRepository favoriteTripRepository;
 
     @Transactional
-    public long sparsifyAndGetMaxPosition() {
+    public long getNextAvailablePosition() {
         long maxPosition = favoriteTripRepository.findMaxPosition().orElse(0L);
 
         if (maxPosition > Long.MAX_VALUE * REBALANCE_THRESHOLD_PERCENT / 100){
@@ -32,7 +30,7 @@ public class SparsifierService {
             }
         }
 
-        return maxPosition;
+        return maxPosition + POSITION_GAP;
     }
 
     @Transactional
@@ -48,31 +46,6 @@ public class SparsifierService {
             });
 
             favoriteTripRepository.saveAll(trips);
-        }
-    }
-
-    @Transactional
-    public void sparsifyInRange(long startPosition, long endPosition) {
-        List<FavoriteTrip> tripsInRange = favoriteTripRepository.findAllByPositionBetweenOrderByPositionAsc(startPosition, endPosition);
-
-        if (!tripsInRange.isEmpty()) {
-
-            final long newGap;
-
-            if (tripsInRange.size() > 1) {
-                newGap = (endPosition - startPosition) / (tripsInRange.size() - 1);
-            } else {
-                newGap = POSITION_GAP;
-            }
-
-            // Распределяем позиции равномерно в заданном диапазоне
-            AtomicLong currentPosition = new AtomicLong(startPosition);
-            tripsInRange.forEach(trip -> {
-                trip.setPosition(currentPosition.get());
-                currentPosition.addAndGet(newGap);
-            });
-
-            favoriteTripRepository.saveAll(tripsInRange);
         }
     }
 }

@@ -21,23 +21,23 @@ public class DragAndDropFavoriteTripService {
 
     @Transactional
     public void execute(Long tripId, Long targetPosition) {
-        FavoriteTrip favoriteTrip = favoriteTripRepository.findByTripId(tripId)
-                .orElseThrow(() -> new TripNotFoundException("Trip not found"));
-
-        long totalCount = favoriteTripRepository.count();
-
         if (targetPosition < 1 ) {
             throw new IllegalArgumentException("Target position is out of bounds");
         }
 
+        FavoriteTrip favoriteTrip = favoriteTripRepository.findByTripId(tripId)
+                .orElseThrow(() -> new TripNotFoundException("Trip not found"));
+
+        long totalCount = favoriteTripRepository.count();
+        long newPosition;
+
         if (targetPosition > totalCount){
-            favoriteTrip.setPosition(sparsifier.sparsifyAndGetMaxPosition() + POSITION_GAP);
-            favoriteTripRepository.save(favoriteTrip);
-            return;
+            newPosition = sparsifier.getNextAvailablePosition();
+        } else {
+            newPosition = calculateNewPosition(targetPosition);
         }
 
-        favoriteTrip.setPosition(calculateNewPosition(targetPosition));
-
+        favoriteTrip.setPosition(newPosition);
         favoriteTripRepository.save(favoriteTrip);
     }
 
@@ -50,11 +50,10 @@ public class DragAndDropFavoriteTripService {
     }
 
     private long calculateFirstPosition() {
-
         long firstPosition = favoriteTripRepository.findMinPosition().orElse(INITIAL_POSITION);
 
         if (firstPosition < MIN_GAP) {
-            sparsifier.sparsifyInRange(0, firstPosition + POSITION_GAP * 2);
+            sparsifier.sparsify();
             firstPosition = favoriteTripRepository.findMinPosition().orElse(INITIAL_POSITION);
         }
 
@@ -62,16 +61,12 @@ public class DragAndDropFavoriteTripService {
     }
 
     private long calculateMiddlePosition(long targetPosition) {
-
         long prevPosition = favoriteTripRepository.findPositionByIndex(targetPosition - 2).orElse(0L);
         long nextPosition = favoriteTripRepository.findPositionByIndex(targetPosition - 1)
                 .orElse(prevPosition + POSITION_GAP);
 
         if ((nextPosition - prevPosition) < MIN_GAP) {
-            long rangeStart = Math.max(0, prevPosition - POSITION_GAP);
-            long rangeEnd = nextPosition + POSITION_GAP * 2;
-
-            sparsifier.sparsifyInRange(rangeStart, rangeEnd);
+            sparsifier.sparsify();
 
             prevPosition = favoriteTripRepository.findPositionByIndex(targetPosition - 2).orElse(0L);
             nextPosition = favoriteTripRepository.findPositionByIndex(targetPosition - 1).orElse(prevPosition + POSITION_GAP);

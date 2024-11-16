@@ -48,7 +48,7 @@
 4. Создайте базу данных PostgreSQL:
 
    ```sql
-   CREATE DATABASE taxi_trip_service;
+   CREATE DATABASE taxi-trip-service-db;
    ```
 
 5. Настройте параметры подключения к базе данных в файле `application.properties` (или `application.yml`):

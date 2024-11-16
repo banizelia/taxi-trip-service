@@ -67,9 +67,7 @@ public class TripController {
 
         try {
             Page<TripDto> trips = tripService.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, page, size, sort, direction);
-
             PagedModel<EntityModel<TripDto>> pagedModel = pagedResourcesAssembler.toModel(trips);
-
             return ResponseEntity.ok(pagedModel);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());

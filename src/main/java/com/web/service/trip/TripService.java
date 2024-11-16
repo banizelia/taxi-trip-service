@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 /**
  * Service for managing trip data.
  */
-@AllArgsConstructor
 @Service
+@AllArgsConstructor
 public class TripService {
     private FilterTripService filterTripService;
     private DownloadTripService downloadTripService;

@@ -11,7 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,7 +30,6 @@ public class FilterTripService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<Trip> trips = tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
-
         return trips.map(TripMapper.INSTANCE::tripToTripDto);
     }
 

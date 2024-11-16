@@ -6,34 +6,55 @@ import com.web.service.favorite.FavoriteTripService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.persistence.OptimisticLockException;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 /**
  * REST controller for managing favorite trips.
  * This controller handles operations related to favorite trips such as
  * retrieving, adding, removing, and reordering favorite trips.
  */
+@Slf4j
 @AllArgsConstructor
 @Validated
 @RestController
 @RequestMapping("/api/v1/favorite-trips")
 public class FavoriteTripController {
     private FavoriteTripService favoriteTripService;
+    private PagedResourcesAssembler<TripDto> pagedResourcesAssembler;
 
     @Operation(summary = "Get all favorite trips", description = "Returns a list of all trips added to favorites.")
     @GetMapping()
-    public ResponseEntity<List<TripDto>> getFavouriteTrips() {
+    public ResponseEntity<PagedModel<EntityModel<TripDto>>> getFavouriteTrips(
+            @Parameter(description = "Page number")
+            @RequestParam(defaultValue = "0") @Min(0) Integer page,
+
+            @Parameter(description = "Page size")
+            @RequestParam(defaultValue = "20") @Min(1) @Max(200) Integer size,
+
+            @Parameter(description = "Field to sort by")
+            @RequestParam(required = false, defaultValue = "position") String sort,
+
+            @Parameter(description = "Sorting direction (asc or desc)")
+            @RequestParam(required = false, defaultValue = "asc") String direction) {
         try {
-            List<TripDto> favoriteTrips = favoriteTripService.getFavouriteTrips();
-            return ResponseEntity.ok(favoriteTrips);
+            Page<TripDto> trips = favoriteTripService.getFavouriteTripsPage(page, size, sort, direction);
+            PagedModel<EntityModel<TripDto>> pagedModel = pagedResourcesAssembler.toModel(trips);
+            return ResponseEntity.ok(pagedModel);
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            log.error("Error getting favorite trips", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
         }
     }
 

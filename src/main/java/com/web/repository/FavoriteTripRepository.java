@@ -2,6 +2,8 @@ package com.web.repository;
 
 import com.web.model.FavoriteTrip;
 import com.web.model.Trip;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +13,10 @@ import java.util.Optional;
 
 @Repository
 public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long> {
+    @Query("SELECT t FROM Trip t JOIN FavoriteTrip ft ON t.id = ft.tripId")
+    Page<Trip> findAllWithPagination(Pageable pageable);
+
+    @Deprecated(forRemoval = true)
     @Query("SELECT t FROM Trip t JOIN FavoriteTrip ft ON t.id = ft.tripId ORDER BY ft.position")
     List<Trip> getTripsByPositionAsc();
 

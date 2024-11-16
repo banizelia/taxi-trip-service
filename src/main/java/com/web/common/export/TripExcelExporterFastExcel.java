@@ -2,13 +2,12 @@ package com.web.common.export;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-
 import com.web.trip.mapper.TripMapper;
 import com.web.trip.model.Trip;
 import com.web.trip.model.TripDto;
@@ -91,7 +90,8 @@ public class TripExcelExporterFastExcel {
                 Runtime rt = Runtime.getRuntime();
                 long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
                 long currentTime = watch.getTime();
-                log.info("batch # {} comleted in {} seconds, memory usage: {}", batchCounter++,(currentTime - lastSplitTime) / 1000.0 , usedMB);
+                log.info("batch # {} completed in {} seconds, memory usage: {}", batchCounter++,
+                        (currentTime - lastSplitTime) / 1000.0, usedMB);
                 lastSplitTime = currentTime;
             }
         }
@@ -110,24 +110,23 @@ public class TripExcelExporterFastExcel {
     }
 
     private void writeHeaders(Worksheet sheet) {
-        for (int i = 0; i < dtoFields.size(); i++) {
-            sheet.value(0, i, dtoFields.get(i).getName());
+        for (int i = 0; i < fieldExtractors.size(); i++) {
+            sheet.value(0, i, fieldExtractors.get(i).getName());
         }
     }
 
     private void writeRow(Worksheet sheet, int rowIdx, TripDto trip) {
-        try {
-            for (int i = 0; i < dtoFields.size(); i++) {
-                Field field = dtoFields.get(i);
-                field.setAccessible(true);
-                Object value = field.get(trip);
-                if (value != null) {
+        for (int i = 0; i < fieldExtractors.size(); i++) {
+            Object value = fieldExtractors.get(i).getExtractor().apply(trip);
+            if (value != null) {
+                if (value instanceof LocalDateTime) {
+                    sheet.value(rowIdx, i, (LocalDateTime) value);
+                } else if (value instanceof Number) {
+                    sheet.value(rowIdx, i, ((Number) value).doubleValue());
+                } else {
                     sheet.value(rowIdx, i, value.toString());
                 }
             }
-        } catch (IllegalAccessException e) {
-            log.error("Error writing row {}: {}", rowIdx, e.getMessage());
-            throw new RuntimeException("Failed to write row to Excel", e);
         }
     }
 

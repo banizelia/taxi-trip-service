@@ -37,7 +37,7 @@ public class SparsifierService {
 
     @Transactional
     public void sparsify() {
-        List<FavoriteTrip> trips = favoriteTripRepository.getFavouriteTripsByPositionAsc();
+        List<FavoriteTrip> trips = favoriteTripRepository.findAllByOrderByPositionAsc();
 
         if (!trips.isEmpty()) {
             AtomicLong currentPosition = new AtomicLong(INITIAL_POSITION);

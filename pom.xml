@@ -128,7 +128,7 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>${flyway.version}</version>
                 <configuration>
-                    <url>jdbc:postgresql://localhost:5432/taxi-trip-service-db</url>
+                    <url>jdbc:postgresql://db:5432/taxi-trip-service-db</url>
                     <user>postgres</user>
                     <password>12345678</password>
                 </configuration>

@@ -16,10 +16,7 @@ public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long
     @Query("SELECT t FROM Trip t JOIN FavoriteTrip ft ON t.id = ft.tripId")
     Page<Trip> findAllWithPagination(Pageable pageable);
 
-    @Query("SELECT ft FROM FavoriteTrip ft ORDER BY ft.position ASC")
-    List<FavoriteTrip> getFavouriteTripsByPositionAsc();
-
-    @Query("SELECT COALESCE(MAX(ft.position), 0) FROM FavoriteTrip ft")
+    @Query("SELECT MAX(ft.position) FROM FavoriteTrip ft")
     Optional<Long> findMaxPosition();
 
     @Query("SELECT MIN(ft.position) FROM FavoriteTrip ft")
@@ -27,6 +24,8 @@ public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long
 
     @Query("SELECT ft.position FROM FavoriteTrip ft ORDER BY ft.position ASC OFFSET :index ROWS FETCH FIRST 1 ROWS ONLY")
     Optional<Long> findPositionByIndex(@Param("index") Long index);
+
+    List<FavoriteTrip> findAllByOrderByPositionAsc();
 
     Optional<FavoriteTrip> findByTripId(Long id);
 }

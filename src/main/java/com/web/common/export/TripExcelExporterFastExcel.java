@@ -71,7 +71,7 @@ public class TripExcelExporterFastExcel {
         int currentRow = 1;
         Worksheet currentSheet = createNewSheet(workbook, 1);
 
-        Iterator<Trip> tripIterator = tripsRepository.findAllStream(batchSize).iterator();
+        Iterator<Trip> tripIterator = tripsRepository.findAllStream().iterator();
 
         while (tripIterator.hasNext()) {
             TripDto trip = TripMapper.INSTANCE.tripToTripDto(tripIterator.next());
@@ -119,12 +119,13 @@ public class TripExcelExporterFastExcel {
         for (int i = 0; i < fieldExtractors.size(); i++) {
             Object value = fieldExtractors.get(i).getExtractor().apply(trip);
             if (value != null) {
-                if (value instanceof LocalDateTime) {
-                    sheet.value(rowIdx, i, (LocalDateTime) value);
-                } else if (value instanceof Number) {
-                    sheet.value(rowIdx, i, ((Number) value).doubleValue());
-                } else {
-                    sheet.value(rowIdx, i, value.toString());
+                switch (value) {
+                    case LocalDateTime localDateTime -> sheet.value(rowIdx, i, localDateTime);
+
+                    case Number number -> sheet.value(rowIdx, i, number.doubleValue());
+
+                    default -> sheet.value(rowIdx, i, value.toString());
+
                 }
             }
         }

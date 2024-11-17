@@ -1,7 +1,5 @@
 package com.web.trip.model;
 import lombok.Data;
-
-
 import java.time.LocalDateTime;
 
 @Data

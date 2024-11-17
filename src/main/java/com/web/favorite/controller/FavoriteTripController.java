@@ -1,12 +1,10 @@
 package com.web.favorite.controller;
 
-import com.web.common.exception.TripNotFoundException;
 import com.web.favorite.service.*;
-import com.web.favorite.service.dragAndDrop.DragAndDropFavoriteTripService;
+import com.web.favorite.service.DragAndDropFavoriteTripService;
 import com.web.trip.model.TripDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
@@ -34,7 +32,7 @@ public class FavoriteTripController {
     private SaveFavoriteTripService saveFavoriteTripService;
     private DeleteFavoriteTripService deleteFavoriteTripService;
     private DragAndDropFavoriteTripService dragAndDropFavoriteTripService;
-    private GetFavoriteTripPageService getFavoriteTripPageService;
+    private GetFavoriteTripService getFavoriteTripService;
     private PagedResourcesAssembler<TripDto> pagedResourcesAssembler;
 
     @Operation(summary = "Get all favorite trips", description = "Returns a list of all trips added to favorites.")
@@ -51,61 +49,43 @@ public class FavoriteTripController {
 
             @Parameter(description = "Sorting direction (asc or desc)")
             @RequestParam(required = false, defaultValue = "asc") String direction) {
-        try {
-            Page<TripDto> trips = getFavoriteTripPageService.execute(page, size, sort, direction);
-            PagedModel<EntityModel<TripDto>> pagedModel = pagedResourcesAssembler.toModel(trips);
-            return ResponseEntity.ok(pagedModel);
-        } catch (Exception e){
-            log.error("Error getting favorite trips", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
-        }
+
+        Page<TripDto> trips = getFavoriteTripService.execute(page, size, sort, direction);
+        PagedModel<EntityModel<TripDto>> pagedModel = pagedResourcesAssembler.toModel(trips);
+        return ResponseEntity.ok(pagedModel);
     }
 
     @Operation(summary = "Add a trip to favorites", description = "Adds a trip with the specified ID to favorites.")
     @PutMapping()
-    public ResponseEntity<String> saveToFavourite(@Parameter(description = "Trip ID") @RequestParam("tripId") @Min(1) Long id) {
-        try {
-            saveFavoriteTripService.execute(id);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Trip added to favorites");
-        } catch (TripNotFoundException | IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (OptimisticLockException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict occurred while saving the trip");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while saving to favorite trips: " + e.getMessage());
-        }
+    public ResponseEntity<String> saveToFavourite(
+            @Parameter(description = "Trip ID")
+            @RequestParam("tripId") @Min(1) Long id) {
+
+        saveFavoriteTripService.execute(id);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Trip added to favorites");
     }
 
     @Operation(summary = "Remove a trip from favorites", description = "Removes a trip with the specified ID from favorites.")
     @DeleteMapping()
-    public ResponseEntity<String> deleteFromFavourite(@Parameter(description = "Trip ID") @RequestParam("tripId") @Min(1) Long id) {
-        try {
-            deleteFavoriteTripService.execute(id);
-            return ResponseEntity.ok("Trip deleted successfully");
-        } catch (TripNotFoundException | IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error occurred while deleting from favorite trips: " + e.getMessage());
-        }
+    public ResponseEntity<String> deleteFromFavourite(
+            @Parameter(description = "Trip ID")
+            @RequestParam("tripId") @Min(1) Long id) {
+
+        deleteFavoriteTripService.execute(id);
+        return ResponseEntity.ok("Trip deleted successfully");
     }
 
     @Operation(summary = "Change the position of a trip in the favorites list", description = "Allows moving a trip to a new position in the favorites list.")
     @PutMapping("/drag-and-drop")
     public ResponseEntity<String> dragAndDrop(
-            @Parameter(description = "Trip ID") @RequestParam(value = "tripId") @Min(1) Long tripId,
-            @Parameter(description = "New position") @RequestParam(value = "newPosition") @Min(1) Long newPosition) {
-        try {
-            dragAndDropFavoriteTripService.execute(tripId, newPosition);
-            return ResponseEntity.ok("Position updated successfully");
-        } catch (TripNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (OptimisticLockException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict occurred while updating position");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while updating position: " + e.getMessage());
-        }
+            @Parameter(description = "Trip ID")
+            @RequestParam(value = "tripId") @Min(1) Long tripId,
+
+            @Parameter(description = "New position")
+            @RequestParam(value = "newPosition") @Min(1) Long newPosition) {
+
+        dragAndDropFavoriteTripService.execute(tripId, newPosition);
+        return ResponseEntity.ok("Position updated successfully");
+
     }
 }

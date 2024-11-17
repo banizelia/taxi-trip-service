@@ -13,7 +13,6 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -67,20 +65,18 @@ public class TripController {
             @Parameter(description = "Sorting direction (asc or desc)")
             @RequestParam(required = false, defaultValue = "asc") String direction) {
 
-        try {
-            Page<TripDto> trips = filterTripService.execute(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, page, size, sort, direction);
-            PagedModel<EntityModel<TripDto>> pagedModel = pagedResourcesAssembler.toModel(trips);
-            return ResponseEntity.ok(pagedModel);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
+        Page<TripDto> trips = filterTripService.execute(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, page, size, sort, direction);
+        PagedModel<EntityModel<TripDto>> pagedModel = pagedResourcesAssembler.toModel(trips);
+        return ResponseEntity.ok(pagedModel);
+
     }
 
     @Operation(summary = "Export trips in Excel format")
     @GetMapping("/download")
-    public ResponseEntity<StreamingResponseBody> download(@Parameter(description = "Filename") @RequestParam(required = false, defaultValue = "trips") String filename) {
+    public ResponseEntity<StreamingResponseBody> download(
+            @Parameter(description = "Filename")
+            @RequestParam(required = false, defaultValue = "trips") String filename) {
+
         if (!filename.matches("[a-zA-Z0-9_-]+")) {
             return ResponseEntity.badRequest().build();
         }

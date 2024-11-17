@@ -1,10 +1,15 @@
 package com.web.trip.service;
 
+import com.web.common.exception.filter.InvalidDateRangeException;
+import com.web.common.exception.filter.InvalidSortDirectionException;
+import com.web.common.exception.filter.InvalidSortFieldException;
+import com.web.common.exception.filter.InvalidWindSpeedRangeException;
 import com.web.trip.mapper.TripMapper;
 import com.web.trip.model.Trip;
 import com.web.trip.model.TripDto;
-import com.web.common.ColumnAnnotatedFields;
+import com.web.common.export.ColumnAnnotatedFields;
 import com.web.trip.repository.TripsRepository;
+import com.web.weather.model.WeatherDto;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,23 +42,23 @@ public class FilterTripService {
                                       Double minWindSpeed, Double maxWindSpeed,
                                       String direction, String sortBy) {
         if (endDateTime.isBefore(startDateTime)){
-            throw new IllegalArgumentException("endDateTime is before startDateTime, startDateTime = " + startDateTime + " endDateTime = " + endDateTime);
+            throw new InvalidDateRangeException(startDateTime, endDateTime);
         }
 
         if (maxWindSpeed <= minWindSpeed){
-            throw new IllegalArgumentException("maxWindSpeed is smaller or equal to minWindSpeed, maxWindSpeed = " + maxWindSpeed + " minWindSpeed = " + minWindSpeed);
+            throw new InvalidWindSpeedRangeException(maxWindSpeed, minWindSpeed);
         }
 
         if (!direction.equalsIgnoreCase("asc") && !direction.equalsIgnoreCase("desc")){
-            throw new IllegalArgumentException("Invalid direction : " + direction);
+            throw new InvalidSortDirectionException(direction);
         }
 
-        Set<String> weatherAndTripAllowedField = new HashSet<>();
-        weatherAndTripAllowedField.addAll(ColumnAnnotatedFields.getTripFields());
-        weatherAndTripAllowedField.addAll(ColumnAnnotatedFields.getWeatherFields());
+        Set<String> allowedField = new HashSet<>();
+        allowedField.addAll(ColumnAnnotatedFields.getAnnotatedFields(TripDto.class));
+        allowedField.addAll(ColumnAnnotatedFields.getAnnotatedFields(WeatherDto.class));
 
-        if (!weatherAndTripAllowedField.contains(sortBy)) {
-            throw new IllegalArgumentException("Invalid sort field: " + sortBy);
+        if (!allowedField.contains(sortBy)) {
+            throw new InvalidSortFieldException(sortBy);
         }
     }
 }

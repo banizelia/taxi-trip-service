@@ -1,10 +1,12 @@
-package com.web.favorite.service.dragAndDrop;
+package com.web.favorite.service;
 
-import com.web.common.FavoriteTripConf;
+import com.web.common.config.FavoriteTripListConf;
+import com.web.common.exception.position.PositionOverflowException;
 import com.web.favorite.model.FavoriteTrip;
 import com.web.favorite.repository.FavoriteTripRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -12,26 +14,24 @@ import java.util.concurrent.atomic.AtomicLong;
 @Service
 @AllArgsConstructor
 public class SparsifierService {
-    private static final long POSITION_GAP = FavoriteTripConf.POSITION_GAP.getValue();
-
-    // Если список достигнет % от MAX_VALUE, произойдет ребалансировка, перенести в конфиг
-    private static final double REBALANCE_THRESHOLD_PERCENT = 80.0;
-
     private FavoriteTripRepository favoriteTripRepository;
+    private static final long POSITION_GAP = FavoriteTripListConf.POSITION_GAP.getValue();
+    private static final long INITIAL_POSITION = FavoriteTripListConf.INITIAL_POSITION.getValue();
+
+    @Value("${rebalancing-threshold-percent:0.8}")
+    private static double rebalanceThreshold;
 
     @Transactional
     public long getNextAvailablePosition() {
         long maxPosition = favoriteTripRepository.findMaxPosition().orElse(0L);
 
-        if (maxPosition > Long.MAX_VALUE * REBALANCE_THRESHOLD_PERCENT / 100){
+        if (needRebalancing(maxPosition)){
             sparsify();
-
             maxPosition = favoriteTripRepository.findMaxPosition().orElse(0L);
-            if (maxPosition > Long.MAX_VALUE * REBALANCE_THRESHOLD_PERCENT / 100){
-                throw new IllegalStateException("Unable to calculate next position even after sparsification");
+            if (needRebalancing(maxPosition)){
+                throw new PositionOverflowException(maxPosition, rebalanceThreshold);
             }
         }
-
         return maxPosition + POSITION_GAP;
     }
 
@@ -40,7 +40,7 @@ public class SparsifierService {
         List<FavoriteTrip> trips = favoriteTripRepository.getFavouriteTripsByPositionAsc();
 
         if (!trips.isEmpty()) {
-            AtomicLong currentPosition = new AtomicLong(FavoriteTripConf.INITIAL_POSITION.getValue());
+            AtomicLong currentPosition = new AtomicLong(INITIAL_POSITION);
 
             trips.forEach(trip -> {
                 trip.setPosition(currentPosition.get());
@@ -49,5 +49,9 @@ public class SparsifierService {
 
             favoriteTripRepository.saveAll(trips);
         }
+    }
+
+    private boolean needRebalancing(long maxPosition) {
+        return maxPosition > Long.MAX_VALUE * rebalanceThreshold;
     }
 }

@@ -9,14 +9,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Slf4j
 @Configuration
 public class AsyncConfig implements WebMvcConfigurer {
-    @Value("${async.timeout.millis}")
+    @Value("${async-timeout-millis:600000}")
     private long asyncTimeoutMillis;
 
     @Override
     public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
         if (asyncTimeoutMillis <= 0) {
             log.warn("Invalid async timeout value: {}. Using default", asyncTimeoutMillis);
-            asyncTimeoutMillis = 30000;
+            asyncTimeoutMillis = 600000;
         }
         configurer.setDefaultTimeout(asyncTimeoutMillis);
         log.info("Async timeout configured: {} ms", asyncTimeoutMillis);

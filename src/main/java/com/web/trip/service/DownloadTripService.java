@@ -1,5 +1,6 @@
 package com.web.trip.service;
 
+import com.web.common.exception.export.ExportException;
 import com.web.common.export.TripExcelExporterFastExcel;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class DownloadTripService {
             try (out) {
                 tripExcelExporterFastExcel.tripsToExcelStream(out);
             } catch (IOException e) {
-                throw new IllegalStateException("Error exporting data to Excel: " + e.getMessage(), e);
+                throw new ExportException("Error exporting data to Excel", e);
             }
         };
     }

@@ -1,13 +1,13 @@
-package com.web.common;
+package com.web.common.config;
 
-public enum FavoriteTripConf {
+public enum FavoriteTripListConf {
     POSITION_GAP(10_000_000L),
     INITIAL_POSITION(10_000_000L),
     MIN_GAP(100L);
 
     private final long value;
 
-    FavoriteTripConf(long value) {
+    FavoriteTripListConf(long value) {
         this.value = value;
     }
 

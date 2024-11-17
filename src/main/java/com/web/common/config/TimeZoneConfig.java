@@ -1,6 +1,6 @@
 package com.web.common.config;
 
-import com.web.common.exception.ApplicationInitializationException;
+import com.web.common.exception.initialization.ApplicationInitializationException;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;

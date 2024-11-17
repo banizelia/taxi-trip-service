@@ -1,10 +1,10 @@
 package com.web.favorite.service;
 
-import com.web.common.exception.TripNotFoundException;
+import com.web.common.exception.trip.TripAlreadyInFavoritesException;
+import com.web.common.exception.trip.TripNotFoundException;
 import com.web.favorite.model.FavoriteTrip;
-import com.web.common.FavoriteTripConf;
+import com.web.common.config.FavoriteTripListConf;
 import com.web.favorite.repository.FavoriteTripRepository;
-import com.web.favorite.service.dragAndDrop.SparsifierService;
 import com.web.trip.repository.TripsRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class SaveFavoriteTripService {
-    private static final long INITIAL_POSITION = FavoriteTripConf.INITIAL_POSITION.getValue();
+    private static final long INITIAL_POSITION = FavoriteTripListConf.INITIAL_POSITION.getValue();
 
     private FavoriteTripRepository favoriteTripRepository;
     private TripsRepository tripsRepository;
@@ -22,11 +22,11 @@ public class SaveFavoriteTripService {
     @Transactional
     public synchronized void execute(Long tripId){
         if (favoriteTripRepository.findByTripId(tripId).isPresent()) {
-            throw new IllegalArgumentException("Trip already in the table");
+            throw new TripAlreadyInFavoritesException(tripId);
         }
 
         if (!tripsRepository.existsById(tripId)) {
-            throw new TripNotFoundException("Such trip doesn't exist");
+            throw new TripNotFoundException(tripId);
         }
 
         FavoriteTrip favoriteTrip = new FavoriteTrip();

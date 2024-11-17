@@ -1,7 +1,8 @@
-package com.web.favorite.service.dragAndDrop;
+package com.web.favorite.service;
 
-import com.web.common.FavoriteTripConf;
-import com.web.common.exception.TripNotFoundException;
+import com.web.common.config.FavoriteTripListConf;
+import com.web.common.exception.position.PositionException;
+import com.web.common.exception.trip.TripNotFoundException;
 import com.web.favorite.model.FavoriteTrip;
 import com.web.favorite.repository.FavoriteTripRepository;
 import jakarta.transaction.Transactional;
@@ -11,9 +12,9 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class DragAndDropFavoriteTripService {
-    private static final long POSITION_GAP = FavoriteTripConf.POSITION_GAP.getValue();
-    private static final long MIN_GAP = FavoriteTripConf.MIN_GAP.getValue();
-    private static final long INITIAL_POSITION = FavoriteTripConf.INITIAL_POSITION.getValue();
+    private static final long POSITION_GAP = FavoriteTripListConf.POSITION_GAP.getValue();
+    private static final long MIN_GAP = FavoriteTripListConf.MIN_GAP.getValue();
+    private static final long INITIAL_POSITION = FavoriteTripListConf.INITIAL_POSITION.getValue();
 
     private FavoriteTripRepository favoriteTripRepository;
     private SparsifierService sparsifier;
@@ -21,11 +22,11 @@ public class DragAndDropFavoriteTripService {
     @Transactional
     public void execute(Long tripId, Long targetPosition) {
         if (targetPosition < 1 ) {
-            throw new IllegalArgumentException("Target position is out of bounds");
+            throw new PositionException(String.format("Target position %d is out of bounds, id: %d, ", targetPosition, tripId));
         }
 
         FavoriteTrip favoriteTrip = favoriteTripRepository.findByTripId(tripId)
-                .orElseThrow(() -> new TripNotFoundException("Trip not found"));
+                .orElseThrow(() -> new TripNotFoundException(tripId));
 
         long totalCount = favoriteTripRepository.count();
         long newPosition;

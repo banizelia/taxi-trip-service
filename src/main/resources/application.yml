@@ -12,9 +12,8 @@ spring:
     locations: classpath:db/migration
 
 
-async:
-  timeout:
-    millis: 600000
+async-timeout-millis: 600000
+rebalance-threshold-percent: 0.80
 
 excel:
   export:

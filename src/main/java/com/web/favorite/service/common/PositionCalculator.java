@@ -30,7 +30,7 @@ public class PositionCalculator {
     private long calculateFirstPosition() {
         long firstPosition = favoriteTripRepository.findMinPosition().orElse(config.getInitialPosition());
 
-        if (firstPosition < config.getPositionGap()) {
+        if (firstPosition < config.getMinGap()) {
             sparsifier.sparsify();
             firstPosition = favoriteTripRepository.findMinPosition().orElse(config.getInitialPosition());
         }

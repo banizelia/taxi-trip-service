@@ -127,7 +127,7 @@ public class TripExcelExporterFastExcel {
             Object value = fieldExtractors.get(i).extractor().apply(trip);
             if (value != null) {
                 switch (value) {
-                    case LocalDateTime localDateTime -> sheet.value(rowIdx, i, localDateTime);
+                    case LocalDateTime localDateTime -> sheet.value(rowIdx, i, localDateTime.toString());
 
                     case Number number -> sheet.value(rowIdx, i, number.doubleValue());
 

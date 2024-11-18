@@ -7,7 +7,7 @@ import com.web.common.exception.filter.InvalidWindSpeedRangeException;
 import com.web.trip.mapper.TripMapper;
 import com.web.trip.model.Trip;
 import com.web.trip.model.TripDto;
-import com.web.common.export.ColumnAnnotatedFields;
+import com.web.common.ColumnAnnotatedFields;
 import com.web.trip.repository.TripsRepository;
 import com.web.weather.model.WeatherDto;
 import lombok.AllArgsConstructor;

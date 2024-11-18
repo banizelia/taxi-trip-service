@@ -1,6 +1,5 @@
-package com.web.common.export;
+package com.web.common;
 
-import jakarta.persistence.Column;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,7 +33,6 @@ public final class ColumnAnnotatedFields {
 
         return CACHED_FIELDS.computeIfAbsent(clazz, k ->
                 Arrays.stream(k.getDeclaredFields())
-                        .filter(field -> field.isAnnotationPresent(Column.class))
                         .map(Field::getName)
                         .collect(Collectors.toUnmodifiableSet())
         );

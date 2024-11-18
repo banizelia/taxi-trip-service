@@ -12,12 +12,16 @@ spring:
     locations: classpath:db/migration
 
 async-timeout-millis: 600000
-rebalance-threshold: 0.80
-
 excel:
   export:
     sheet:
       prefix: "trips_"
-      max-rows: 1000000
+      max-rows: 1048576
     performance:
       batch-size: 100000
+
+favorite-trip-list:
+  position-gap: 10000000
+  initial-position: 10000000
+  min-gap: 100
+  rebalance-threshold: 0.8

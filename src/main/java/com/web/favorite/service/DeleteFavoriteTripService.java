@@ -3,10 +3,13 @@ package com.web.favorite.service;
 import com.web.common.exception.trip.TripNotFoundException;
 import com.web.favorite.model.FavoriteTrip;
 import com.web.favorite.repository.FavoriteTripRepository;
+import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class DeleteFavoriteTripService {
@@ -17,6 +20,16 @@ public class DeleteFavoriteTripService {
         FavoriteTrip favoriteTrip = favoriteTripRepository.findByTripId(tripId)
                 .orElseThrow(() -> new TripNotFoundException(tripId));
 
-        favoriteTripRepository.delete(favoriteTrip);
+        try {
+            favoriteTripRepository.delete(favoriteTrip);
+        } catch (OptimisticLockException e) {
+            log.warn("Optimistic lock exception while deleting favoriteTrip: id={}, tripId={}, position={}",
+                    favoriteTrip.getId(),
+                    favoriteTrip.getTripId(),
+                    favoriteTrip.getPosition(),
+                    e
+            );
+            throw e;
+        }
     }
 }

@@ -3,24 +3,25 @@ package com.web.favorite.service;
 import com.web.common.exception.trip.TripAlreadyInFavoritesException;
 import com.web.common.exception.trip.TripNotFoundException;
 import com.web.favorite.model.FavoriteTrip;
-import com.web.common.config.FavoriteTripListConf;
 import com.web.favorite.repository.FavoriteTripRepository;
+import com.web.favorite.service.common.PositionCalculator;
 import com.web.trip.repository.TripsRepository;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class SaveFavoriteTripService {
-    private static final long INITIAL_POSITION = FavoriteTripListConf.INITIAL_POSITION.getValue();
-
     private FavoriteTripRepository favoriteTripRepository;
     private TripsRepository tripsRepository;
-    private SparsifierService sparsifier;
+    private PositionCalculator positionCalculator;
 
     @Transactional
-    public synchronized void execute(Long tripId){
+    public void execute(Long tripId){
         if (favoriteTripRepository.findByTripId(tripId).isPresent()) {
             throw new TripAlreadyInFavoritesException(tripId);
         }
@@ -32,14 +33,19 @@ public class SaveFavoriteTripService {
         FavoriteTrip favoriteTrip = new FavoriteTrip();
         favoriteTrip.setTripId(tripId);
 
-        long maxPosition = sparsifier.getNextAvailablePosition();
+        long maxPosition = positionCalculator.calculateLastPosition();
+        favoriteTrip.setPosition(maxPosition);
 
-        if (maxPosition == 0) {
-            favoriteTrip.setPosition(INITIAL_POSITION);
-        } else {
-            favoriteTrip.setPosition(maxPosition+INITIAL_POSITION);
+        try {
+            favoriteTripRepository.save(favoriteTrip);
+        } catch (OptimisticLockException e) {
+            log.warn("Optimistic lock exception while saving favoriteTrip: id={}, tripId={}, position={}",
+                    favoriteTrip.getId(),
+                    favoriteTrip.getTripId(),
+                    favoriteTrip.getPosition(),
+                    e
+            );
+            throw e;
         }
-
-        favoriteTripRepository.save(favoriteTrip);
     }
 }

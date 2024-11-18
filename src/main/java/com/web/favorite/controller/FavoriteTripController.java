@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -59,7 +60,7 @@ public class FavoriteTripController {
     @PutMapping()
     public ResponseEntity<String> saveToFavourite(
             @Parameter(description = "Trip ID")
-            @RequestParam("tripId") @Min(1) Long id) {
+            @RequestParam("tripId") @NotNull @Min(1) @Max(Long.MAX_VALUE) Long id) {
 
         saveFavoriteTripService.execute(id);
         return ResponseEntity.status(HttpStatus.CREATED).body("Trip added to favorites");
@@ -69,7 +70,7 @@ public class FavoriteTripController {
     @DeleteMapping()
     public ResponseEntity<String> deleteFromFavourite(
             @Parameter(description = "Trip ID")
-            @RequestParam("tripId") @Min(1) Long id) {
+            @RequestParam("tripId") @NotNull @Min(1) @Max(Long.MAX_VALUE) Long id) {
 
         deleteFavoriteTripService.execute(id);
         return ResponseEntity.ok("Trip deleted successfully");
@@ -79,10 +80,10 @@ public class FavoriteTripController {
     @PutMapping("/drag-and-drop")
     public ResponseEntity<String> dragAndDrop(
             @Parameter(description = "Trip ID")
-            @RequestParam(value = "tripId") @Min(1) Long tripId,
+            @RequestParam(value = "tripId") @NotNull @Min(1) @Max(Long.MAX_VALUE) Long tripId,
 
             @Parameter(description = "New position")
-            @RequestParam(value = "newPosition") @Min(1) Long newPosition) {
+            @RequestParam(value = "newPosition") @NotNull @Min(1) @Max(Long.MAX_VALUE) Long newPosition) {
 
         dragAndDropFavoriteTripService.execute(tripId, newPosition);
         return ResponseEntity.ok("Position updated successfully");

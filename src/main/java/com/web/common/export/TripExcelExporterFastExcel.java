@@ -12,6 +12,7 @@ import com.web.trip.mapper.TripMapper;
 import com.web.trip.model.Trip;
 import com.web.trip.model.TripDto;
 import com.web.trip.repository.TripsRepository;
+import jakarta.validation.constraints.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
@@ -29,11 +30,16 @@ public class TripExcelExporterFastExcel {
     private final TripsRepository tripsRepository;
 
     @Value("${excel.export.sheet.prefix:trips_}")
+    @Pattern(regexp = "^[a-zA-Z0-9_-]+$", message = "Sheet prefix can only contain letters, numbers, underscore and hyphen")
+    @Size(min = 1, max = 30, message = "Sheet prefix length must be between 1 and 30 characters")
     private String sheetPrefix;
 
-    @Value("${excel.export.sheet.max-rows:1000000}")
+    @Positive
+    @Max(1048576)
+    @Value("${excel.export.sheet.max-rows:1048576}")
     private int maxRowsPerSheet;
 
+    @Positive
     @Value("${excel.export.performance.batch-size:100000}")
     private int batchSize;
 
@@ -68,8 +74,9 @@ public class TripExcelExporterFastExcel {
 
         Workbook workbook = new Workbook(outputStream, "Trips Export", "1.0");
         int totalPages = 0;
-        int currentRow = 1;
+
         Worksheet currentSheet = createNewSheet(workbook, 1);
+        int currentRow = 1;
 
         Iterator<Trip> tripIterator = tripsRepository.findAllStream().iterator();
 
@@ -111,13 +118,13 @@ public class TripExcelExporterFastExcel {
 
     private void writeHeaders(Worksheet sheet) {
         for (int i = 0; i < fieldExtractors.size(); i++) {
-            sheet.value(0, i, fieldExtractors.get(i).getName());
+            sheet.value(0, i, fieldExtractors.get(i).name());
         }
     }
 
     private void writeRow(Worksheet sheet, int rowIdx, TripDto trip) {
         for (int i = 0; i < fieldExtractors.size(); i++) {
-            Object value = fieldExtractors.get(i).getExtractor().apply(trip);
+            Object value = fieldExtractors.get(i).extractor().apply(trip);
             if (value != null) {
                 switch (value) {
                     case LocalDateTime localDateTime -> sheet.value(rowIdx, i, localDateTime);
@@ -125,27 +132,11 @@ public class TripExcelExporterFastExcel {
                     case Number number -> sheet.value(rowIdx, i, number.doubleValue());
 
                     default -> sheet.value(rowIdx, i, value.toString());
-
                 }
             }
         }
     }
 
-    private static class FieldExtractor {
-        private final String name;
-        private final Function<TripDto, Object> extractor;
-
-        public FieldExtractor(String name, Function<TripDto, Object> extractor) {
-            this.name = name;
-            this.extractor = extractor;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public Function<TripDto, Object> getExtractor() {
-            return extractor;
-        }
+    private record FieldExtractor(String name, Function<TripDto, Object> extractor) {
     }
 }

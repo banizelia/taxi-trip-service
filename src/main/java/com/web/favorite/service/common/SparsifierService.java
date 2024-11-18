@@ -1,12 +1,11 @@
-package com.web.favorite.service;
+package com.web.favorite.service.common;
 
-import com.web.common.config.FavoriteTripListConf;
+import com.web.favorite.config.FavoriteTripListConf;
 import com.web.common.exception.position.PositionOverflowException;
 import com.web.favorite.model.FavoriteTrip;
 import com.web.favorite.repository.FavoriteTripRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -14,12 +13,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @Service
 @AllArgsConstructor
 public class SparsifierService {
-    private FavoriteTripRepository favoriteTripRepository;
-    private static final long POSITION_GAP = FavoriteTripListConf.POSITION_GAP.getValue();
-    private static final long INITIAL_POSITION = FavoriteTripListConf.INITIAL_POSITION.getValue();
-
-    @Value("${rebalancing-threshold-percent:0.8}")
-    private static double rebalanceThreshold;
+    private final FavoriteTripRepository favoriteTripRepository;
+    private final FavoriteTripListConf favoriteTripListConf;
 
     @Transactional
     public long getNextAvailablePosition() {
@@ -29,10 +24,10 @@ public class SparsifierService {
             sparsify();
             maxPosition = favoriteTripRepository.findMaxPosition().orElse(0L);
             if (needRebalancing(maxPosition)){
-                throw new PositionOverflowException(maxPosition, rebalanceThreshold);
+                throw new PositionOverflowException(maxPosition, favoriteTripListConf.getRebalanceThreshold());
             }
         }
-        return maxPosition + POSITION_GAP;
+        return maxPosition + favoriteTripListConf.getPositionGap();
     }
 
     @Transactional
@@ -40,18 +35,17 @@ public class SparsifierService {
         List<FavoriteTrip> trips = favoriteTripRepository.findAllByOrderByPositionAsc();
 
         if (!trips.isEmpty()) {
-            AtomicLong currentPosition = new AtomicLong(INITIAL_POSITION);
+            AtomicLong currentPosition = new AtomicLong(favoriteTripListConf.getInitialPosition());
 
             trips.forEach(trip -> {
                 trip.setPosition(currentPosition.get());
-                currentPosition.addAndGet(POSITION_GAP);
+                currentPosition.addAndGet(favoriteTripListConf.getPositionGap());
             });
-
             favoriteTripRepository.saveAll(trips);
         }
     }
 
     private boolean needRebalancing(long maxPosition) {
-        return maxPosition > Long.MAX_VALUE * rebalanceThreshold;
+        return maxPosition > Long.MAX_VALUE * favoriteTripListConf.getRebalanceThreshold();
     }
 }

@@ -1,12 +1,12 @@
 package com.web.trip.controller;
 
+import com.web.trip.TripFilterParams;
 import com.web.trip.model.TripDto;
 import com.web.trip.service.DownloadTripService;
 import com.web.trip.service.FilterTripService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -40,35 +40,11 @@ public class TripController {
 
     @Operation(summary = "Filter trips", description = "Allows filtering trips by date, wind speed, as well as sorting and pagination.")
     @GetMapping
-    public ResponseEntity<PagedModel<EntityModel<TripDto>>> filterTrips(
-            @Parameter(description = "Start date and time of the trip", example = "2016-01-01T00:00:00.000")
-            @RequestParam(required = false, defaultValue = "2016-01-01T00:00:00.000") LocalDateTime startDateTime,
-
-            @Parameter(description = "End date and time of the trip", example = "2016-02-01T00:00:00.000")
-            @RequestParam(required = false, defaultValue = "2016-02-01T00:00:00.000") LocalDateTime endDateTime,
-
-            @Parameter(description = "Minimum wind speed")
-            @RequestParam(required = false, defaultValue = "0") @Min(0) Double minWindSpeed,
-
-            @Parameter(description = "Maximum wind speed")
-            @RequestParam(required = false, defaultValue = "9999") @Min(0) Double maxWindSpeed,
-
-            @Parameter(description = "Page number")
-            @RequestParam(defaultValue = "0") @Min(0) Integer page,
-
-            @Parameter(description = "Page size")
-            @RequestParam(defaultValue = "20") @Min(1) @Max(200) Integer size,
-
-            @Parameter(description = "Field to sort by")
-            @RequestParam(required = false, defaultValue = "id") String sort,
-
-            @Parameter(description = "Sorting direction (asc or desc)")
-            @RequestParam(required = false, defaultValue = "asc") String direction) {
-
-        Page<TripDto> trips = filterTripService.execute(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, page, size, sort, direction);
+    public ResponseEntity<PagedModel<EntityModel<TripDto>>> filterTrips(@Valid TripFilterParams filterParams) {
+        filterParams.validate();
+        Page<TripDto> trips = filterTripService.execute(filterParams);
         PagedModel<EntityModel<TripDto>> pagedModel = pagedResourcesAssembler.toModel(trips);
         return ResponseEntity.ok(pagedModel);
-
     }
 
     @Operation(summary = "Export trips in Excel format")

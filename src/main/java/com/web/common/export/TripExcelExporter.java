@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class TripExcelExporterFastExcel {
+public class TripExcelExporter {
     private final TripsRepository tripsRepository;
 
     @Value("${excel.export.sheet.prefix:trips_}")

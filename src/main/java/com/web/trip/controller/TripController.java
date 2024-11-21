@@ -1,12 +1,13 @@
 package com.web.trip.controller;
 
-import com.web.trip.TripFilterParams;
+import com.web.trip.service.filter.TripFilterParams;
 import com.web.trip.model.TripDto;
 import com.web.trip.service.DownloadTripService;
-import com.web.trip.service.FilterTripService;
+import com.web.trip.service.filter.FilterTripService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -51,7 +52,9 @@ public class TripController {
     @GetMapping("/download")
     public ResponseEntity<StreamingResponseBody> download(
             @Parameter(description = "Filename")
+            @NotNull
             @RequestParam(required = false, defaultValue = "trips") String filename) {
+
 
         if (!filename.matches("[a-zA-Z0-9_-]+")) {
             return ResponseEntity.badRequest().build();

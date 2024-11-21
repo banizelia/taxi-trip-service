@@ -32,16 +32,16 @@ public class TripExcelExporter {
     @Value("${excel.export.sheet.prefix:trips_}")
     @Pattern(regexp = "^[a-zA-Z0-9_-]+$", message = "Sheet prefix can only contain letters, numbers, underscore and hyphen")
     @Size(min = 1, max = 30, message = "Sheet prefix length must be between 1 and 30 characters")
-    private String sheetPrefix;
+    private final String sheetPrefix;
 
     @Positive
     @Max(1048576)
     @Value("${excel.export.sheet.max-rows:1048576}")
-    private int maxRowsPerSheet;
+    private final int maxRowsPerSheet;
 
     @Positive
     @Value("${excel.export.performance.batch-size:100000}")
-    private int batchSize;
+    private final int batchSize;
 
     private final List<FieldExtractor> fieldExtractors = Arrays.asList(
             new FieldExtractor("ID", TripDto::getId),

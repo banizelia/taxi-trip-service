@@ -1,4 +1,4 @@
-package com.web.trip;
+package com.web.trip.service.filter;
 
 import com.web.common.ColumnAnnotatedFields;
 import com.web.common.exception.filter.InvalidDateRangeException;
@@ -10,7 +10,6 @@ import com.web.weather.model.WeatherDto;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;

@@ -1,6 +1,5 @@
-package com.web.trip.service;
+package com.web.trip.service.filter;
 
-import com.web.trip.TripFilterParams;
 import com.web.trip.mapper.TripMapper;
 import com.web.trip.model.Trip;
 import com.web.trip.model.TripDto;

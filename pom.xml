@@ -26,6 +26,7 @@
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
         <mapstruct.version>1.6.2</mapstruct.version>
         <fast.excel.version>0.14.0</fast.excel.version>
+        <otj-pg-embedded.version>1.0.3</otj-pg-embedded.version>
     </properties>
 
     <dependencies>
@@ -78,13 +79,6 @@
             <artifactId>fastexcel</artifactId>
             <version>${fast.excel.version}</version>
         </dependency>
-        <!--Poi-->
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>${poi.version}</version>
-        </dependency>
-
 
         <!-- OpenAPI Documentation -->
         <dependency>
@@ -102,6 +96,12 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.opentable.components</groupId>
+            <artifactId>otj-pg-embedded</artifactId>
+            <version>${otj-pg-embedded.version}</version>
             <scope>test</scope>
         </dependency>
 

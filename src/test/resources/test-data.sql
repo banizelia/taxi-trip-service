@@ -1,0 +1,9 @@
+--INSERT INTO favorite_trips (trip_id, position) VALUES
+--(1, 1),
+--(2, 2),
+--(3, 3);
+--
+--INSERT INTO trips (id, vendor_id) VALUES
+--(1, 'VENDOR1'),
+--(2, 'VENDOR2'),
+--(3, 'VENDOR3');

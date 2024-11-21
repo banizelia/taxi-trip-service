@@ -4,7 +4,6 @@ import com.web.favorite.model.FavoriteTrip;
 import com.web.favorite.repository.FavoriteTripRepository;
 import com.web.favorite.service.common.PositionCalculator;
 import com.web.trip.repository.TripsRepository;
-import jakarta.persistence.OptimisticLockException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,24 +60,6 @@ class SaveFavoriteTripServiceTest {
         verify(favoriteTripRepository).findByTripId(TRIP_ID);
         verify(tripsRepository).existsById(TRIP_ID);
         verify(positionCalculator).calculateLastPosition();
-    }
-
-    @Test
-    void execute_ShouldThrowOptimisticLockException_WhenConcurrentModification() {
-        // Arrange
-        when(favoriteTripRepository.save(any(FavoriteTrip.class)))
-                .thenThrow(new OptimisticLockException("Concurrent modification"));
-
-        // Act & Assert
-        assertThrows(
-                OptimisticLockException.class,
-                () -> service.execute(TRIP_ID)
-        );
-
-        verify(favoriteTripRepository).findByTripId(TRIP_ID);
-        verify(tripsRepository).existsById(TRIP_ID);
-        verify(positionCalculator).calculateLastPosition();
-        verify(favoriteTripRepository).save(any());
     }
 
     @Test

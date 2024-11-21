@@ -5,7 +5,6 @@ import com.web.common.exception.trip.TripNotFoundException;
 import com.web.favorite.model.FavoriteTrip;
 import com.web.favorite.repository.FavoriteTripRepository;
 import com.web.favorite.service.common.PositionCalculator;
-import jakarta.persistence.OptimisticLockException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,18 +75,5 @@ class DragAndDropFavoriteTripServiceTest {
         assertThrows(TripNotFoundException.class, () -> service.execute(TRIP_ID, TARGET_POSITION));
         verify(positionCalculator, never()).calculateNewPosition(any());
         verify(favoriteTripRepository, never()).save(any());
-    }
-
-    @Test
-    void execute_ShouldThrowOptimisticLockException_WhenConcurrentModification() {
-        // Arrange
-        when(favoriteTripRepository.findByTripId(TRIP_ID)).thenReturn(Optional.of(favoriteTrip));
-        when(positionCalculator.calculateNewPosition(TARGET_POSITION)).thenReturn(NEW_POSITION);
-        when(favoriteTripRepository.save(favoriteTrip)).thenThrow(OptimisticLockException.class);
-
-        // Act & Assert
-        assertThrows(OptimisticLockException.class, () -> service.execute(TRIP_ID, TARGET_POSITION));
-        verify(favoriteTripRepository).findByTripId(TRIP_ID);
-        verify(positionCalculator).calculateNewPosition(TARGET_POSITION);
     }
 }

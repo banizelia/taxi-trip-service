@@ -12,13 +12,11 @@ spring:
     locations: classpath:db/migration
 
 async-timeout-millis: 600000
-excel:
-  export:
-    sheet:
-      prefix: "trips_"
-      max-rows: 1048576
-    performance:
-      batch-size: 100000
+
+excel-export:
+  sheet-prefix: "trips_"
+  max-rows-per-sheet: 1048576 # must be smaller than 1048576 because of Excel limitations
+  batch-size: 100000
 
 favorite-trip-list:
   position-gap: 10000000

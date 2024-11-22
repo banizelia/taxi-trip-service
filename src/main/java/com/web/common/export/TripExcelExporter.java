@@ -12,13 +12,11 @@ import com.web.trip.mapper.TripMapper;
 import com.web.trip.model.Trip;
 import com.web.trip.model.TripDto;
 import com.web.trip.repository.TripsRepository;
-import jakarta.validation.constraints.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,20 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TripExcelExporter {
     private final TripsRepository tripsRepository;
-
-    @Value("${excel.export.sheet.prefix:trips_}")
-    @Pattern(regexp = "^[a-zA-Z0-9_-]+$", message = "Sheet prefix can only contain letters, numbers, underscore and hyphen")
-    @Size(min = 1, max = 30, message = "Sheet prefix length must be between 1 and 30 characters")
-    private final String sheetPrefix;
-
-    @Positive
-    @Max(1048576)
-    @Value("${excel.export.sheet.max-rows:1048576}")
-    private final int maxRowsPerSheet;
-
-    @Positive
-    @Value("${excel.export.performance.batch-size:100000}")
-    private final int batchSize;
+    private final ExcelExporterConf conf;
 
     private final List<FieldExtractor> fieldExtractors = Arrays.asList(
             new FieldExtractor("ID", TripDto::getId),
@@ -83,7 +68,7 @@ public class TripExcelExporter {
         while (tripIterator.hasNext()) {
             TripDto trip = TripMapper.INSTANCE.tripToTripDto(tripIterator.next());
 
-            if (currentRow > maxRowsPerSheet) {
+            if (currentRow > conf.getMaxRowsPerSheet()) {
                 currentSheet.finish();
                 outputStream.flush();
 
@@ -93,7 +78,7 @@ public class TripExcelExporter {
 
             writeRow(currentSheet, currentRow++, trip);
 
-            if (currentRow % batchSize == 0) {
+            if (currentRow % conf.getBatchSize() == 0) {
                 Runtime rt = Runtime.getRuntime();
                 long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
                 long currentTime = watch.getTime();
@@ -111,7 +96,7 @@ public class TripExcelExporter {
     }
 
     private Worksheet createNewSheet(Workbook workbook, int sheetNumber) {
-        Worksheet sheet = workbook.newWorksheet(sheetPrefix + sheetNumber);
+        Worksheet sheet = workbook.newWorksheet(conf.getSheetPrefix() + sheetNumber);
         writeHeaders(sheet);
         return sheet;
     }

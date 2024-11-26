@@ -1,6 +1,6 @@
 package com.web.trip.service.filter;
 
-import com.web.common.ColumnAnnotatedFields;
+import com.web.common.FieldNamesExtractor;
 import com.web.common.exception.filter.InvalidDateRangeException;
 import com.web.common.exception.filter.InvalidSortDirectionException;
 import com.web.common.exception.filter.InvalidSortFieldException;
@@ -86,8 +86,8 @@ public record TripFilterParams(
 
     private void validateSortField() {
         Set<String> allowedField = new HashSet<>();
-        allowedField.addAll(ColumnAnnotatedFields.getAnnotatedFields(TripDto.class));
-        allowedField.addAll(ColumnAnnotatedFields.getAnnotatedFields(WeatherDto.class));
+        allowedField.addAll(FieldNamesExtractor.getFields(TripDto.class));
+        allowedField.addAll(FieldNamesExtractor.getFields(WeatherDto.class));
 
         if (!allowedField.contains(sort)) {
             throw new InvalidSortFieldException(sort);

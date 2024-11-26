@@ -9,8 +9,8 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties(prefix = "excel-export")
 public class ExcelExporterConf {
-    @Pattern(regexp = "^[a-zA-Z0-9_-]+$", message = "Sheet prefix can only contain letters, numbers, underscore, and hyphen")
-    @Size(min = 1, max = 30, message = "Sheet prefix length must be between 1 and 30 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9_-]+$")
+    @Size(min = 1, max = 25)
     String sheetPrefix;
 
     @Min(1)
@@ -19,4 +19,9 @@ public class ExcelExporterConf {
 
     @Positive
     int batchSize;
+
+    @AssertTrue(message = "Batch size must not exceed maxRowsPerSheet")
+    private boolean isBatchSizeValid() {
+        return batchSize <= maxRowsPerSheet;
+    }
 }

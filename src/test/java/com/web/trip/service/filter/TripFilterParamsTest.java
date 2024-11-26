@@ -1,6 +1,6 @@
 package com.web.trip.service.filter;
 
-import com.web.common.ColumnAnnotatedFields;
+import com.web.common.FieldNamesExtractor;
 import com.web.common.exception.filter.InvalidDateRangeException;
 import com.web.common.exception.filter.InvalidSortDirectionException;
 import com.web.common.exception.filter.InvalidSortFieldException;
@@ -80,11 +80,11 @@ class TripFilterParamsTest {
 
     @Test
     void validate_WithValidParameters_ShouldNotThrowException() {
-        try (MockedStatic<ColumnAnnotatedFields> mockedStatic = mockStatic(ColumnAnnotatedFields.class)) {
+        try (MockedStatic<FieldNamesExtractor> mockedStatic = mockStatic(FieldNamesExtractor.class)) {
             // Arrange
-            mockedStatic.when(() -> ColumnAnnotatedFields.getAnnotatedFields(TripDto.class))
+            mockedStatic.when(() -> FieldNamesExtractor.getFields(TripDto.class))
                     .thenReturn(mockTripFields);
-            mockedStatic.when(() -> ColumnAnnotatedFields.getAnnotatedFields(WeatherDto.class))
+            mockedStatic.when(() -> FieldNamesExtractor.getFields(WeatherDto.class))
                     .thenReturn(mockWeatherFields);
 
             TripFilterParams params = new TripFilterParams(
@@ -160,11 +160,11 @@ class TripFilterParamsTest {
 
     @Test
     void validate_WithInvalidSortField_ShouldThrowException() {
-        try (MockedStatic<ColumnAnnotatedFields> mockedStatic = mockStatic(ColumnAnnotatedFields.class)) {
+        try (MockedStatic<FieldNamesExtractor> mockedStatic = mockStatic(FieldNamesExtractor.class)) {
             // Arrange
-            mockedStatic.when(() -> ColumnAnnotatedFields.getAnnotatedFields(TripDto.class))
+            mockedStatic.when(() -> FieldNamesExtractor.getFields(TripDto.class))
                     .thenReturn(mockTripFields);
-            mockedStatic.when(() -> ColumnAnnotatedFields.getAnnotatedFields(WeatherDto.class))
+            mockedStatic.when(() -> FieldNamesExtractor.getFields(WeatherDto.class))
                     .thenReturn(mockWeatherFields);
 
             TripFilterParams params = new TripFilterParams(
@@ -185,11 +185,11 @@ class TripFilterParamsTest {
 
     @Test
     void validate_WithValidSortDirectionCaseInsensitive_ShouldNotThrowException() {
-        try (MockedStatic<ColumnAnnotatedFields> mockedStatic = mockStatic(ColumnAnnotatedFields.class)) {
+        try (MockedStatic<FieldNamesExtractor> mockedStatic = mockStatic(FieldNamesExtractor.class)) {
             // Arrange
-            mockedStatic.when(() -> ColumnAnnotatedFields.getAnnotatedFields(TripDto.class))
+            mockedStatic.when(() -> FieldNamesExtractor.getFields(TripDto.class))
                     .thenReturn(mockTripFields);
-            mockedStatic.when(() -> ColumnAnnotatedFields.getAnnotatedFields(WeatherDto.class))
+            mockedStatic.when(() -> FieldNamesExtractor.getFields(WeatherDto.class))
                     .thenReturn(mockWeatherFields);
 
             // Test both "ASC" and "DESC" in different cases
@@ -210,11 +210,11 @@ class TripFilterParamsTest {
 
     @Test
     void validate_WithNullWindSpeeds_ShouldUseDefaults() {
-        try (MockedStatic<ColumnAnnotatedFields> mockedStatic = mockStatic(ColumnAnnotatedFields.class)) {
+        try (MockedStatic<FieldNamesExtractor> mockedStatic = mockStatic(FieldNamesExtractor.class)) {
             // Arrange
-            mockedStatic.when(() -> ColumnAnnotatedFields.getAnnotatedFields(TripDto.class))
+            mockedStatic.when(() -> FieldNamesExtractor.getFields(TripDto.class))
                     .thenReturn(mockTripFields);
-            mockedStatic.when(() -> ColumnAnnotatedFields.getAnnotatedFields(WeatherDto.class))
+            mockedStatic.when(() -> FieldNamesExtractor.getFields(WeatherDto.class))
                     .thenReturn(mockWeatherFields);
 
             TripFilterParams params = new TripFilterParams(

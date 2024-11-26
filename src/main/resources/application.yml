@@ -12,6 +12,7 @@ spring:
     locations: classpath:db/migration
 
 async-timeout-millis: 600000
+application-timezone: "GMT"
 
 excel-export:
   sheet-prefix: "trips_"

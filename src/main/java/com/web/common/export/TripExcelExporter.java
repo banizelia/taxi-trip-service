@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import com.web.trip.mapper.TripMapper;
 import com.web.trip.model.Trip;
 import com.web.trip.model.TripDto;
@@ -90,7 +89,6 @@ public class TripExcelExporter {
 
         watch.stop();
         log.info("Total export time: {} seconds", watch.getTime(TimeUnit.SECONDS));
-
         workbook.finish();
         outputStream.flush();
     }
@@ -120,8 +118,5 @@ public class TripExcelExporter {
                 }
             }
         }
-    }
-
-    private record FieldExtractor(String name, Function<TripDto, Object> extractor) {
     }
 }

@@ -5,13 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * Model representing weather observation data, including information about wind, precipitation, temperature, and snowfall.
- */
 @Getter
 @Setter
 @NoArgsConstructor

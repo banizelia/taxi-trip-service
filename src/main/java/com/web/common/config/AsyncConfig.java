@@ -15,8 +15,8 @@ public class AsyncConfig implements WebMvcConfigurer {
     private long asyncTimeoutMillis;
 
     @Override
-    public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
-        configurer.setDefaultTimeout(asyncTimeoutMillis);
+    public void configureAsyncSupport(AsyncSupportConfigurer conf) {
+        conf.setDefaultTimeout(asyncTimeoutMillis);
         log.info("Async timeout configured: {} ms", asyncTimeoutMillis);
     }
 }

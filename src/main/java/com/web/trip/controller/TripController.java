@@ -25,11 +25,6 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * REST controller for managing trips.
- * This controller handles operations related to trips such as
- * filtering, sorting, pagination, and exporting to Excel.
- */
 @AllArgsConstructor
 @Validated
 @RestController

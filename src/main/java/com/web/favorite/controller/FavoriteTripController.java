@@ -19,11 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * REST controller for managing favorite trips.
- * This controller handles operations related to favorite trips such as
- * retrieving, adding, removing, and reordering favorite trips.
- */
 @Slf4j
 @AllArgsConstructor
 @Validated

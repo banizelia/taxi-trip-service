@@ -14,7 +14,7 @@ public class ExcelExporterConf {
     String sheetPrefix;
 
     @Min(1)
-    @Max(1048576)
+    @Max(1048576) // limitation by xlsx format
     int maxRowsPerSheet;
 
     @Positive

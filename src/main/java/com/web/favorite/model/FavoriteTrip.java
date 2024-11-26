@@ -6,9 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Model of a favorite trip, containing information about the trip, its position in the favorites list, and the record version.
- */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,7 +14,7 @@ import lombok.Setter;
 public class FavoriteTrip {
 
     /**
-     * Record version for optimistic locking implementation.
+     * Record version for optimistic locking
      */
     @Version
     private Long version;

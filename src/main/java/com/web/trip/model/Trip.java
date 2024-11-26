@@ -10,10 +10,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.*;
 
-/**
- * Trip model, including information about the time, place, and payment of the trip,
- * as well as related information about weather and favorite trips.
- */
 @Getter
 @Setter
 @NoArgsConstructor

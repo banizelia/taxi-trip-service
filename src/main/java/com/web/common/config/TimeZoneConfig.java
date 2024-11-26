@@ -17,6 +17,7 @@ public class TimeZoneConfig {
         try {
             TimeZone targetTimeZone = TimeZone.getTimeZone(APPLICATION_TIMEZONE);
             TimeZone.setDefault(targetTimeZone);
+
             log.info("Application timezone set to: {}", APPLICATION_TIMEZONE);
         } catch (Exception e) {
             log.error("Failed to set timezone to {}", APPLICATION_TIMEZONE, e);

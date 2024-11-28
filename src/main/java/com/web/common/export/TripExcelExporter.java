@@ -3,10 +3,10 @@ package com.web.common.export;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import com.web.common.exception.export.ExportException;
 import com.web.trip.mapper.TripMapper;
 import com.web.trip.model.Trip;
 import com.web.trip.model.TripDto;
@@ -27,7 +27,7 @@ public class TripExcelExporter {
     private final TripsRepository tripsRepository;
     private final ExcelExporterConf conf;
 
-    private final List<FieldExtractor> fieldExtractors = Arrays.asList(
+    private final List<FieldExtractor> fieldExtractors = List.of(
             new FieldExtractor("ID", TripDto::getId),
             new FieldExtractor("Vendor ID", TripDto::getVendorId),
             new FieldExtractor("Pickup Datetime", TripDto::getPickupDatetime),
@@ -56,41 +56,47 @@ public class TripExcelExporter {
         watch.start();
         long lastSplitTime = watch.getTime();
 
-        Workbook workbook = new Workbook(outputStream, "Trips Export", "1.0");
-        int totalPages = 0;
+        Workbook workbook = null;
+        try {
+            workbook = new Workbook(outputStream, "Trips Export", "1.0");
+            int totalPages = 0;
 
-        Worksheet currentSheet = createNewSheet(workbook, 1);
-        int currentRow = 1;
+            Worksheet currentSheet = createNewSheet(workbook, 1);
+            int currentRow = 1;
 
-        Iterator<Trip> tripIterator = tripsRepository.findAllStream().iterator();
+            Iterator<Trip> tripIterator = tripsRepository.findAllStream().iterator();
 
-        while (tripIterator.hasNext()) {
-            TripDto trip = TripMapper.INSTANCE.tripToTripDto(tripIterator.next());
+            while (tripIterator.hasNext()) {
+                TripDto trip = TripMapper.INSTANCE.tripToTripDto(tripIterator.next());
 
-            if (currentRow > conf.getMaxRowsPerSheet()) {
-                currentSheet.finish();
-                outputStream.flush();
+                if (currentRow > conf.getMaxRowsPerSheet()) {
+                    currentSheet.finish();
+                    outputStream.flush();
 
-                currentSheet = createNewSheet(workbook, ++totalPages);
-                currentRow = 1;
+                    currentSheet = createNewSheet(workbook, ++totalPages);
+                    currentRow = 1;
+                }
+
+                writeRow(currentSheet, currentRow++, trip);
+
+                if (currentRow % conf.getBatchSize() == 0) {
+                    Runtime rt = Runtime.getRuntime();
+                    long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
+                    long currentTime = watch.getTime();
+                    log.info("batch # {} completed in {} seconds, memory usage: {}", batchCounter++,
+                            (currentTime - lastSplitTime) / 1000.0, usedMB);
+                    lastSplitTime = currentTime;
+                }
             }
-
-            writeRow(currentSheet, currentRow++, trip);
-
-            if (currentRow % conf.getBatchSize() == 0) {
-                Runtime rt = Runtime.getRuntime();
-                long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-                long currentTime = watch.getTime();
-                log.info("batch # {} completed in {} seconds, memory usage: {}", batchCounter++,
-                        (currentTime - lastSplitTime) / 1000.0, usedMB);
-                lastSplitTime = currentTime;
-            }
+        } catch (IOException e) {
+            log.error("Ошибка во время экспорта в xlsx: {}", e.getMessage());
+            throw new ExportException("Ошибка во время экспорта в xlsx", e);
+        } finally {
+            watch.stop();
+            log.info("Total export time: {} seconds", watch.getTime(TimeUnit.SECONDS));
+            workbook.finish();
+            outputStream.flush();
         }
-
-        watch.stop();
-        log.info("Total export time: {} seconds", watch.getTime(TimeUnit.SECONDS));
-        workbook.finish();
-        outputStream.flush();
     }
 
     private Worksheet createNewSheet(Workbook workbook, int sheetNumber) {

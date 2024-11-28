@@ -39,15 +39,17 @@ public class PositionCalculator {
     }
 
     private long calculateMiddlePosition(long targetPosition) {
-        long prevPosition = favoriteTripRepository.findPositionByIndex(targetPosition - 2).orElse(0L);
-        long nextPosition = favoriteTripRepository.findPositionByIndex(targetPosition - 1)
-                .orElse(prevPosition + config.getPositionGap());
+        long prevIndex = targetPosition - 2;
+        long nextIndex = targetPosition - 1;
+
+        long prevPosition = favoriteTripRepository.findPositionByIndex(prevIndex).orElse(0L);
+        long nextPosition = favoriteTripRepository.findPositionByIndex(nextIndex).orElse(prevPosition + config.getPositionGap());
 
         if ((nextPosition - prevPosition) < config.getMinGap()) {
             sparsifier.sparsify();
 
-            prevPosition = favoriteTripRepository.findPositionByIndex(targetPosition - 2).orElse(0L);
-            nextPosition = favoriteTripRepository.findPositionByIndex(targetPosition - 1).orElse(prevPosition + config.getPositionGap());
+            prevPosition = favoriteTripRepository.findPositionByIndex(prevIndex).orElse(0L);
+            nextPosition = favoriteTripRepository.findPositionByIndex(nextIndex).orElse(prevPosition + config.getPositionGap());
         }
 
         return prevPosition + (nextPosition - prevPosition) / 2;

@@ -37,7 +37,6 @@ public class TripController {
     @Operation(summary = "Filter trips", description = "Allows filtering trips by date, wind speed, as well as sorting and pagination.")
     @GetMapping
     public ResponseEntity<PagedModel<EntityModel<TripDto>>> filterTrips(@Valid TripFilterParams filterParams) {
-        filterParams.validate();
         Page<TripDto> trips = filterTripService.execute(filterParams);
         PagedModel<EntityModel<TripDto>> pagedModel = pagedResourcesAssembler.toModel(trips);
         return ResponseEntity.ok(pagedModel);

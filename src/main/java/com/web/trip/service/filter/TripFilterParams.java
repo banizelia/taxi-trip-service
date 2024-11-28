@@ -1,96 +1,66 @@
 package com.web.trip.service.filter;
 
 import com.web.common.FieldNamesExtractor;
-import com.web.common.exception.filter.InvalidDateRangeException;
-import com.web.common.exception.filter.InvalidSortDirectionException;
-import com.web.common.exception.filter.InvalidSortFieldException;
-import com.web.common.exception.filter.InvalidWindSpeedRangeException;
 import com.web.trip.model.TripDto;
 import com.web.weather.model.WeatherDto;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 public record TripFilterParams(
+        @NotNull
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         LocalDateTime startDateTime,
 
+        @NotNull
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         LocalDateTime endDateTime,
 
+        @NotNull
         @Min(0)
         Double minWindSpeed,
 
+        @NotNull
         @Min(0)
         Double maxWindSpeed,
 
+        @NotNull
         @Min(0)
         Integer page,
 
+        @NotNull
         @Min(1)
         @Max(200)
         Integer size,
 
+        @NotBlank
         String sort,
 
+        @NotBlank
         String direction
 ) {
-    // Default values
-    private static final LocalDateTime DEFAULT_START = LocalDateTime.parse("2016-01-01T00:00:00.000");
-    private static final LocalDateTime DEFAULT_END = LocalDateTime.parse("2016-02-01T00:00:00.000");
-    private static final double DEFAULT_MIN_WIND = 0.0;
-    private static final double DEFAULT_MAX_WIND = 9999.0;
-    private static final int DEFAULT_PAGE = 0;
-    private static final int DEFAULT_SIZE = 20;
-    private static final String DEFAULT_SORT = "id";
-    private static final String DEFAULT_DIRECTION = "asc";
-
-    public TripFilterParams {
-        if (page == null) page = DEFAULT_PAGE;
-        if (size == null) size = DEFAULT_SIZE;
-        if (sort == null) sort = DEFAULT_SORT;
-        if (direction == null) direction = DEFAULT_DIRECTION;
-        if (startDateTime == null) startDateTime = DEFAULT_START;
-        if (endDateTime == null) endDateTime = DEFAULT_END;
-        if (minWindSpeed == null) minWindSpeed = DEFAULT_MIN_WIND;
-        if (maxWindSpeed == null) maxWindSpeed = DEFAULT_MAX_WIND;
+    @AssertTrue(message = "endDateTime must be after startDateTime")
+    private boolean isEndDateTimeAfterStartDateTime() {
+        return endDateTime.isAfter(startDateTime);
     }
 
-    public void validate() {
-        validateDateRange();
-        validateWindSpeedRange();
-        validateSortDirection();
-        validateSortField();
+    @AssertTrue(message = "maxWindSpeed must be greater than minWindSpeed")
+    private boolean isMaxWindSpeedGreaterThanMinWindSpeed() {
+        return maxWindSpeed > minWindSpeed;
     }
 
-    private void validateDateRange() {
-        if (endDateTime.isBefore(startDateTime)) {
-            throw new InvalidDateRangeException(startDateTime, endDateTime);
-        }
+    @AssertTrue(message = "sort field is invalid")
+    private boolean isSortFieldValid() {
+        Set<String> allowedFields = new HashSet<>();
+        allowedFields.addAll(FieldNamesExtractor.getFields(TripDto.class));
+        allowedFields.addAll(FieldNamesExtractor.getFields(WeatherDto.class));
+        return allowedFields.contains(sort);
     }
 
-    private void validateWindSpeedRange() {
-        if (maxWindSpeed <= minWindSpeed) {
-            throw new InvalidWindSpeedRangeException(maxWindSpeed, minWindSpeed);
-        }
-    }
-
-    private void validateSortDirection() {
-        if (!direction.equalsIgnoreCase("asc") && !direction.equalsIgnoreCase("desc")) {
-            throw new InvalidSortDirectionException(direction);
-        }
-    }
-
-    private void validateSortField() {
-        Set<String> allowedField = new HashSet<>();
-        allowedField.addAll(FieldNamesExtractor.getFields(TripDto.class));
-        allowedField.addAll(FieldNamesExtractor.getFields(WeatherDto.class));
-
-        if (!allowedField.contains(sort)) {
-            throw new InvalidSortFieldException(sort);
-        }
+    @AssertTrue(message = "direction must be 'asc' or 'desc'")
+    private boolean isDirectionValid() {
+        return "asc".equalsIgnoreCase(direction) || "desc".equalsIgnoreCase(direction);
     }
 }

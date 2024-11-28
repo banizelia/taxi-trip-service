@@ -19,8 +19,8 @@ public class FavoriteTrip {
     @Version
     private Long version;
 
-    @OneToOne(mappedBy = "favoriteTrip", fetch = FetchType.LAZY)
-    @JoinColumn(name = "trip_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trip_id", insertable = false, updatable = false)
     private Trip trip;
 
     @Id

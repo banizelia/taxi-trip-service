@@ -2,11 +2,11 @@ package com.web.common;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public final class FieldNamesExtractor {
-
-    private static final Map<Class<?>, Set<String>> CACHED_FIELDS = new HashMap<>();
+    private static final Map<Class<?>, Set<String>> CACHED_FIELDS = new ConcurrentHashMap<>();
 
     private FieldNamesExtractor() {
         throw new IllegalStateException("Utility class - cannot be instantiated");

@@ -41,7 +41,5 @@ public class DragAndDropFavoriteTripService {
             );
             throw e;
         }
-
-        favoriteTripRepository.save(favoriteTrip);
     }
 }

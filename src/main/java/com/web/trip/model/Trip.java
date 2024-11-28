@@ -22,8 +22,7 @@ public class Trip {
     private Weather weather;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", referencedColumnName = "trip_id", insertable = false, updatable = false)
+    @OneToOne(mappedBy = "trip", fetch = FetchType.LAZY)
     private FavoriteTrip favoriteTrip;
 
     @Id

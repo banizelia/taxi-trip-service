@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import java.time.ZoneId;
+import java.util.Set;
 import java.util.TimeZone;
 
 @Slf4j
@@ -19,15 +21,16 @@ public class TimeZoneConfig {
 
     @PostConstruct
     void init() {
+        Set<String> availableZoneIds = ZoneId.getAvailableZoneIds();
 
-        TimeZone targetTimeZone = TimeZone.getTimeZone(applicationTimezone);
-
-        if (!targetTimeZone.getID().equals(applicationTimezone)) {
+        if (!availableZoneIds.contains(applicationTimezone)) {
+            log.error("Invalid timezone specified: {}", applicationTimezone);
             throw new InvalidTimeZoneException(applicationTimezone);
         }
 
         try {
-            TimeZone.setDefault(targetTimeZone);
+            ZoneId zoneId = ZoneId.of(applicationTimezone);
+            TimeZone.setDefault(TimeZone.getTimeZone(zoneId));
             log.info("Application timezone set to: {}", applicationTimezone);
         } catch (Exception e) {
             log.error("Failed to set timezone to {}", applicationTimezone, e);

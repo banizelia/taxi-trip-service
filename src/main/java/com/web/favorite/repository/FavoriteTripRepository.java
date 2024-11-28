@@ -13,8 +13,12 @@ import java.util.Optional;
 
 @Repository
 public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long> {
-    @Query("SELECT t FROM Trip t JOIN FavoriteTrip ft ON t.id = ft.tripId")
+//    @Query("SELECT t FROM Trip t JOIN FavoriteTrip ft ON t.id = ft.tripId")
+    @Query("SELECT t FROM Trip t JOIN t.favoriteTrip ft")
     Page<Trip> findAllWithPagination(Pageable pageable);
+
+    @Query("SELECT ft.position FROM FavoriteTrip ft ORDER BY ft.position ASC OFFSET :index ROWS FETCH FIRST 1 ROWS ONLY")
+    Optional<Long> findPositionByIndex(@Param("index") Long index);
 
     @Query("SELECT MAX(ft.position) FROM FavoriteTrip ft")
     Optional<Long> findMaxPosition();
@@ -22,10 +26,6 @@ public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long
     @Query("SELECT MIN(ft.position) FROM FavoriteTrip ft")
     Optional<Long> findMinPosition();
 
-    @Query("SELECT ft.position FROM FavoriteTrip ft ORDER BY ft.position ASC OFFSET :index ROWS FETCH FIRST 1 ROWS ONLY")
-    Optional<Long> findPositionByIndex(@Param("index") Long index);
-
     List<FavoriteTrip> findAllByOrderByPositionAsc();
-
     Optional<FavoriteTrip> findByTripId(Long id);
 }

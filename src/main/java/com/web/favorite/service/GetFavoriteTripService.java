@@ -24,7 +24,7 @@ public class GetFavoriteTripService {
     public Page<TripDto> execute(Integer page, Integer size, String sortBy, String direction) {
         validateSortParams(direction, sortBy);
 
-        Sort sort = Sort.by(Sort.Direction.fromString(direction), "favoriteTrip." +sortBy);
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), "ft." +sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<Trip> trips = favoriteTripRepository.findAllWithPagination(pageable);

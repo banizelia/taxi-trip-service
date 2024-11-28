@@ -25,11 +25,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/favorite-trips")
 public class FavoriteTripController {
-    private SaveFavoriteTripService saveFavoriteTripService;
-    private DeleteFavoriteTripService deleteFavoriteTripService;
-    private DragAndDropFavoriteTripService dragAndDropFavoriteTripService;
-    private GetFavoriteTripService getFavoriteTripService;
-    private PagedResourcesAssembler<TripDto> pagedResourcesAssembler;
+    private final SaveFavoriteTripService saveFavoriteTripService;
+    private final DeleteFavoriteTripService deleteFavoriteTripService;
+    private final DragAndDropFavoriteTripService dragAndDropFavoriteTripService;
+    private final GetFavoriteTripService getFavoriteTripService;
+    private final PagedResourcesAssembler<TripDto> pagedResourcesAssembler;
 
     @Operation(summary = "Get all favorite trips", description = "Returns a list of all trips added to favorites.")
     @GetMapping()
@@ -82,6 +82,5 @@ public class FavoriteTripController {
 
         dragAndDropFavoriteTripService.execute(tripId, newPosition);
         return ResponseEntity.ok("Position updated successfully");
-
     }
 }

@@ -5,15 +5,15 @@ import com.web.favorite.model.FavoriteTrip;
 import com.web.favorite.repository.FavoriteTripRepository;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DeleteFavoriteTripService {
-    private FavoriteTripRepository favoriteTripRepository;
+    private final FavoriteTripRepository favoriteTripRepository;
 
     @Transactional
     public void execute(Long tripId) {

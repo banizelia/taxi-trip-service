@@ -5,19 +5,15 @@ import com.web.common.exception.trip.TripNotFoundException;
 import com.web.favorite.model.FavoriteTrip;
 import com.web.favorite.repository.FavoriteTripRepository;
 import com.web.favorite.service.common.PositionCalculator;
+import jakarta.persistence.OptimisticLockException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.mockito.*;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class DragAndDropFavoriteTripServiceTest {
 
     @Mock
@@ -27,53 +23,103 @@ class DragAndDropFavoriteTripServiceTest {
     private PositionCalculator positionCalculator;
 
     @InjectMocks
-    private DragAndDropFavoriteTripService service;
-
-    private FavoriteTrip favoriteTrip;
-    private static final Long TRIP_ID = 1L;
-    private static final Long TARGET_POSITION = 2L;
-    private static final Long NEW_POSITION = 3L;
+    private DragAndDropFavoriteTripService dragAndDropFavoriteTripService;
 
     @BeforeEach
     void setUp() {
-        favoriteTrip = new FavoriteTrip();
-        favoriteTrip.setId(1L);
-        favoriteTrip.setTripId(TRIP_ID);
-        favoriteTrip.setPosition(1L);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void execute_ShouldUpdatePosition_WhenValidInput() {
+    @DisplayName("Execute successfully with valid tripId and targetPosition")
+    void execute_Successful() {
         // Arrange
-        when(favoriteTripRepository.findByTripId(TRIP_ID)).thenReturn(Optional.of(favoriteTrip));
-        when(positionCalculator.calculateNewPosition(TARGET_POSITION)).thenReturn(NEW_POSITION);
+        Long tripId = 1L;
+        Long targetPosition = 5L;
+        FavoriteTrip favoriteTrip = new FavoriteTrip();
+        favoriteTrip.setId(10L);
+        favoriteTrip.setTripId(tripId);
+        favoriteTrip.setPosition(3L);
+
+        Long newPosition = 5L;
+
+        when(favoriteTripRepository.findByTripId(tripId)).thenReturn(Optional.of(favoriteTrip));
+        when(positionCalculator.calculateNewPosition(targetPosition)).thenReturn(newPosition);
+        when(favoriteTripRepository.save(favoriteTrip)).thenReturn(favoriteTrip);
 
         // Act
-        service.execute(TRIP_ID, TARGET_POSITION);
+        assertDoesNotThrow(() -> dragAndDropFavoriteTripService.execute(tripId, targetPosition));
 
         // Assert
-        assertEquals(NEW_POSITION, favoriteTrip.getPosition());
-        verify(favoriteTripRepository).findByTripId(TRIP_ID);
-        verify(favoriteTripRepository, times(2)).save(favoriteTrip);
-        verify(positionCalculator).calculateNewPosition(TARGET_POSITION);
+        assertEquals(newPosition, favoriteTrip.getPosition());
+        verify(favoriteTripRepository, times(1)).findByTripId(tripId);
+        verify(positionCalculator, times(1)).calculateNewPosition(targetPosition);
+        verify(favoriteTripRepository, times(1)).save(favoriteTrip);
     }
 
     @Test
-    void execute_ShouldThrowPositionException_WhenTargetPositionIsLessThanOne() {
-        // Act & Assert
-        assertThrows(PositionException.class, () -> service.execute(TRIP_ID, 0L));
-        verify(favoriteTripRepository, never()).findByTripId(any());
-        verify(positionCalculator, never()).calculateNewPosition(any());
-    }
-
-    @Test
-    void execute_ShouldThrowTripNotFoundException_WhenTripNotFound() {
+    @DisplayName("Execute throws PositionException when targetPosition is less than 1")
+    void execute_TargetPositionLessThanOne_ThrowsPositionException() {
         // Arrange
-        when(favoriteTripRepository.findByTripId(TRIP_ID)).thenReturn(Optional.empty());
+        Long tripId = 1L;
+        Long targetPosition = 0L;
 
         // Act & Assert
-        assertThrows(TripNotFoundException.class, () -> service.execute(TRIP_ID, TARGET_POSITION));
-        verify(positionCalculator, never()).calculateNewPosition(any());
-        verify(favoriteTripRepository, never()).save(any());
+        PositionException exception = assertThrows(PositionException.class, () ->
+                dragAndDropFavoriteTripService.execute(tripId, targetPosition)
+        );
+
+        assertEquals("Target position 0 is out of bounds, id: 1, ", exception.getMessage());
+        verify(favoriteTripRepository, never()).findByTripId(anyLong());
+        verify(positionCalculator, never()).calculateNewPosition(anyLong());
+        verify(favoriteTripRepository, never()).save(any(FavoriteTrip.class));
+    }
+
+    @Test
+    @DisplayName("Execute throws TripNotFoundException when tripId is not found")
+    void execute_TripNotFound_ThrowsTripNotFoundException() {
+        // Arrange
+        Long tripId = 999L;
+        Long targetPosition = 5L;
+
+        when(favoriteTripRepository.findByTripId(tripId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        TripNotFoundException exception = assertThrows(TripNotFoundException.class, () ->
+                dragAndDropFavoriteTripService.execute(tripId, targetPosition)
+        );
+
+        assertEquals("Such trip doesn't exist: 999", exception.getMessage());
+        verify(favoriteTripRepository, times(1)).findByTripId(tripId);
+        verify(positionCalculator, never()).calculateNewPosition(anyLong());
+        verify(favoriteTripRepository, never()).save(any(FavoriteTrip.class));
+    }
+
+    @Test
+    @DisplayName("Execute throws OptimisticLockException when save fails due to optimistic locking")
+    void execute_OptimisticLockException_ThrowsOptimisticLockException() {
+        // Arrange
+        Long tripId = 1L;
+        Long targetPosition = 5L;
+        FavoriteTrip favoriteTrip = new FavoriteTrip();
+        favoriteTrip.setId(10L);
+        favoriteTrip.setTripId(tripId);
+        favoriteTrip.setPosition(3L);
+
+        Long newPosition = 5L;
+
+        when(favoriteTripRepository.findByTripId(tripId)).thenReturn(Optional.of(favoriteTrip));
+        when(positionCalculator.calculateNewPosition(targetPosition)).thenReturn(newPosition);
+        when(favoriteTripRepository.save(favoriteTrip)).thenThrow(new OptimisticLockException("Optimistic lock failed"));
+
+        // Act & Assert
+        OptimisticLockException exception = assertThrows(OptimisticLockException.class, () ->
+                dragAndDropFavoriteTripService.execute(tripId, targetPosition)
+        );
+
+        assertEquals("Optimistic lock failed", exception.getMessage());
+        verify(favoriteTripRepository, times(1)).findByTripId(tripId);
+        verify(positionCalculator, times(1)).calculateNewPosition(targetPosition);
+        verify(favoriteTripRepository, times(1)).save(favoriteTrip);
     }
 }

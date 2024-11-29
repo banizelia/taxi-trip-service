@@ -2,16 +2,16 @@ package com.web.trip.service;
 
 import com.web.common.exception.export.ExportException;
 import com.web.common.export.TripExcelExporter;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import java.io.IOException;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DownloadTripService {
-    private TripExcelExporter tripExcelExporter;
+    private final TripExcelExporter tripExcelExporter;
 
     @Transactional(readOnly = true)
     public StreamingResponseBody execute() {

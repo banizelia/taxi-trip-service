@@ -3,7 +3,7 @@ package com.web.trip.controller;
 import com.web.trip.model.TripDto;
 import com.web.trip.service.DownloadTripService;
 import com.web.trip.service.filter.FilterTripService;
-import com.web.trip.service.filter.TripFilterParams;
+import com.web.trip.model.TripFilterParams;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

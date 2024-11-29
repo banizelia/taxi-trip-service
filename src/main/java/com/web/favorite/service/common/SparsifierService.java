@@ -5,13 +5,13 @@ import com.web.common.exception.position.PositionOverflowException;
 import com.web.favorite.model.FavoriteTrip;
 import com.web.favorite.repository.FavoriteTripRepository;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SparsifierService {
     private final FavoriteTripRepository favoriteTripRepository;
     private final FavoriteTripListConf favoriteTripListConf;

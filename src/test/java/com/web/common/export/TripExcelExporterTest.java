@@ -11,9 +11,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
-
 import static org.mockito.Mockito.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class TripExcelExporterTest {
@@ -34,10 +33,9 @@ class TripExcelExporterTest {
 
     @Test
     void shouldExportEmptyWorkbookWhenNoTrips() throws IOException {
-
         exporter.tripsToExcelStream(outputStream);
 
-        assertThat(outputStream.size()).isPositive();
+        assertTrue(outputStream.size() > 0);
         verify(tripsRepository).findAllStream();
     }
 
@@ -50,7 +48,7 @@ class TripExcelExporterTest {
 
         exporter.tripsToExcelStream(outputStream);
 
-        assertThat(outputStream.size()).isPositive();
+        assertTrue(outputStream.size() > 0);
         verify(tripsRepository).findAllStream();
     }
 
@@ -65,7 +63,7 @@ class TripExcelExporterTest {
 
         exporter.tripsToExcelStream(outputStream);
 
-        assertThat(outputStream.size()).isPositive();
+        assertTrue(outputStream.size() > 0);
         verify(tripsRepository).findAllStream();
     }
 

@@ -6,7 +6,7 @@ import com.web.trip.mapper.TripMapper;
 import com.web.trip.model.Trip;
 import com.web.trip.model.TripDto;
 import com.web.favorite.repository.FavoriteTripRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,9 +17,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GetFavoriteTripService {
-    private FavoriteTripRepository favoriteTripRepository;
+    private final FavoriteTripRepository favoriteTripRepository;
 
     public Page<TripDto> execute(Integer page, Integer size, String sortBy, String direction) {
         validateSortParams(direction, sortBy);

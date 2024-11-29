@@ -3,6 +3,7 @@ package com.web.trip.service.filter;
 import com.web.trip.mapper.TripMapper;
 import com.web.trip.model.Trip;
 import com.web.trip.model.TripDto;
+import com.web.trip.model.TripFilterParams;
 import com.web.trip.repository.TripsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,11 +13,9 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -20,7 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Validated
 @RestController
 @RequestMapping("/api/v1/favorite-trips")

@@ -13,7 +13,6 @@ import java.util.Optional;
 
 @Repository
 public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long> {
-//    @Query("SELECT t FROM Trip t JOIN FavoriteTrip ft ON t.id = ft.tripId")
     @Query("SELECT t FROM Trip t JOIN t.favoriteTrip ft")
     Page<Trip> findAllWithPagination(Pageable pageable);
 

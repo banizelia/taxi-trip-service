@@ -7,16 +7,16 @@ import com.web.favorite.repository.FavoriteTripRepository;
 import com.web.favorite.service.common.PositionCalculator;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DragAndDropFavoriteTripService {
-    private FavoriteTripRepository favoriteTripRepository;
-    private PositionCalculator positionCalculator;
+    private final FavoriteTripRepository favoriteTripRepository;
+    private final PositionCalculator positionCalculator;
 
     @Transactional
     public void execute(Long tripId, Long targetPosition) {

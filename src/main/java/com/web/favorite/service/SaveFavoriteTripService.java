@@ -8,17 +8,17 @@ import com.web.favorite.service.common.PositionCalculator;
 import com.web.trip.repository.TripsRepository;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SaveFavoriteTripService {
-    private FavoriteTripRepository favoriteTripRepository;
-    private TripsRepository tripsRepository;
-    private PositionCalculator positionCalculator;
+    private final FavoriteTripRepository favoriteTripRepository;
+    private final TripsRepository tripsRepository;
+    private final PositionCalculator positionCalculator;
 
     @Transactional
     public void execute(Long tripId){

@@ -1,6 +1,6 @@
 package com.web.trip.controller;
 
-import com.web.trip.service.filter.TripFilterParams;
+import com.web.trip.model.TripFilterParams;
 import com.web.trip.model.TripDto;
 import com.web.trip.service.DownloadTripService;
 import com.web.trip.service.filter.FilterTripService;
@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
@@ -25,14 +25,14 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Validated
 @RestController
 @RequestMapping("/api/v1/trips")
 public class TripController {
-    private FilterTripService filterTripService;
-    private DownloadTripService downloadTripService;
-    private PagedResourcesAssembler<TripDto> pagedResourcesAssembler;
+    private final FilterTripService filterTripService;
+    private final DownloadTripService downloadTripService;
+    private final PagedResourcesAssembler<TripDto> pagedResourcesAssembler;
 
     @Operation(summary = "Filter trips", description = "Allows filtering trips by date, wind speed, as well as sorting and pagination.")
     @GetMapping

@@ -51,51 +51,81 @@ public class TripExcelExporter {
     );
 
     public void tripsToExcelStream(OutputStream outputStream) throws IOException {
-        int batchCounter = 1;
-        StopWatch watch = new StopWatch();
-        watch.start();
-        long lastSplitTime = watch.getTime();
+        ExportContext context = initializeExport(outputStream);
 
-        Workbook workbook = null;
         try {
-            workbook = new Workbook(outputStream, "Trips Export", "1.0");
-            int totalPages = 0;
-
-            Worksheet currentSheet = createNewSheet(workbook, 1);
-            int currentRow = 1;
-
-            Iterator<Trip> tripIterator = tripsRepository.findAllStream().iterator();
-
-            while (tripIterator.hasNext()) {
-                TripDto trip = TripMapper.INSTANCE.tripToTripDto(tripIterator.next());
-
-                if (currentRow > conf.getMaxRowsPerSheet()) {
-                    currentSheet.finish();
-                    outputStream.flush();
-
-                    currentSheet = createNewSheet(workbook, ++totalPages);
-                    currentRow = 1;
-                }
-
-                writeRow(currentSheet, currentRow++, trip);
-
-                if (currentRow % conf.getBatchSize() == 0) {
-                    Runtime rt = Runtime.getRuntime();
-                    long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-                    long currentTime = watch.getTime();
-                    log.info("batch # {} completed in {} seconds, memory usage: {}", batchCounter++,
-                            (currentTime - lastSplitTime) / 1000.0, usedMB);
-                    lastSplitTime = currentTime;
-                }
-            }
+            processTrips(context);
         } catch (IOException e) {
             log.error("Ошибка во время экспорта в xlsx: {}", e.getMessage());
             throw new ExportException("Ошибка во время экспорта в xlsx", e);
         } finally {
-            watch.stop();
-            log.info("Total export time: {} seconds", watch.getTime(TimeUnit.SECONDS));
-            workbook.finish();
-            outputStream.flush();
+            finalizeExport(context);
+        }
+    }
+
+    private ExportContext initializeExport(OutputStream outputStream) {
+        StopWatch watch = new StopWatch();
+        watch.start();
+
+        Workbook workbook = new Workbook(outputStream, "Trips Export", "1.0");
+        Worksheet currentSheet = createNewSheet(workbook, 1);
+
+        return new ExportContext(
+                workbook,
+                outputStream,
+                currentSheet,
+                1,
+                1,
+                1,
+                watch.getTime(),
+                watch
+        );
+    }
+
+    private void processTrips(ExportContext context) throws IOException {
+        Iterator<Trip> tripIterator = tripsRepository.findAllStream().iterator();
+
+        while (tripIterator.hasNext()) {
+            TripDto tripDto = TripMapper.INSTANCE.tripToTripDto(tripIterator.next());
+
+            if (context.getCurrentRow() > conf.getMaxRowsPerSheet()) {
+                context.getCurrentSheet().finish();
+                context.getOutputStream().flush();
+
+                context.setTotalPages(context.getTotalPages() + 1);
+                Worksheet newSheet = createNewSheet(context.getWorkbook(), context.getTotalPages());
+                context.setCurrentSheet(newSheet);
+                context.setCurrentRow(1);
+                log.info("Created new sheet: {}", conf.getSheetPrefix() + context.getTotalPages());
+            }
+
+            writeRow(context.getCurrentSheet(), context.getCurrentRow(), tripDto);
+            context.setCurrentRow(context.getCurrentRow()+1);
+
+            if (context.getCurrentRow() % conf.getBatchSize() == 0) {
+                Runtime rt = Runtime.getRuntime();
+                long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
+                long currentTime = context.getWatch().getTime();
+                log.info("batch # {} completed in {} seconds, memory usage: {} MB", context.getBatchCounter(),
+                        (currentTime - context.getLastSplitTime()) / 1000.0, usedMB);
+                context.setBatchCounter(context.getBatchCounter() + 1);
+                context.setLastSplitTime(currentTime);
+            }
+        }
+    }
+
+    private void finalizeExport(ExportContext context) {
+        context.getWatch().stop();
+        log.info("Total export time: {} seconds", context.getWatch().getTime(TimeUnit.SECONDS));
+
+        try {
+            if (context.getWorkbook() != null) {
+                context.getWorkbook().finish();
+            }
+            context.getOutputStream().flush();
+        } catch (IOException e) {
+            log.error("Ошибка при завершении экспорта: {}", e.getMessage());
+            throw new ExportException("Ошибка во время завершения экспорта в xlsx", e);
         }
     }
 

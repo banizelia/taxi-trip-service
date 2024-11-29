@@ -1,7 +1,6 @@
-package com.web.trip.service.filter;
+package com.web.trip.model;
 
 import com.web.common.FieldNamesExtractor;
-import com.web.trip.model.TripDto;
 import com.web.weather.model.WeatherDto;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -41,17 +40,17 @@ public record TripFilterParams(
         @NotBlank
         String direction
 ) {
-    @AssertTrue(message = "endDateTime must be after startDateTime")
+    @AssertTrue
     private boolean isEndDateTimeAfterStartDateTime() {
         return endDateTime.isAfter(startDateTime);
     }
 
-    @AssertTrue(message = "maxWindSpeed must be greater than minWindSpeed")
+    @AssertTrue
     private boolean isMaxWindSpeedGreaterThanMinWindSpeed() {
         return maxWindSpeed > minWindSpeed;
     }
 
-    @AssertTrue(message = "sort field is invalid")
+    @AssertTrue
     private boolean isSortFieldValid() {
         Set<String> allowedFields = new HashSet<>();
         allowedFields.addAll(FieldNamesExtractor.getFields(TripDto.class));
@@ -59,7 +58,7 @@ public record TripFilterParams(
         return allowedFields.contains(sort);
     }
 
-    @AssertTrue(message = "direction must be 'asc' or 'desc'")
+    @AssertTrue
     private boolean isDirectionValid() {
         return "asc".equalsIgnoreCase(direction) || "desc".equalsIgnoreCase(direction);
     }

@@ -4,7 +4,7 @@ import com.web.common.exception.position.PositionException;
 import com.web.common.exception.trip.TripNotFoundException;
 import com.web.favorite.model.FavoriteTrip;
 import com.web.favorite.repository.FavoriteTripRepository;
-import com.web.favorite.service.common.PositionCalculator;
+import com.web.favorite.service.position.PositionCalculator;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

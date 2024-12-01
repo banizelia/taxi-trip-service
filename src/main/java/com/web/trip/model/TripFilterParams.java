@@ -1,50 +1,45 @@
 package com.web.trip.model;
 
-import com.web.common.FieldNamesExtractor;
-import com.web.weather.model.WeatherDto;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.*;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
-public record TripFilterParams(
-        LocalDateTime startDateTime,
-        LocalDateTime endDateTime,
-        Double minWindSpeed,
-        Double maxWindSpeed,
-        Integer page,
-        Integer size,
-        String sort,
-        String direction
-) {
-    public Pageable getPageable() {
-        Sort sortOrder = Sort.by(Sort.Direction.fromString(direction), sort);
-        return PageRequest.of(page, size, sortOrder);
-    }
+@Data
+public class TripFilterParams {
+    private Boolean isFavorite;
 
-    @AssertTrue
+    @Parameter(description = "Start date and time of the trip", example = "2000-01-01T00:00:00.000")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0);
+
+    @Parameter(description = "End date and time of the trip", example = "2020-02-01T00:00:00.000")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime endDateTime = LocalDateTime.of(2020, 2, 1, 0, 0, 0, 0);
+
+    @Parameter(description = "Minimum wind speed")
+    @Min(value = 0, message = "Minimum wind speed must be at least 0")
+    private Double minWindSpeed = 0.0;
+
+    @Parameter(description = "Maximum wind speed")
+    @Min(value = 0, message = "Maximum wind speed must be at least 0")
+    private Double maxWindSpeed = 20.0;
+
+
+    @AssertTrue(message = "End date and time must be after start date and time")
     private boolean isEndDateTimeAfterStartDateTime() {
+        if (startDateTime == null || endDateTime == null) {
+            return true;
+        }
         return endDateTime.isAfter(startDateTime);
     }
 
-    @AssertTrue
+    @AssertTrue(message = "Maximum wind speed must be greater than minimum wind speed")
     private boolean isMaxWindSpeedGreaterThanMinWindSpeed() {
+        if (minWindSpeed == null || maxWindSpeed == null) {
+            return true;
+        }
         return maxWindSpeed > minWindSpeed;
-    }
-
-    @AssertTrue
-    private boolean isSortFieldValid() {
-        Set<String> allowedFields = new HashSet<>();
-        allowedFields.addAll(FieldNamesExtractor.getFields(TripDto.class));
-        allowedFields.addAll(FieldNamesExtractor.getFields(WeatherDto.class));
-        return allowedFields.contains(sort);
-    }
-
-    @AssertTrue
-    private boolean isDirectionValid() {
-        return "asc".equalsIgnoreCase(direction) || "desc".equalsIgnoreCase(direction);
     }
 }

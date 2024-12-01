@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class TripDto {
+    private Boolean isFavorite;
     private Long id;
     private String vendorId;
     private LocalDateTime pickupDatetime;

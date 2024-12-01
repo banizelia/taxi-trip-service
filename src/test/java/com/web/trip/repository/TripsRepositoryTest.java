@@ -49,50 +49,149 @@ class TripsRepositoryTest {
     class FilterMethodTests {
 
         @Test
-        @DisplayName("Должен возвращать поездки в заданном диапазоне дат и скорости ветра")
-        void filter_ReturnsCorrectTrips() {
+        @DisplayName("Должен возвращать поездки в заданном диапазоне дат и скорости ветра без фильтрации по избранному")
+        void filter_ReturnsCorrectTrips_NoFavoriteFilter() {
+            Boolean isFavorite = null; // Нет фильтрации по избранному
             LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);
             LocalDateTime endDateTime = LocalDateTime.of(2023, 1, 2, 23, 59);
             double minWindSpeed = 0.0;
             double maxWindSpeed = 10.0;
             Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
 
-            Page<Trip> result = tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
+            Page<Trip> result = tripsRepository.filter(isFavorite, startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
 
             assertFalse(result.isEmpty());
             assertEquals(1000, result.getTotalElements());
             Trip trip = result.getContent().get(0);
             double windSpeed = trip.getWeather().getAverageWindSpeed();
-            assertEquals(1, (long) trip.getId());
+            assertEquals(1, trip.getId());
             assertTrue(windSpeed >= minWindSpeed && windSpeed <= maxWindSpeed);
+        }
+
+        @Test
+        @DisplayName("Должен возвращать поездки в заданном диапазоне дат и скорости ветра с фильтром по избранному (избранные)")
+        void filter_ReturnsFavoriteTrips() {
+            Boolean isFavorite = true; // Фильтрация только избранных поездок
+            LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);
+            LocalDateTime endDateTime = LocalDateTime.of(2024, 12, 1, 23, 59);
+            double minWindSpeed = 0.0;
+            double maxWindSpeed = 10.0;
+            Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+
+            Page<Trip> result = tripsRepository.filter(isFavorite, startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
+
+            assertFalse(result.isEmpty());
+            // Предположим, что в тестовой базе данных есть 500 избранных поездок
+            assertEquals(99, result.getTotalElements());
+            Trip trip = result.getContent().get(0);
+            assertNotNull(trip.getFavoriteTrip());
+        }
+
+        @Test
+        @DisplayName("Должен возвращать поездки без избранного в заданном диапазоне дат и скорости ветра")
+        void filter_ReturnsNonFavoriteTrips() {
+            Boolean isFavorite = false; // Фильтрация только не избранных поездок
+            LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);
+            LocalDateTime endDateTime = LocalDateTime.of(2024, 12, 1, 23, 59);
+            double minWindSpeed = 0.0;
+            double maxWindSpeed = 10.0;
+            Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+
+            Page<Trip> result = tripsRepository.filter(isFavorite, startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
+
+            assertFalse(result.isEmpty());
+            // Предположим, что в тестовой базе данных есть 500 не избранных поездок
+            assertEquals(901, result.getTotalElements());
+            Trip trip = result.getContent().get(0);
+            assertNull(trip.getFavoriteTrip());
         }
 
         @Test
         @DisplayName("Должен возвращать пустую страницу, если нет соответствующих поездок")
         void filter_NoMatchingTrips_ReturnsEmptyPage() {
-            LocalDateTime startDateTime = LocalDateTime.of(2023, 1, 3, 0, 0);
-            LocalDateTime endDateTime = LocalDateTime.of(2023, 1, 4, 23, 59);
+            Boolean isFavorite = null; // Нет фильтрации по избранному
+            LocalDateTime startDateTime = LocalDateTime.of(2025, 1, 1, 0, 0);
+            LocalDateTime endDateTime = LocalDateTime.of(2025, 1, 2, 23, 59);
             Double minWindSpeed = 15.0;
             Double maxWindSpeed = 20.0;
             Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
 
-            Page<Trip> result = tripsRepository.filter(startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
+            Page<Trip> result = tripsRepository.filter(isFavorite, startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
 
             assertTrue(result.isEmpty());
         }
     }
 
     @Nested
-    @DisplayName("Тесты для метода findAllStream")
-    class FindAllStreamMethodTests {
+    @DisplayName("Тесты для метода streamFilter")
+    class StreamFilterMethodTests {
 
         @Test
-        @DisplayName("Должен возвращать все поездки как стрим")
-        void findAllStream_ReturnsAllTrips() {
-            List<Trip> trips = StreamSupport.stream(tripsRepository.findAllStream().spliterator(), false)
+        @DisplayName("Должен возвращать все поездки как стрим без фильтрации по избранному")
+        void streamFilter_ReturnsAllTrips_NoFavoriteFilter() {
+            Boolean isFavorite = null; // Нет фильтрации по избранному
+            LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);
+            LocalDateTime endDateTime = LocalDateTime.of(2024, 12, 1, 23, 59);
+            Double minWindSpeed = 0.0;
+            Double maxWindSpeed = 100.0;
+            Pageable pageable = Pageable.unpaged(); // Без пагинации
+
+            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(isFavorite, startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable).spliterator(), false)
                     .toList();
 
             assertEquals(1000, trips.size());
+        }
+
+        @Test
+        @DisplayName("Должен возвращать только избранные поездки как стрим")
+        void streamFilter_ReturnsFavoriteTrips() {
+            Boolean isFavorite = true; // Фильтрация только избранных поездок
+            LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);
+            LocalDateTime endDateTime = LocalDateTime.of(2024, 12, 1, 23, 59);
+            Double minWindSpeed = 0.0;
+            Double maxWindSpeed = 100.0;
+            Pageable pageable = Pageable.unpaged(); // Без пагинации
+
+            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(isFavorite, startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable).spliterator(), false)
+                    .toList();
+
+            // Предположим, что в тестовой базе данных есть 500 избранных поездок
+            assertEquals(99, trips.size());
+            trips.forEach(trip -> assertNotNull(trip.getFavoriteTrip()));
+        }
+
+        @Test
+        @DisplayName("Должен возвращать только не избранные поездки как стрим")
+        void streamFilter_ReturnsNonFavoriteTrips() {
+            Boolean isFavorite = false; // Фильтрация только не избранных поездок
+            LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);
+            LocalDateTime endDateTime = LocalDateTime.of(2024, 12, 1, 23, 59);
+            Double minWindSpeed = 0.0;
+            Double maxWindSpeed = 100.0;
+            Pageable pageable = Pageable.unpaged(); // Без пагинации
+
+            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(isFavorite, startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable).spliterator(), false)
+                    .toList();
+
+            // Предположим, что в тестовой базе данных есть 500 не избранных поездок
+            assertEquals(901, trips.size());
+            trips.forEach(trip -> assertNull(trip.getFavoriteTrip()));
+        }
+
+        @Test
+        @DisplayName("Должен возвращать пустой стрим, если нет соответствующих поездок")
+        void streamFilter_NoMatchingTrips_ReturnsEmptyStream() {
+            Boolean isFavorite = null; // Нет фильтрации по избранному
+            LocalDateTime startDateTime = LocalDateTime.of(2025, 1, 1, 0, 0);
+            LocalDateTime endDateTime = LocalDateTime.of(2025, 1, 2, 23, 59);
+            Double minWindSpeed = 15.0;
+            Double maxWindSpeed = 20.0;
+            Pageable pageable = Pageable.unpaged(); // Без пагинации
+
+            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(isFavorite, startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable).spliterator(), false)
+                    .toList();
+
+            assertTrue(trips.isEmpty());
         }
     }
 }

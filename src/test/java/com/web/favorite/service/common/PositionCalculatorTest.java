@@ -2,6 +2,8 @@ package com.web.favorite.service.common;
 
 import com.web.favorite.config.FavoriteTripListConf;
 import com.web.favorite.repository.FavoriteTripRepository;
+import com.web.favorite.service.position.PositionCalculator;
+import com.web.favorite.service.position.Sparsifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,7 +19,7 @@ class PositionCalculatorTest {
     private FavoriteTripListConf config;
 
     @Mock
-    private SparsifierService sparsifier;
+    private Sparsifier sparsifier;
 
     @Mock
     private FavoriteTripRepository favoriteTripRepository;

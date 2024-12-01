@@ -3,6 +3,7 @@ package com.web.common.export;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import com.web.common.exception.export.ExportException;
@@ -16,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,64 +86,49 @@ public class TripExcelExporter {
     }
 
     private void processTrips(ExportContext context, TripFilterParams params) throws IOException {
-        Pageable pageable = params.getPageable();
-        Page<Trip> page = tripsRepository.filter(
-                params.startDateTime(),
-                params.endDateTime(),
-                params.minWindSpeed(),
-                params.maxWindSpeed(),
-                pageable
-        );
+        Pageable pageable = PageRequest.of(0, 1000);
 
-        while (page.hasContent()) {
-            List<TripDto> tripDtos = page.map(TripMapper.INSTANCE::tripToTripDto).getContent();
+        Iterator<Trip> tripIterator = tripsRepository.streamFilter(
+                params.getIsFavorite(),
+                params.getStartDateTime(),
+                params.getEndDateTime(),
+                params.getMinWindSpeed(),
+                params.getMaxWindSpeed(),
+                pageable)
+                .iterator();
 
-            for (TripDto tripDto : tripDtos) {
-                if (context.getCurrentRow() > conf.getMaxRowsPerSheet()) {
-                    context.getCurrentSheet().finish();
-                    context.getOutputStream().flush();
+        while (tripIterator.hasNext()) {
+            TripDto tripDto = TripMapper.INSTANCE.tripToTripDto(tripIterator.next());
 
-                    context.setTotalPages(context.getTotalPages() + 1);
-                    Worksheet newSheet = createNewSheet(context.getWorkbook(), context.getTotalPages());
-                    context.setCurrentSheet(newSheet);
-                    context.setCurrentRow(1);
-                    log.info("Создан новый лист: {}", conf.getSheetPrefix() + context.getTotalPages());
-                }
+            if (context.getCurrentRow() > conf.getMaxRowsPerSheet()) {
+                context.getCurrentSheet().finish();
+                context.getOutputStream().flush();
 
-                writeRow(context.getCurrentSheet(), context.getCurrentRow(), tripDto);
-                context.setCurrentRow(context.getCurrentRow() + 1);
-
-                if (context.getCurrentRow() % conf.getBatchSize() == 0) {
-                    Runtime rt = Runtime.getRuntime();
-                    long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-                    long currentTime = context.getWatch().getTime();
-                    log.info("Партия #{} завершена за {} секунд, использование памяти: {} MB",
-                            context.getBatchCounter(),
-                            (currentTime - context.getLastSplitTime()) / 1000.0,
-                            usedMB);
-                    context.setBatchCounter(context.getBatchCounter() + 1);
-                    context.setLastSplitTime(currentTime);
-                }
+                context.setTotalPages(context.getTotalPages() + 1);
+                Worksheet newSheet = createNewSheet(context.getWorkbook(), context.getTotalPages());
+                context.setCurrentSheet(newSheet);
+                context.setCurrentRow(1);
+                log.info("Created new sheet: {}", conf.getSheetPrefix() + context.getTotalPages());
             }
 
-            if (page.hasNext()) {
-                pageable = page.nextPageable();
-                page = tripsRepository.filter(
-                        params.startDateTime(),
-                        params.endDateTime(),
-                        params.minWindSpeed(),
-                        params.maxWindSpeed(),
-                        pageable
-                );
-            } else {
-                break;
+            writeRow(context.getCurrentSheet(), context.getCurrentRow(), tripDto);
+            context.setCurrentRow(context.getCurrentRow()+1);
+
+            if (context.getCurrentRow() % conf.getBatchSize() == 0) {
+                Runtime rt = Runtime.getRuntime();
+                long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
+                long currentTime = context.getWatch().getTime();
+                log.info("batch # {} completed in {} seconds, memory usage: {} MB", context.getBatchCounter(),
+                        (currentTime - context.getLastSplitTime()) / 1000.0, usedMB);
+                context.setBatchCounter(context.getBatchCounter() + 1);
+                context.setLastSplitTime(currentTime);
             }
         }
     }
 
     private void finalizeExport(ExportContext context) {
         context.getWatch().stop();
-        log.info("Total export time: {} seconds", context.getWatch().getTime(TimeUnit.SECONDS));
+        log.info("Total export time: {} seconds", context.getWatch().getTime(TimeUnit.MILLISECONDS));
 
         try {
             if (context.getWorkbook() != null) {

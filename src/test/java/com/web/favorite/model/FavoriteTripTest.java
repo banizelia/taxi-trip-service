@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Nested;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FavoriteTripTest {
+public class FavoriteTripTest {
 
     private FavoriteTrip favoriteTrip;
 

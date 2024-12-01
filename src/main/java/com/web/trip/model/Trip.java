@@ -22,7 +22,7 @@ public class Trip {
     private Weather weather;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "trip", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "trip", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private FavoriteTrip favoriteTrip;
 
     @Id

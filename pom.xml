@@ -130,8 +130,7 @@
         </dependency>
 
 
-        <!-- Testcontainers JUnit Jupiter (для интеграции с JUnit 5) -->
-
+        <!-- Testcontainers JUnit Jupiter -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -194,11 +193,6 @@
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>${flyway.version}</version>
-<!--                <configuration>-->
-<!--                    <url>jdbc:postgresql://db:5432/taxi-trip-service-db</url>-->
-<!--                    <user>postgres</user>-->
-<!--                    <password>12345678</password>-->
-<!--                </configuration>-->
             </plugin>
 
             <!-- Maven Compiler Plugin -->

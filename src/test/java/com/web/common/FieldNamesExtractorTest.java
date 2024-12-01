@@ -3,44 +3,42 @@ package com.web.common;
 import org.junit.jupiter.api.Test;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
-
 class FieldNamesExtractorTest {
 
-    @Test
-    void testGetFields_WithColumnAnnotations() {
-        Set<String> fields = FieldNamesExtractor.getFields(TestClass.class);
+    static class TestClass {
+        private String field1;
+        private int field2;
+        protected double field3;
+        public boolean field4;
+    }
 
-        assertAll(
-                () -> assertTrue(fields.contains("annotatedField1")),
-                () -> assertTrue(fields.contains("annotatedField2")),
-                () -> assertEquals(2, fields.size())
-        );
+    static class EmptyClass {
     }
 
     @Test
-    void testGetFields_NullClass() {
-        assertThrows(NullPointerException.class,
-                () -> FieldNamesExtractor.getFields(null));
+    void getFields_shouldReturnFieldNames() {
+        Set<String> fieldNames = FieldNamesExtractor.getFields(TestClass.class);
+
+        assertEquals(Set.of("field1", "field2", "field3", "field4"), fieldNames);
     }
 
     @Test
-    void testGetFields_NoFields() {
-        Set<String> fields = FieldNamesExtractor.getFields(EmptyTestClass.class);
-        assertEquals(0, fields.size());
+    void getFields_shouldReturnEmptySetForClassWithoutFields() {
+        Set<String> fieldNames = FieldNamesExtractor.getFields(EmptyClass.class);
+
+        assertTrue(fieldNames.isEmpty());
     }
 
     @Test
-    void testGetFields_CacheReuse() {
-        Set<String> fields1 = FieldNamesExtractor.getFields(TestClass.class);
-        Set<String> fields2 = FieldNamesExtractor.getFields(TestClass.class);
-
-        assertSame(fields1, fields2, "Should return cached result for same class");
+    void getFields_shouldThrowExceptionWhenClassIsNull() {
+        assertThrows(NullPointerException.class, () -> FieldNamesExtractor.getFields(null));
     }
 
-    private static class TestClass {
-        private String annotatedField1;
-        private int annotatedField2;
-    }
+    @Test
+    void getFields_shouldCacheResults() {
+        Set<String> firstCall = FieldNamesExtractor.getFields(TestClass.class);
+        Set<String> secondCall = FieldNamesExtractor.getFields(TestClass.class);
 
-    private static class EmptyTestClass { }
+        assertSame(firstCall, secondCall);
+    }
 }

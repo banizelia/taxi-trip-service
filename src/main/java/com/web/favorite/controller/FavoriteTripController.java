@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -33,7 +31,7 @@ public class FavoriteTripController {
 
     @Operation(summary = "Get all favorite trips", description = "Returns a list of all trips added to favorites.")
     @GetMapping()
-    public ResponseEntity<PagedModel<EntityModel<TripDto>>> getFavouriteTrips(
+    public ResponseEntity<Page<TripDto>> getFavouriteTrips(
             @Parameter(description = "Page number")
             @RequestParam(defaultValue = "0") @Min(0) Integer page,
 
@@ -47,8 +45,7 @@ public class FavoriteTripController {
             @RequestParam(required = false, defaultValue = "asc") String direction) {
 
         Page<TripDto> trips = getFavoriteTripService.execute(page, size, sort, direction);
-        PagedModel<EntityModel<TripDto>> pagedModel = pagedResourcesAssembler.toModel(trips);
-        return ResponseEntity.ok(pagedModel);
+        return ResponseEntity.ok(trips);
     }
 
     @Operation(summary = "Add a trip to favorites", description = "Adds a trip with the specified ID to favorites.")

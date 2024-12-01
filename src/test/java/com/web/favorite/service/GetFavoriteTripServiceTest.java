@@ -16,9 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -72,7 +70,7 @@ class GetFavoriteTripServiceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"invalidField", "name", "date"})
+    @ValueSource(strings = {"invalidField", "score", "asd123"})
     void execute_ShouldThrowInvalidSortFieldException_WhenInvalidSortField(String invalidField) {
         // Act & Assert
         assertThrows(InvalidSortFieldException.class,

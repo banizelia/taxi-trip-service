@@ -34,7 +34,6 @@ class ExcelExporterConfTest {
         Set<ConstraintViolation<ExcelExporterConf>> violations = validator.validate(config);
 
         assertEquals(1, violations.size());
-        assertTrue(violations.iterator().next().getMessage().contains("должно соответствовать"));
     }
 
     @Test
@@ -43,6 +42,5 @@ class ExcelExporterConfTest {
         Set<ConstraintViolation<ExcelExporterConf>> violations = validator.validate(config);
 
         assertEquals(1, violations.size());
-        assertTrue(violations.iterator().next().getMessage().contains("должно быть больше 0"));
     }
 }

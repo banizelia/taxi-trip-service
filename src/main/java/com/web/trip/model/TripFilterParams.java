@@ -3,43 +3,28 @@ package com.web.trip.model;
 import com.web.common.FieldNamesExtractor;
 import com.web.weather.model.WeatherDto;
 import jakarta.validation.constraints.*;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 public record TripFilterParams(
-        @NotNull
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         LocalDateTime startDateTime,
-
-        @NotNull
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         LocalDateTime endDateTime,
-
-        @NotNull
-        @Min(0)
         Double minWindSpeed,
-
-        @NotNull
-        @Min(0)
         Double maxWindSpeed,
-
-        @NotNull
-        @Min(0)
         Integer page,
-
-        @NotNull
-        @Min(1)
-        @Max(200)
         Integer size,
-
-        @NotBlank
         String sort,
-
-        @NotBlank
         String direction
 ) {
+    public Pageable getPageable() {
+        Sort sortOrder = Sort.by(Sort.Direction.fromString(direction), sort);
+        return PageRequest.of(page, size, sortOrder);
+    }
+
     @AssertTrue
     private boolean isEndDateTimeAfterStartDateTime() {
         return endDateTime.isAfter(startDateTime);

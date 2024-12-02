@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,11 +56,11 @@ class FilterTripServiceTest {
 
         when(tripsRepository.filter(
                 null,
-                eq(startDateTime),
-                eq(endDateTime),
-                eq(0.0),
-                eq(10.0),
-                eq(pageable)
+                startDateTime,
+                endDateTime,
+                0.0,
+                10.0,
+                pageable
         )).thenReturn(tripPage);
 
         Page<TripDto> result = filterTripService.execute(filterParams, pageable);
@@ -147,11 +146,11 @@ class FilterTripServiceTest {
 
         when(tripsRepository.filter(
                 null,
-                eq(startDateTime),
-                eq(endDateTime),
-                eq(0.0),
-                eq(10.0),
-                eq(pageable)
+                startDateTime,
+                endDateTime,
+                0.0,
+                10.0,
+                pageable
         )).thenReturn(tripPage);
 
         Page<TripDto> result = filterTripService.execute(filterParams, pageable);
@@ -165,11 +164,11 @@ class FilterTripServiceTest {
 
         verify(tripsRepository).filter(
                 null,
-                eq(startDateTime),
-                eq(endDateTime),
-                eq(0.0),
-                eq(10.0),
-                eq(pageable)
+                startDateTime,
+                endDateTime,
+                0.0,
+                10.0,
+                pageable
         );
     }
 
@@ -196,11 +195,11 @@ class FilterTripServiceTest {
 
         verify(tripsRepository).filter(
                 true,
-                eq(startDateTime),
-                eq(endDateTime),
-                eq(0.0),
-                eq(10.0),
-                eq(pageable)
+                startDateTime,
+                endDateTime,
+                0.0,
+                10.0,
+                pageable
         );
     }
 }

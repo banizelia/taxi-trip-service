@@ -31,7 +31,7 @@ public class Trip {
     private Long id;
 
     @Column(name = "vendor_id")
-    private String vendorId;
+    private Integer vendorId;
 
     @Column(name = "pickup_datetime")
     private LocalDateTime pickupDatetime;
@@ -47,7 +47,7 @@ public class Trip {
     private Double tripDistance;
 
     @Column(name = "rate_code_id")
-    private String rateCodeId;
+    private Integer rateCodeId;
 
     @Column(name = "store_and_fwd_flag")
     private String storeAndFwdFlag;
@@ -59,7 +59,7 @@ public class Trip {
     private Integer dropoffLocationId;
 
     @Column(name = "payment_type")
-    private String paymentType;
+    private Integer paymentType;
 
     @Column(name = "fare_amount")
     private Double fareAmount;

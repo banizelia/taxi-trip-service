@@ -20,16 +20,16 @@ class TripMapperTest {
     void setUp() {
         trip = new Trip();
         trip.setId(1L);
-        trip.setVendorId("V123");
+        trip.setVendorId(1);
         trip.setPickupDatetime(localDateTime);
         trip.setDropoffDatetime(localDateTime.plusHours(1));
         trip.setPassengerCount(2);
         trip.setTripDistance(10.5);
-        trip.setRateCodeId("R1");
+        trip.setRateCodeId(1);
         trip.setStoreAndFwdFlag("Y");
         trip.setPickupLocationId(100);
         trip.setDropoffLocationId(200);
-        trip.setPaymentType("CREDIT");
+        trip.setPaymentType(1);
         trip.setFareAmount(25.50);
         trip.setExtra(2.0);
         trip.setMtaTax(0.5);

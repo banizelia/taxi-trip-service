@@ -58,7 +58,7 @@ class TripControllerTest {
     void setUp() {
         tripDto = new TripDto();
         tripDto.setId(1L);
-        tripDto.setVendorId("VENDOR123");
+        tripDto.setVendorId(1);
 
         List<TripDto> trips = List.of(tripDto);
         tripPage = new PageImpl<>(trips);

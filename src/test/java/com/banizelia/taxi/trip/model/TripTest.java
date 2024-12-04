@@ -36,7 +36,7 @@ class TripTest {
 
         @Test
         void testVendorIdField() {
-            String vendorId = "V123";
+            int vendorId = 1;
             trip.setVendorId(vendorId);
             assertEquals(vendorId, trip.getVendorId());
         }
@@ -69,7 +69,7 @@ class TripTest {
 
         @Test
         void testRateCodeIdField() {
-            String rateCodeId = "R1";
+            int rateCodeId = 1;
             trip.setRateCodeId(rateCodeId);
             assertEquals(rateCodeId, trip.getRateCodeId());
         }
@@ -103,7 +103,7 @@ class TripTest {
     class PaymentFieldsTests {
         @Test
         void testPaymentTypeField() {
-            String paymentType = "CREDIT";
+            int paymentType = 1;
             trip.setPaymentType(paymentType);
             assertEquals(paymentType, trip.getPaymentType());
         }
@@ -204,16 +204,16 @@ class TripTest {
     @Test
     void testCompleteTrip() {
         trip.setId(1L);
-        trip.setVendorId("V123");
+        trip.setVendorId(1);
         trip.setPickupDatetime(localDateTime);
         trip.setDropoffDatetime(localDateTime.plusHours(1));
         trip.setPassengerCount(2);
         trip.setTripDistance(10.5);
-        trip.setRateCodeId("R1");
+        trip.setRateCodeId(1);
         trip.setStoreAndFwdFlag("Y");
         trip.setPickupLocationId(100);
         trip.setDropoffLocationId(200);
-        trip.setPaymentType("CREDIT");
+        trip.setPaymentType(1);
         trip.setFareAmount(25.50);
         trip.setExtra(2.0);
         trip.setMtaTax(0.5);
@@ -237,16 +237,16 @@ class TripTest {
 
         assertAll(
                 () -> assertEquals(1L, trip.getId()),
-                () -> assertEquals("V123", trip.getVendorId()),
+                () -> assertEquals(1, trip.getVendorId()),
                 () -> assertEquals(localDateTime, trip.getPickupDatetime()),
                 () -> assertEquals(localDateTime.plusHours(1), trip.getDropoffDatetime()),
                 () -> assertEquals(2, trip.getPassengerCount()),
                 () -> assertEquals(10.5, trip.getTripDistance()),
-                () -> assertEquals("R1", trip.getRateCodeId()),
+                () -> assertEquals(1, trip.getRateCodeId()),
                 () -> assertEquals("Y", trip.getStoreAndFwdFlag()),
                 () -> assertEquals(100, trip.getPickupLocationId()),
                 () -> assertEquals(200, trip.getDropoffLocationId()),
-                () -> assertEquals("CREDIT", trip.getPaymentType()),
+                () -> assertEquals(1, trip.getPaymentType()),
                 () -> assertEquals(25.50, trip.getFareAmount()),
                 () -> assertEquals(2.0, trip.getExtra()),
                 () -> assertEquals(0.5, trip.getMtaTax()),

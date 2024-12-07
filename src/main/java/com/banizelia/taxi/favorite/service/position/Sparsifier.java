@@ -14,20 +14,21 @@ import java.util.concurrent.atomic.AtomicLong;
 @RequiredArgsConstructor
 public class Sparsifier {
     private final FavoriteTripRepository favoriteTripRepository;
-    private final FavoriteTripListConfig favoriteTripListConfig;
+    private final FavoriteTripListConfig config;
 
     @Transactional
     public long getNextAvailablePosition() {
         long maxPosition = favoriteTripRepository.findMaxPosition().orElse(0L);
 
-        if (needRebalancing(maxPosition)){
+        if (isRebalancingNeeded(maxPosition)){
             sparsify();
             maxPosition = favoriteTripRepository.findMaxPosition().orElse(0L);
-            if (needRebalancing(maxPosition)){
-                throw new PositionOverflowException(maxPosition, favoriteTripListConfig.getRebalanceThreshold());
+            if (isRebalancingNeeded(maxPosition)){
+                throw new PositionOverflowException(maxPosition, config.getRebalanceThreshold());
             }
         }
-        return maxPosition + favoriteTripListConfig.getPositionGap();
+
+        return maxPosition == 0 ? config.getInitialPosition() : (maxPosition + config.getPositionGap());
     }
 
     @Transactional
@@ -35,17 +36,14 @@ public class Sparsifier {
         List<FavoriteTrip> trips = favoriteTripRepository.findAllByOrderByPositionAsc();
 
         if (!trips.isEmpty()) {
-            AtomicLong currentPosition = new AtomicLong(favoriteTripListConfig.getInitialPosition());
+            AtomicLong currentPosition = new AtomicLong(config.getInitialPosition());
 
-            trips.forEach(trip -> {
-                trip.setPosition(currentPosition.get());
-                currentPosition.addAndGet(favoriteTripListConfig.getPositionGap());
-            });
+            trips.forEach(trip -> trip.setPosition(currentPosition.getAndAdd(config.getPositionGap())));
             favoriteTripRepository.saveAll(trips);
         }
     }
 
-    private boolean needRebalancing(long maxPosition) {
-        return maxPosition > Long.MAX_VALUE * favoriteTripListConfig.getRebalanceThreshold();
+    private boolean isRebalancingNeeded(long maxPosition) {
+        return maxPosition > Long.MAX_VALUE * config.getRebalanceThreshold();
     }
 }

@@ -35,43 +35,6 @@ class PositionCalculatorTest {
     class CalculateNewPositionTests {
 
         @Test
-        void calculateNewPosition_TargetPositionGreaterThanTotalCount_MaxPositionZero() {
-            Long targetPosition = 10L;
-            long totalCount = 5L;
-            long initialPosition = 10000000L;
-
-            when(favoriteTripRepository.count()).thenReturn(totalCount);
-            when(sparsifier.getNextAvailablePosition()).thenReturn(0L);
-            when(config.getInitialPosition()).thenReturn(initialPosition);
-
-            long newPosition = positionCalculator.calculateNewPosition(targetPosition);
-
-            assertEquals(initialPosition, newPosition);
-            verify(favoriteTripRepository, times(1)).count();
-            verify(sparsifier, times(1)).getNextAvailablePosition();
-            verify(config, times(1)).getInitialPosition();
-        }
-
-        @Test
-        void calculateNewPosition_TargetPositionGreaterThanTotalCount_MaxPositionNonZero() {
-            Long targetPosition = 10L;
-            long totalCount = 5L;
-            long maxPosition = 20000000L;
-            long initialPosition = 10000000L;
-
-            when(favoriteTripRepository.count()).thenReturn(totalCount);
-            when(sparsifier.getNextAvailablePosition()).thenReturn(maxPosition);
-            when(config.getInitialPosition()).thenReturn(initialPosition);
-
-            long newPosition = positionCalculator.calculateNewPosition(targetPosition);
-
-            assertEquals(maxPosition + initialPosition, newPosition);
-            verify(favoriteTripRepository, times(1)).count();
-            verify(sparsifier, times(1)).getNextAvailablePosition();
-            verify(config, times(1)).getInitialPosition();
-        }
-
-        @Test
         void calculateNewPosition_TargetPositionOne_FirstPositionValid() {
             Long targetPosition = 1L;
             long totalCount = 5L;
@@ -139,36 +102,4 @@ class PositionCalculatorTest {
         }
     }
 
-    @Nested
-    class CalculateLastPositionTests {
-
-        @Test
-        void calculateLastPosition_MaxPositionZero() {
-            long initialPosition = 10000000L;
-
-            when(sparsifier.getNextAvailablePosition()).thenReturn(0L);
-            when(config.getInitialPosition()).thenReturn(initialPosition);
-
-            long lastPosition = positionCalculator.calculateLastPosition();
-
-            assertEquals(initialPosition, lastPosition);
-            verify(sparsifier, times(1)).getNextAvailablePosition();
-            verify(config, times(1)).getInitialPosition();
-        }
-
-        @Test
-        void calculateLastPosition_MaxPositionNonZero() {
-            long initialPosition = 10000000L;
-            long maxPosition = 20000000L;
-
-            when(sparsifier.getNextAvailablePosition()).thenReturn(maxPosition);
-            when(config.getInitialPosition()).thenReturn(initialPosition);
-
-            long lastPosition = positionCalculator.calculateLastPosition();
-
-            assertEquals(maxPosition + initialPosition, lastPosition);
-            verify(sparsifier, times(1)).getNextAvailablePosition();
-            verify(config, times(1)).getInitialPosition();
-        }
-    }
 }

@@ -1,6 +1,7 @@
 package com.banizelia.taxi.favorite.service.position;
 
 import com.banizelia.taxi.config.FavoriteTripListConfig;
+import com.banizelia.taxi.error.position.PositionException;
 import com.banizelia.taxi.favorite.repository.FavoriteTripRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -8,26 +9,25 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class PositionCalculator {
+    private final FavoriteTripRepository favoriteTripRepository;
     private final FavoriteTripListConfig config;
     private final Sparsifier sparsifier;
-    private final FavoriteTripRepository favoriteTripRepository;
+
 
     public long calculateNewPosition(Long targetPosition) {
-        long totalCount = favoriteTripRepository.count();
-        long newPosition;
-
-        if (targetPosition > totalCount) {
-            newPosition = calculateLastPosition();
-        } else if (targetPosition == 1) {
-            newPosition = calculateFirstPosition();
-        } else {
-            newPosition = calculateMiddlePosition(targetPosition);
+        if (targetPosition < 1) {
+            throw new PositionException("Target position < 1: " + targetPosition);
         }
 
-        return newPosition;
+        long count = favoriteTripRepository.count();
+        if (targetPosition > count)
+            return lastPosition();
+        if (targetPosition == 1)
+            return firstPosition();
+        return middlePosition(targetPosition);
     }
 
-    private long calculateFirstPosition() {
+    private long firstPosition() {
         long firstPosition = favoriteTripRepository.findMinPosition().orElse(config.getInitialPosition());
 
         if (firstPosition < config.getMinGap()) {
@@ -38,31 +38,24 @@ public class PositionCalculator {
         return firstPosition / 2;
     }
 
-    private long calculateMiddlePosition(long targetPosition) {
-        long prevIndex = targetPosition - 2;
-        long nextIndex = targetPosition - 1;
+    private long middlePosition(long targetPosition) {
+        long prevPos = positionByIndex(targetPosition-2, 0L);
+        long nextPos = positionByIndex(targetPosition-1, prevPos + config.getPositionGap());
 
-        long prevPosition = favoriteTripRepository.findPositionByIndex(prevIndex).orElse(0L);
-        long nextPosition = favoriteTripRepository.findPositionByIndex(nextIndex).orElse(prevPosition + config.getPositionGap());
 
-        if ((nextPosition - prevPosition) < config.getMinGap()) {
+        if ((nextPos - prevPos) < config.getMinGap()) {
             sparsifier.sparsify();
-
-            prevPosition = favoriteTripRepository.findPositionByIndex(prevIndex).orElse(0L);
-            nextPosition = favoriteTripRepository.findPositionByIndex(nextIndex).orElse(prevPosition + config.getPositionGap());
+            prevPos = positionByIndex(targetPosition - 2, 0L);
+            nextPos = positionByIndex(targetPosition - 1, prevPos + config.getPositionGap());
         }
-
-        return prevPosition + (nextPosition - prevPosition) / 2;
+        return prevPos + (nextPos - prevPos) / 2;
     }
 
-    public long calculateLastPosition() {
-        long maxPosition = sparsifier.getNextAvailablePosition();
+    public long lastPosition() {
+        return sparsifier.getNextAvailablePosition();
+    }
 
-        if (maxPosition == 0) {
-            maxPosition = config.getInitialPosition();
-        } else {
-            maxPosition += config.getInitialPosition();
-        }
-        return maxPosition;
+    private long positionByIndex(long idx, long fallback) {
+        return favoriteTripRepository.findPositionByIndex(idx).orElse(fallback);
     }
 }

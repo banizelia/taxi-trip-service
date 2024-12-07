@@ -1,7 +1,7 @@
 package com.banizelia.taxi.trip.service;
 
 import com.banizelia.taxi.error.export.ExportException;
-import com.banizelia.taxi.util.export.TripExcelExporter;
+import com.banizelia.taxi.util.export.excel.TripExcelExporter;
 import com.banizelia.taxi.trip.model.TripFilterParams;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,11 +31,11 @@ class DownloadTripServiceTest {
 
     @Test
     void execute_SuccessfulExport() throws IOException {
-        doNothing().when(tripExcelExporter).tripsToExcelStream(any(OutputStream.class), eq(sampleFilterParams));
+        doNothing().when(tripExcelExporter).exportTrips(any(OutputStream.class), eq(sampleFilterParams));
         StreamingResponseBody result = downloadTripService.execute(sampleFilterParams);
         assertNotNull(result);
         result.writeTo(outputStream);
-        verify(tripExcelExporter, times(1)).tripsToExcelStream(outputStream, sampleFilterParams);
+        verify(tripExcelExporter, times(1)).exportTrips(outputStream, sampleFilterParams);
         verifyNoMoreInteractions(tripExcelExporter);
     }
 
@@ -43,7 +43,7 @@ class DownloadTripServiceTest {
     void execute_ThrowsExportException_WhenIOExceptionOccurs() throws IOException {
         doThrow(new IOException("Test IO Exception"))
                 .when(tripExcelExporter)
-                .tripsToExcelStream(any(OutputStream.class), eq(sampleFilterParams));
+                .exportTrips(any(OutputStream.class), eq(sampleFilterParams));
         StreamingResponseBody result = downloadTripService.execute(sampleFilterParams);
         assertNotNull(result, "StreamingResponseBody не должен быть null");
         ExportException exception = assertThrows(
@@ -54,17 +54,17 @@ class DownloadTripServiceTest {
         assertInstanceOf(IOException.class, exception.getCause());
         assertEquals("Test IO Exception", exception.getCause().getMessage());
 
-        verify(tripExcelExporter, times(1)).tripsToExcelStream(outputStream, sampleFilterParams);
+        verify(tripExcelExporter, times(1)).exportTrips(outputStream, sampleFilterParams);
         verifyNoMoreInteractions(tripExcelExporter);
     }
 
     @Test
     void execute_EnsuresOutputStreamIsClosed() throws IOException {
-        doNothing().when(tripExcelExporter).tripsToExcelStream(any(OutputStream.class), eq(sampleFilterParams));
+        doNothing().when(tripExcelExporter).exportTrips(any(OutputStream.class), eq(sampleFilterParams));
         StreamingResponseBody result = downloadTripService.execute(sampleFilterParams);
         result.writeTo(outputStream);
         verify(outputStream, times(1)).close();
-        verify(tripExcelExporter, times(1)).tripsToExcelStream(outputStream, sampleFilterParams);
+        verify(tripExcelExporter, times(1)).exportTrips(outputStream, sampleFilterParams);
         verifyNoMoreInteractions(tripExcelExporter);
     }
 
@@ -72,11 +72,11 @@ class DownloadTripServiceTest {
     void execute_EnsuresOutputStreamIsClosedEvenOnError() throws IOException {
         doThrow(new IOException("Test IO Exception"))
                 .when(tripExcelExporter)
-                .tripsToExcelStream(any(OutputStream.class), eq(sampleFilterParams));
+                .exportTrips(any(OutputStream.class), eq(sampleFilterParams));
         StreamingResponseBody result = downloadTripService.execute(sampleFilterParams);
         assertThrows(ExportException.class, () -> result.writeTo(outputStream));
         verify(outputStream, times(1)).close();
-        verify(tripExcelExporter, times(1)).tripsToExcelStream(outputStream, sampleFilterParams);
+        verify(tripExcelExporter, times(1)).exportTrips(outputStream, sampleFilterParams);
         verifyNoMoreInteractions(tripExcelExporter);
     }
 

@@ -37,7 +37,6 @@ public interface TripsRepository extends JpaRepository<Trip, Long> {
             @Param("startDateTime") LocalDateTime startDateTime,
             @Param("endDateTime") LocalDateTime endDateTime,
             @Param("minWindSpeed") Double minWindSpeed,
-            @Param("maxWindSpeed") Double maxWindSpeed,
-            Pageable pageable
+            @Param("maxWindSpeed") Double maxWindSpeed
     );
 }

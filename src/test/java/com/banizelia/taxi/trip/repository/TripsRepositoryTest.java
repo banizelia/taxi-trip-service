@@ -2,7 +2,6 @@ package com.banizelia.taxi.trip.repository;
 
 import com.banizelia.taxi.trip.model.Trip;
 import com.banizelia.taxi.weather.repository.WeatherRepository;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,9 +120,8 @@ class TripsRepositoryTest {
             LocalDateTime endDateTime = LocalDateTime.of(2024, 12, 1, 23, 59);
             Double minWindSpeed = 0.0;
             Double maxWindSpeed = 100.0;
-            Pageable pageable = Pageable.unpaged();
 
-            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(null, startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable).spliterator(), false)
+            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(null, startDateTime, endDateTime, minWindSpeed, maxWindSpeed).spliterator(), false)
                     .toList();
 
             assertEquals(1000, trips.size());
@@ -136,9 +134,8 @@ class TripsRepositoryTest {
             LocalDateTime endDateTime = LocalDateTime.of(2024, 12, 1, 23, 59);
             Double minWindSpeed = 0.0;
             Double maxWindSpeed = 100.0;
-            Pageable pageable = Pageable.unpaged();
 
-            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(isFavorite, startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable).spliterator(), false)
+            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(isFavorite, startDateTime, endDateTime, minWindSpeed, maxWindSpeed).spliterator(), false)
                     .toList();
 
             assertEquals(99, trips.size());
@@ -146,16 +143,14 @@ class TripsRepositoryTest {
         }
 
         @Test
-        @DisplayName("Должен возвращать только не избранные поездки как стрим")
         void streamFilter_ReturnsNonFavoriteTrips() {
             Boolean isFavorite = false;
             LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);
             LocalDateTime endDateTime = LocalDateTime.of(2024, 12, 1, 23, 59);
             Double minWindSpeed = 0.0;
             Double maxWindSpeed = 100.0;
-            Pageable pageable = Pageable.unpaged();
 
-            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(isFavorite, startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable).spliterator(), false)
+            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(isFavorite, startDateTime, endDateTime, minWindSpeed, maxWindSpeed).spliterator(), false)
                     .toList();
 
             assertEquals(901, trips.size());
@@ -168,9 +163,8 @@ class TripsRepositoryTest {
             LocalDateTime endDateTime = LocalDateTime.of(2025, 1, 2, 23, 59);
             Double minWindSpeed = 15.0;
             Double maxWindSpeed = 20.0;
-            Pageable pageable = Pageable.unpaged();
 
-            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(null, startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable).spliterator(), false)
+            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(null, startDateTime, endDateTime, minWindSpeed, maxWindSpeed).spliterator(), false)
                     .toList();
 
             assertTrue(trips.isEmpty());

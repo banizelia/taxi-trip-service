@@ -1,5 +1,6 @@
 package com.banizelia.taxi.favorite.service;
 
+import com.banizelia.taxi.error.trip.FavoriteTripModificationException;
 import com.banizelia.taxi.error.trip.TripNotFoundException;
 import com.banizelia.taxi.favorite.model.FavoriteTrip;
 import com.banizelia.taxi.favorite.repository.FavoriteTripRepository;
@@ -29,7 +30,7 @@ public class DeleteFavoriteTripService {
                     favoriteTrip.getPosition(),
                     e
             );
-            throw e;
+            throw new FavoriteTripModificationException("Failed to delete FavoriteTrip due to concurrent modification", e);
         }
     }
 }

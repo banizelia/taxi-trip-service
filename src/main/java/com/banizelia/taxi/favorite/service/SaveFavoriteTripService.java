@@ -1,5 +1,6 @@
 package com.banizelia.taxi.favorite.service;
 
+import com.banizelia.taxi.error.trip.FavoriteTripModificationException;
 import com.banizelia.taxi.error.trip.TripAlreadyInFavoritesException;
 import com.banizelia.taxi.error.trip.TripNotFoundException;
 import com.banizelia.taxi.favorite.model.FavoriteTrip;
@@ -22,6 +23,12 @@ public class SaveFavoriteTripService {
 
     @Transactional
     public void execute(Long tripId){
+        validateTripId(tripId);
+        FavoriteTrip favoriteTrip = createFavoriteTrip(tripId);
+        saveFavoriteTrip(favoriteTrip);
+    }
+
+    private void validateTripId(Long tripId) {
         if (favoriteTripRepository.findByTripId(tripId).isPresent()) {
             throw new TripAlreadyInFavoritesException(tripId);
         }
@@ -29,13 +36,17 @@ public class SaveFavoriteTripService {
         if (!tripsRepository.existsById(tripId)) {
             throw new TripNotFoundException(tripId);
         }
+    }
 
+    private FavoriteTrip createFavoriteTrip(Long tripId) {
+        long maxPosition = positionCalculator.lastPosition();
         FavoriteTrip favoriteTrip = new FavoriteTrip();
         favoriteTrip.setTripId(tripId);
-
-        long maxPosition = positionCalculator.calculateLastPosition();
         favoriteTrip.setPosition(maxPosition);
+        return favoriteTrip;
+    }
 
+    private void saveFavoriteTrip(FavoriteTrip favoriteTrip) {
         try {
             favoriteTripRepository.save(favoriteTrip);
         } catch (OptimisticLockException e) {
@@ -45,7 +56,7 @@ public class SaveFavoriteTripService {
                     favoriteTrip.getPosition(),
                     e
             );
-            throw e;
+            throw new FavoriteTripModificationException("Failed to save FavoriteTrip due to concurrent modification", e);
         }
     }
 }

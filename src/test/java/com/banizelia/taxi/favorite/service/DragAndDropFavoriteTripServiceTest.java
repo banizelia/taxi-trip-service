@@ -1,6 +1,7 @@
 package com.banizelia.taxi.favorite.service;
 
 import com.banizelia.taxi.error.position.PositionException;
+import com.banizelia.taxi.error.trip.FavoriteTripModificationException;
 import com.banizelia.taxi.error.trip.TripNotFoundException;
 import com.banizelia.taxi.favorite.model.FavoriteTrip;
 import com.banizelia.taxi.favorite.repository.FavoriteTripRepository;
@@ -80,7 +81,7 @@ class DragAndDropFavoriteTripServiceTest {
     }
 
     @Test
-    void execute_OptimisticLockException_ThrowsOptimisticLockException() {
+    void execute_OptimisticLockException() {
         Long tripId = 1L;
         Long targetPosition = 5L;
         FavoriteTrip favoriteTrip = new FavoriteTrip();
@@ -92,9 +93,9 @@ class DragAndDropFavoriteTripServiceTest {
 
         when(favoriteTripRepository.findByTripId(tripId)).thenReturn(Optional.of(favoriteTrip));
         when(positionCalculator.calculateNewPosition(targetPosition)).thenReturn(newPosition);
-        when(favoriteTripRepository.save(favoriteTrip)).thenThrow(new OptimisticLockException("Optimistic lock failed"));
+        when(favoriteTripRepository.save(favoriteTrip)).thenThrow(new FavoriteTripModificationException("Concurrent error", new OptimisticLockException() ));
 
-        assertThrows(OptimisticLockException.class, () -> dragAndDropFavoriteTripService.execute(tripId, targetPosition));
+        assertThrows(FavoriteTripModificationException.class, () -> dragAndDropFavoriteTripService.execute(tripId, targetPosition));
         verify(favoriteTripRepository, times(1)).findByTripId(tripId);
         verify(positionCalculator, times(1)).calculateNewPosition(targetPosition);
         verify(favoriteTripRepository, times(1)).save(favoriteTrip);

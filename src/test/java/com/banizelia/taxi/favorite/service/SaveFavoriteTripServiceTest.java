@@ -41,11 +41,11 @@ class SaveFavoriteTripServiceTest {
     void setUp() {
         when(favoriteTripRepository.findByTripId(TRIP_ID)).thenReturn(Optional.empty());
         when(tripsRepository.existsById(TRIP_ID)).thenReturn(true);
-        when(positionCalculator.calculateLastPosition()).thenReturn(MAX_POSITION);
+        when(positionCalculator.lastPosition()).thenReturn(MAX_POSITION);
     }
 
     @Test
-    void execute_ShouldSaveFavoriteTrip_WhenValidInput() {
+    void execute_ShouldSaveFavoriteTripFavoriteTrip_WhenValidInput() {
         service.execute(TRIP_ID);
 
         verify(favoriteTripRepository).save(favoriteTripCaptor.capture());
@@ -56,13 +56,13 @@ class SaveFavoriteTripServiceTest {
 
         verify(favoriteTripRepository).findByTripId(TRIP_ID);
         verify(tripsRepository).existsById(TRIP_ID);
-        verify(positionCalculator).calculateLastPosition();
+        verify(positionCalculator).lastPosition();
     }
 
     @Test
     void execute_ShouldSetCorrectPosition_WhenSaving() {
         Long expectedPosition = 42L;
-        when(positionCalculator.calculateLastPosition()).thenReturn(expectedPosition);
+        when(positionCalculator.lastPosition()).thenReturn(expectedPosition);
 
         service.execute(TRIP_ID);
 

@@ -1,6 +1,7 @@
 package com.banizelia.taxi.favorite.service;
 
 import com.banizelia.taxi.error.position.PositionException;
+import com.banizelia.taxi.error.trip.FavoriteTripModificationException;
 import com.banizelia.taxi.error.trip.TripNotFoundException;
 import com.banizelia.taxi.favorite.model.FavoriteTrip;
 import com.banizelia.taxi.favorite.repository.FavoriteTripRepository;
@@ -39,7 +40,7 @@ public class DragAndDropFavoriteTripService {
                     favoriteTrip.getPosition(),
                     e
             );
-            throw e;
+            throw new FavoriteTripModificationException("Failed to save FavoriteTrip due to concurrent modification", e);
         }
     }
 }

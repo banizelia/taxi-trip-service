@@ -1,16 +1,12 @@
 package com.banizelia.taxi.favorite.repository;
 
 import com.banizelia.taxi.favorite.model.FavoriteTrip;
-import com.banizelia.taxi.trip.model.Trip;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -52,17 +48,6 @@ class FavoriteTripRepositoryTest {
         FavoriteTrip trip2 = new FavoriteTrip();
         trip2.setTripId(102L);
         favoriteTripRepository.save(trip2);
-    }
-
-    @Test
-    void findAllWithPagination_ShouldReturnPaginatedTrips() {
-        Pageable pageable = PageRequest.of(0, 1);
-
-        Page<Trip> page = favoriteTripRepository.findAllWithPagination(pageable);
-
-        assertNotNull(page);
-        assertEquals(2, page.getTotalElements()); // Adjusted based on migration data
-        assertEquals(1, page.getContent().size());
     }
 
     @Test

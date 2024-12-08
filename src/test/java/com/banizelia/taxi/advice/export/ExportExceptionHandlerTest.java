@@ -7,8 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ExportExceptionHandlerTest {
 
@@ -20,8 +22,9 @@ class ExportExceptionHandlerTest {
 
         ResponseEntity<ApiErrorResponse> response = exportExceptionHandler.handleExportException(exception);
 
+        assertNotNull(response);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals(500, response.getBody().status());
+        assertEquals(500, Objects.requireNonNull(response.getBody()).status());
         assertEquals("Export Operation Failed", response.getBody().error());
         assertEquals("Export operation encountered an error", response.getBody().message());
     }

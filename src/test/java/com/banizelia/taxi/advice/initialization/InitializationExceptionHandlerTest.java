@@ -7,7 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class InitializationExceptionHandlerTest {
 
@@ -19,8 +22,9 @@ class InitializationExceptionHandlerTest {
 
         ResponseEntity<ApiErrorResponse> response = initializationExceptionHandler.handleApplicationInitializationException(exception);
 
+        assertNotNull(response);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals(500, response.getBody().status());
+        assertEquals(500, Objects.requireNonNull(response.getBody()).status());
         assertEquals("Application Initialization Error", response.getBody().error());
         assertEquals("Initialization failed", response.getBody().message());
     }
@@ -32,7 +36,7 @@ class InitializationExceptionHandlerTest {
         ResponseEntity<ApiErrorResponse> response = initializationExceptionHandler.handleInvalidTimeZoneException(exception);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals(400, response.getBody().status());
+        assertEquals(400, Objects.requireNonNull(response.getBody()).status());
         assertEquals("Invalid Timezone Error", response.getBody().error());
         assertEquals("Invalid timezone specified: Timezone is not supported", response.getBody().message());
     }

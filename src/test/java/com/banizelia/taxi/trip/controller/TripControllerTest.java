@@ -25,6 +25,8 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -50,13 +52,12 @@ class TripControllerTest {
     @InjectMocks
     private TripController tripController;
 
-    private TripDto tripDto;
     private TripFilterParams filterParams;
     private Page<TripDto> tripPage;
 
     @BeforeEach
     void setUp() {
-        tripDto = new TripDto();
+        TripDto tripDto = new TripDto();
         tripDto.setId(1L);
         tripDto.setVendorId(1);
 
@@ -103,18 +104,13 @@ class TripControllerTest {
         verify(filterTripService, times(1)).execute(any(TripFilterParams.class), any(Pageable.class));
     }
 
-    // Тесты для метода addToFavorites
-
     @Test
     void addToFavorites_ShouldReturnCreatedStatus() {
-        // Arrange
         Long tripId = 1L;
         doNothing().when(saveFavoriteTripService).execute(tripId);
 
-        // Act
         ResponseEntity<String> response = tripController.addToFavorites(tripId);
 
-        // Assert
         assertNotNull(response);
         assertEquals(HttpStatusCode.valueOf(201), response.getStatusCode());
         assertEquals("Trip added to favorites", response.getBody());
@@ -166,7 +162,7 @@ class TripControllerTest {
         HttpHeaders headers = response.getHeaders();
         String contentDisposition = headers.getFirst(HttpHeaders.CONTENT_DISPOSITION);
 
-        assertTrue(contentDisposition.startsWith("attachment; filename="));
+        assertTrue(Objects.requireNonNull(contentDisposition).startsWith("attachment; filename="));
         assertTrue(contentDisposition.contains(".xlsx"));
 
         assertEquals(MediaType.parseMediaType("application/vnd.ms-excel"), headers.getContentType());

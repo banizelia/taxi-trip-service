@@ -7,7 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class PositionExceptionHandlerTest {
 
@@ -20,7 +23,7 @@ class PositionExceptionHandlerTest {
         ResponseEntity<ApiErrorResponse> response = positionExceptionHandler.handlePositionException(exception);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals(500, response.getBody().status());
+        assertEquals(500, Objects.requireNonNull(response.getBody()).status());
         assertEquals("Position Processing Error", response.getBody().error());
         assertEquals("Position processing failed", response.getBody().message());
     }
@@ -31,8 +34,9 @@ class PositionExceptionHandlerTest {
 
         ResponseEntity<ApiErrorResponse> response = positionExceptionHandler.handlePositionOverflowException(exception);
 
+        assertNotNull(response);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals(500, response.getBody().status());
+        assertEquals(500, Objects.requireNonNull(response.getBody()).status());
         assertEquals("Position Overflow Error", response.getBody().error());
     }
 }

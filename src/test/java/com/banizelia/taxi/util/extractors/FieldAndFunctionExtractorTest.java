@@ -27,7 +27,7 @@ class FieldAndFunctionExtractorTest {
 
         Object result = fieldAndFunctionExtractor.extractor().apply(tripDto);
 
-        assertEquals(null, result);
+        assertNull(result);
     }
 
     @Test

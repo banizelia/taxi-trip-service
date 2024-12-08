@@ -10,7 +10,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -24,8 +27,9 @@ class GlobalExceptionHandlerTest {
 
         ResponseEntity<ApiErrorResponse> response = globalExceptionHandler.handleOptimisticLockException(exception);
 
+        assertNotNull(response);
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertEquals(409, response.getBody().status());
+        assertEquals(409, Objects.requireNonNull(response.getBody()).status());
         assertEquals("Concurrent Modification Error", response.getBody().error());
         assertEquals("Entity is being modified by another transaction", response.getBody().message());
     }
@@ -41,7 +45,7 @@ class GlobalExceptionHandlerTest {
         ResponseEntity<ApiErrorResponse> response = globalExceptionHandler.handleMethodArgumentNotValidException(exception);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals(400, response.getBody().status());
+        assertEquals(400, Objects.requireNonNull(response.getBody()).status());
         assertEquals("Validation Error", response.getBody().error());
         assertEquals("fieldName: must not be null", response.getBody().message());
     }
@@ -56,7 +60,7 @@ class GlobalExceptionHandlerTest {
         ResponseEntity<ApiErrorResponse> response = globalExceptionHandler.handleMethodArgumentNotValidException(exception);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals(400, response.getBody().status());
+        assertEquals(400, Objects.requireNonNull(response.getBody()).status());
         assertEquals("Validation Error", response.getBody().error());
         assertEquals("", response.getBody().message());
     }

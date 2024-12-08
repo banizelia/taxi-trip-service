@@ -32,7 +32,6 @@ class DragAndDropFavoriteTripServiceTest {
 
     @Test
     void execute_Successful() {
-        // Arrange
         Long tripId = 1L;
         Long targetPosition = 5L;
         FavoriteTrip favoriteTrip = new FavoriteTrip();
@@ -46,10 +45,8 @@ class DragAndDropFavoriteTripServiceTest {
         when(positionCalculator.calculateNewPosition(targetPosition)).thenReturn(newPosition);
         when(favoriteTripRepository.save(favoriteTrip)).thenReturn(favoriteTrip);
 
-        // Act
         assertDoesNotThrow(() -> dragAndDropFavoriteTripService.execute(tripId, targetPosition));
 
-        // Assert
         assertEquals(newPosition, favoriteTrip.getPosition());
         verify(favoriteTripRepository, times(1)).findByTripId(tripId);
         verify(positionCalculator, times(1)).calculateNewPosition(targetPosition);

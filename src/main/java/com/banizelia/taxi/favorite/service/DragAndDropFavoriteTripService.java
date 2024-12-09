@@ -21,7 +21,7 @@ public class DragAndDropFavoriteTripService {
 
     @Transactional
     public void execute(Long tripId, Long targetPosition) {
-        if (targetPosition < 1 ) {
+        if (targetPosition < 1) {
             throw new PositionException(String.format("Target position %d is out of bounds, id: %d, ", targetPosition, tripId));
         }
 

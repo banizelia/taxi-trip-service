@@ -39,8 +39,8 @@ public class PositionCalculator {
     }
 
     private long middlePosition(long targetPosition) {
-        long prevPos = positionByIndex(targetPosition-2, 0L);
-        long nextPos = positionByIndex(targetPosition-1, prevPos + config.getPositionGap());
+        long prevPos = positionByIndex(targetPosition - 2, 0L);
+        long nextPos = positionByIndex(targetPosition - 1, prevPos + config.getPositionGap());
 
 
         if ((nextPos - prevPos) < config.getMinGap()) {

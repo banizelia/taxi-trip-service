@@ -1,9 +1,11 @@
 package com.banizelia.taxi.trip.model;
 
 import io.swagger.v3.oas.annotations.Parameter;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDateTime;
 
 @Data

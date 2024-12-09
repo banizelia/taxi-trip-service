@@ -3,8 +3,8 @@ package com.banizelia.taxi.trip.controller;
 import com.banizelia.taxi.favorite.service.DeleteFavoriteTripService;
 import com.banizelia.taxi.favorite.service.DragAndDropFavoriteTripService;
 import com.banizelia.taxi.favorite.service.SaveFavoriteTripService;
-import com.banizelia.taxi.trip.model.TripFilterParams;
 import com.banizelia.taxi.trip.model.TripDto;
+import com.banizelia.taxi.trip.model.TripFilterParams;
 import com.banizelia.taxi.trip.service.DownloadTripService;
 import com.banizelia.taxi.trip.service.FilterTripService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -41,13 +42,13 @@ public class TripController {
     @Operation(
             summary = "Filter trips",
             description = """
-        Filters trips with the option to sort by various fields, including nested properties.
-
-        Sorting examples:
-        
-            - Sort by pickup date: `sort=pickupDatetime,asc`
-
-            - Sort by position in favorite trips: `sort=favoriteTrip.position,desc`\s""")
+                    Filters trips with the option to sort by various fields, including nested properties.
+                    
+                    Sorting examples:
+                    
+                        - Sort by pickup date: `sort=pickupDatetime,asc`
+                    
+                        - Sort by position in favorite trips: `sort=favoriteTrip.position,desc`\s""")
     @GetMapping
     public ResponseEntity<Page<TripDto>> filterTrips(
             @Valid @ParameterObject TripFilterParams params,

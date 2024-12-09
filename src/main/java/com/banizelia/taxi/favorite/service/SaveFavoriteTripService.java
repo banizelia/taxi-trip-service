@@ -22,7 +22,7 @@ public class SaveFavoriteTripService {
     private final PositionCalculator positionCalculator;
 
     @Transactional
-    public void execute(Long tripId){
+    public void execute(Long tripId) {
         validateTripId(tripId);
         FavoriteTrip favoriteTrip = createFavoriteTrip(tripId);
         saveFavoriteTrip(favoriteTrip);

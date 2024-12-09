@@ -4,7 +4,7 @@ import com.banizelia.taxi.error.trip.FavoriteTripModificationException;
 import com.banizelia.taxi.error.trip.TripNotFoundException;
 import com.banizelia.taxi.favorite.model.FavoriteTrip;
 import com.banizelia.taxi.favorite.repository.FavoriteTripRepository;
-import jakarta.persistence.*;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

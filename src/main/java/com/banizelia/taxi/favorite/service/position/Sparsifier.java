@@ -7,6 +7,7 @@ import com.banizelia.taxi.favorite.repository.FavoriteTripRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -20,10 +21,10 @@ public class Sparsifier {
     public long getNextAvailablePosition() {
         long maxPosition = favoriteTripRepository.findMaxPosition().orElse(0L);
 
-        if (isRebalancingNeeded(maxPosition)){
+        if (isRebalancingNeeded(maxPosition)) {
             sparsify();
             maxPosition = favoriteTripRepository.findMaxPosition().orElse(0L);
-            if (isRebalancingNeeded(maxPosition)){
+            if (isRebalancingNeeded(maxPosition)) {
                 throw new PositionOverflowException(maxPosition, config.getRebalanceThreshold());
             }
         }

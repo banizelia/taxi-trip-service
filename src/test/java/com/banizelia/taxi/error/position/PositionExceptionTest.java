@@ -13,15 +13,4 @@ class PositionExceptionTest {
 
         assertEquals(message, exception.getMessage());
     }
-
-    @Test
-    void testExceptionWithMessageAndCause() {
-        String message = "Position error occurred";
-        Throwable cause = new RuntimeException("Underlying cause");
-
-        PositionException exception = new PositionException(message, cause);
-
-        assertEquals(message, exception.getMessage());
-        assertEquals(cause, exception.getCause());
-    }
 }

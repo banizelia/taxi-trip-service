@@ -4,7 +4,6 @@ import com.banizelia.taxi.config.ExcelExporterConfig;
 import com.banizelia.taxi.trip.model.TripDto;
 import com.banizelia.taxi.trip.model.TripFilterParams;
 import com.banizelia.taxi.util.export.TripDataProvider;
-import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -23,13 +22,6 @@ class TripExcelExporterTest {
         when(conf.getSheetPrefix()).thenReturn("trips_");
         when(conf.getMaxRowsPerSheet()).thenReturn(100);
         when(conf.getBatchSize()).thenReturn(10);
-
-        when(writer.createSheet(Mockito.any(Workbook.class), Mockito.anyString()))
-                .thenAnswer(invocation -> {
-                    Workbook workbook = invocation.getArgument(0);
-                    String sheetName = invocation.getArgument(1);
-                    return workbook.newWorksheet(sheetName);
-                });
 
         Iterator<TripDto> it = new Iterator<>() {
             int count = 0;

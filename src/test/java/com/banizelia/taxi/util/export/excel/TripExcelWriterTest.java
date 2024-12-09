@@ -13,7 +13,8 @@ class TripExcelWriterTest {
         Mockito.when(wb.newWorksheet("test")).thenReturn(ws);
 
         TripExcelWriter writer = new TripExcelWriter();
-        Worksheet sheet = writer.createSheet(wb, "test");
+        Worksheet sheet = wb.newWorksheet("test");
+
         writer.writeHeaders(sheet);
         Mockito.verify(ws, Mockito.times(20)).value(Mockito.eq(0), Mockito.anyInt(), Mockito.anyString());
     }

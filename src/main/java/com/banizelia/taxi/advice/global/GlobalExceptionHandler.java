@@ -2,6 +2,7 @@ package com.banizelia.taxi.advice.global;
 
 import com.banizelia.taxi.util.ApiErrorResponse;
 import jakarta.persistence.OptimisticLockException;
+import org.hibernate.query.sqm.PathElementException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,6 +35,18 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation Error",
                 String.join(", ", errors)
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PathElementException.class)
+    public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValidException(PathElementException ex) {
+
+        ApiErrorResponse response = new ApiErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Validation Error",
+                ex.getMessage()
         );
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

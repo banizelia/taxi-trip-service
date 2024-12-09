@@ -1,4 +1,5 @@
 package com.banizelia.taxi.trip.model;
+
 import lombok.Data;
 import java.time.LocalDateTime;
 

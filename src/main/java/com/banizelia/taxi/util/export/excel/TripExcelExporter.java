@@ -25,7 +25,7 @@ public class TripExcelExporter {
 
     public void exportTrips(OutputStream outputStream, TripFilterParams filterParams) throws IOException {
         Workbook workbook = new Workbook(outputStream, "Trips", "1.0");
-        Worksheet worksheet = writer.createSheet(workbook, conf.getSheetPrefix() + "1");
+        Worksheet worksheet = workbook.newWorksheet(conf.getSheetPrefix() + "1");
         writer.writeHeaders(worksheet);
 
         Iterator<TripDto> iterator = dataProvider.provide(filterParams);
@@ -37,7 +37,7 @@ public class TripExcelExporter {
                 worksheet.finish();
                 outputStream.flush();
                 pageCount++;
-                worksheet = writer.createSheet(workbook, conf.getSheetPrefix() + pageCount);
+                worksheet = workbook.newWorksheet(conf.getSheetPrefix() + pageCount);
                 writer.writeHeaders(worksheet);
                 row = 1;
             }
@@ -46,7 +46,6 @@ public class TripExcelExporter {
                 outputStream.flush();
             }
         }
-
         workbook.finish();
         outputStream.flush();
     }

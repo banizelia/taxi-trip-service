@@ -3,7 +3,6 @@ package com.banizelia.taxi.util.export.excel;
 import com.banizelia.taxi.trip.model.TripDto;
 import com.banizelia.taxi.util.extractors.FieldAndFunctionExtractor;
 import lombok.RequiredArgsConstructor;
-import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
@@ -35,10 +34,6 @@ public class TripExcelWriter {
             new FieldAndFunctionExtractor("Airport Fee", TripDto::getAirportFee)
     );
 
-    public Worksheet createSheet(Workbook workbook, String name) {
-        return workbook.newWorksheet(name);
-    }
-
     public void writeHeaders(Worksheet sheet) {
         for (int i = 0; i < extractors.size(); i++) {
             sheet.value(0, i, extractors.get(i).name());
@@ -48,10 +43,10 @@ public class TripExcelWriter {
     public void writeRow(Worksheet sheet, int row, TripDto dto) {
         for (int i = 0; i < extractors.size(); i++) {
             Object val = extractors.get(i).extractor().apply(dto);
-            if (val instanceof LocalDateTime d) {
-                sheet.value(row, i, d.toString());
-            } else if (val instanceof Number n) {
-                sheet.value(row, i, n.doubleValue());
+            if (val instanceof LocalDateTime dateTime) {
+                sheet.value(row, i, dateTime.toString());
+            } else if (val instanceof Number number) {
+                sheet.value(row, i, number.doubleValue());
             } else if (val != null) {
                 sheet.value(row, i, val.toString());
             }

@@ -1,6 +1,7 @@
 package com.banizelia.taxi.util.export.excel;
 
 import com.banizelia.taxi.config.ExcelExporterConfig;
+import com.banizelia.taxi.error.export.ExportException;
 import com.banizelia.taxi.trip.model.TripDto;
 import com.banizelia.taxi.trip.model.TripFilterParams;
 import com.banizelia.taxi.util.export.TripDataProvider;
@@ -26,28 +27,34 @@ public class TripExcelExporter {
 
     public void exportTrips(OutputStream outputStream, TripFilterParams filterParams) throws IOException {
         Workbook workbook = new Workbook(outputStream, "Trips", "1.0");
-        Worksheet worksheet = workbook.newWorksheet(conf.getSheetPrefix() + "1");
-        writer.writeHeaders(worksheet);
 
-        Iterator<TripDto> iterator = dataProvider.provide(filterParams);
+        try {
+            Worksheet worksheet = workbook.newWorksheet(conf.getSheetPrefix() + "1");
+            writer.writeHeaders(worksheet);
 
-        int row = 1;
-        int pageCount = 1;
-        while (iterator.hasNext()) {
-            if (row > conf.getMaxRowsPerSheet()) {
-                worksheet.finish();
-                outputStream.flush();
-                pageCount++;
-                worksheet = workbook.newWorksheet(conf.getSheetPrefix() + pageCount);
-                writer.writeHeaders(worksheet);
-                row = 1;
+            Iterator<TripDto> iterator = dataProvider.provide(filterParams);
+
+            int row = 1;
+            int pageCount = 1;
+            while (iterator.hasNext()) {
+                if (row > conf.getMaxRowsPerSheet()) {
+                    worksheet.finish();
+                    outputStream.flush();
+                    pageCount++;
+                    worksheet = workbook.newWorksheet(conf.getSheetPrefix() + pageCount);
+                    writer.writeHeaders(worksheet);
+                    row = 1;
+                }
+                writer.writeRow(worksheet, row++, iterator.next());
+                if (row % conf.getBatchSize() == 0) {
+                    outputStream.flush();
+                }
             }
-            writer.writeRow(worksheet, row++, iterator.next());
-            if (row % conf.getBatchSize() == 0) {
-                outputStream.flush();
-            }
+        } catch (IOException e) {
+            throw new ExportException("Error while exporting to excel", e);
+        } finally {
+            workbook.finish();
+            outputStream.flush();
         }
-        workbook.finish();
-        outputStream.flush();
     }
 }

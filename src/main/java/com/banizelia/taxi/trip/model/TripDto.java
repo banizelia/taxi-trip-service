@@ -6,8 +6,9 @@ import java.time.LocalDateTime;
 
 @Data
 public class TripDto {
-    private Boolean isFavorite;
     private Long id;
+    private Boolean isFavorite;
+    private Double averageWindSpeed;
     private Integer vendorId;
     private LocalDateTime pickupDatetime;
     private LocalDateTime dropoffDatetime;

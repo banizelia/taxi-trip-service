@@ -26,10 +26,10 @@ class TripFilterParamsTest {
     }
 
     @Test
-    void testInvalidEndDateTime() {
+    void testInvalidpickupDateTimeTo() {
         TripFilterParams params = new TripFilterParams();
-        params.setStartDateTime(LocalDateTime.of(2023, 1, 1, 0, 0));
-        params.setEndDateTime(LocalDateTime.of(2022, 1, 1, 0, 0));
+        params.setPickupDateTimeFrom(LocalDateTime.of(2023, 1, 1, 0, 0));
+        params.setPickupDateTimeTo(LocalDateTime.of(2022, 1, 1, 0, 0));
 
         Set<ConstraintViolation<TripFilterParams>> violations = validator.validate(params);
 
@@ -50,8 +50,8 @@ class TripFilterParamsTest {
     @Test
     void testValidCustomValues() {
         TripFilterParams params = new TripFilterParams();
-        params.setStartDateTime(LocalDateTime.of(2023, 1, 1, 0, 0));
-        params.setEndDateTime(LocalDateTime.of(2023, 2, 1, 0, 0));
+        params.setPickupDateTimeFrom(LocalDateTime.of(2023, 1, 1, 0, 0));
+        params.setPickupDateTimeTo(LocalDateTime.of(2023, 2, 1, 0, 0));
         params.setMinWindSpeed(5.0);
         params.setMaxWindSpeed(15.0);
 

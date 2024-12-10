@@ -18,8 +18,8 @@ public class FilterTripService {
     public Page<TripDto> execute(TripFilterParams params, Pageable pageable) {
         Page<Trip> trips = tripsRepository.filter(
                 params.getIsFavorite(),
-                params.getStartDateTime(),
-                params.getEndDateTime(),
+                params.getPickupDateTimeFrom(),
+                params.getPickupDateTimeTo(),
                 params.getMinWindSpeed(),
                 params.getMaxWindSpeed(),
                 pageable);

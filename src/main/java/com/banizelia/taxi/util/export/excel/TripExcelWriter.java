@@ -42,14 +42,17 @@ public class TripExcelWriter {
     }
 
     public void writeRow(Worksheet sheet, int row, TripDto dto) {
-        for (int i = 0; i < extractors.size(); i++) {
-            Object val = extractors.get(i).extractor().apply(dto);
+        for (int column = 0; column < extractors.size(); column++) {
+            Object val = extractors.get(column).extractor().apply(dto);
             if (val instanceof LocalDateTime dateTime) {
-                sheet.value(row, i, dateTime.toString());
+
+                sheet.value(row, column, dateTime);
+                sheet.style(row, column).format("yyyy-MM-dd H:mm:ss").set();
+
             } else if (val instanceof Number number) {
-                sheet.value(row, i, number.doubleValue());
+                sheet.value(row, column, number.doubleValue());
             } else if (val != null) {
-                sheet.value(row, i, val.toString());
+                sheet.value(row, column, val.toString());
             }
         }
     }

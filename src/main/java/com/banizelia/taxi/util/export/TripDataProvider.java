@@ -19,8 +19,8 @@ public class TripDataProvider {
     public Iterator<TripDto> provide(TripFilterParams params) {
         Stream<Trip> stream = tripsRepository.streamFilter(
                 params.getIsFavorite(),
-                params.getStartDateTime(),
-                params.getEndDateTime(),
+                params.getPickupDateTimeFrom(),
+                params.getPickupDateTimeTo(),
                 params.getMinWindSpeed(),
                 params.getMaxWindSpeed()
         );

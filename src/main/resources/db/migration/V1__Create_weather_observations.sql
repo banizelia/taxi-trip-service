@@ -19,6 +19,15 @@ CREATE TABLE IF NOT EXISTS public.weather_observations
 ALTER TABLE public.weather_observations
 ADD CONSTRAINT unique_weather_date UNIQUE (date);
 
+CREATE INDEX IF NOT EXISTS idx_weather_wind_speed
+    ON public.weather_observations (average_wind_speed);
+
+CREATE INDEX IF NOT EXISTS idx_weather_date_wind_speed
+    ON public.weather_observations (date, average_wind_speed);
+
+CREATE INDEX IF NOT EXISTS idx_weather_observations_date
+    ON public.weather_observations (date ASC NULLS LAST);
+
 INSERT INTO public.weather_observations
 (station_id, station_name, date, average_wind_speed, precipitation, snow_depth, snowfall, max_temperature, min_temperature, weather_id)
 VALUES

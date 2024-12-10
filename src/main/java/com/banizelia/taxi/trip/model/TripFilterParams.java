@@ -14,11 +14,11 @@ public class TripFilterParams {
 
     @Parameter(description = "Start date and time of the trip", example = "2000-01-01T00:00:00.000")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    private LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0);
+    private LocalDateTime pickupDateTimeFrom = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0);
 
     @Parameter(description = "End date and time of the trip", example = "2020-02-01T00:00:00.000")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    private LocalDateTime endDateTime = LocalDateTime.of(2020, 2, 1, 0, 0, 0, 0);
+    private LocalDateTime pickupDateTimeTo = LocalDateTime.of(2020, 2, 1, 0, 0, 0, 0);
 
     @Parameter(description = "Minimum wind speed")
     @Min(value = 0)
@@ -30,18 +30,18 @@ public class TripFilterParams {
 
 
     @AssertTrue()
-    private boolean isEndDateTimeAfterStartDateTime() {
-        if (startDateTime == null || endDateTime == null) {
+    private boolean isEndAndStartDateTimeValid() {
+        if (pickupDateTimeFrom == null || pickupDateTimeTo == null) {
             return true;
         }
-        return endDateTime.isAfter(startDateTime);
+        return pickupDateTimeTo.isAfter(pickupDateTimeFrom)|| pickupDateTimeFrom.equals(pickupDateTimeTo);
     }
 
     @AssertTrue()
-    private boolean isMaxWindSpeedGreaterThanMinWindSpeed() {
+    private boolean isMaxAndMinWindSpeedValid() {
         if (minWindSpeed == null || maxWindSpeed == null) {
             return true;
         }
-        return maxWindSpeed > minWindSpeed;
+        return maxWindSpeed >= minWindSpeed;
     }
 }

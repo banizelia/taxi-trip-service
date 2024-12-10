@@ -13,6 +13,9 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_favorite_trips_trip_id
     ON public.favorite_trips USING btree
     (trip_id ASC NULLS LAST);
 
+CREATE INDEX IF NOT EXISTS idx_favorite_trip_position
+    ON public.favorite_trips (position);
+
 INSERT INTO public.favorite_trips (trip_id, position, version) VALUES
 (1, 1, 0),
 (2, 2, 0),

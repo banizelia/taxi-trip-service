@@ -65,8 +65,8 @@ class TripControllerTest {
         tripPage = new PageImpl<>(trips);
 
         filterParams = new TripFilterParams();
-        filterParams.setStartDateTime(LocalDateTime.now().minusDays(1));
-        filterParams.setEndDateTime(LocalDateTime.now().plusDays(1));
+        filterParams.setPickupDateTimeFrom(LocalDateTime.now().minusDays(1));
+        filterParams.setPickupDateTimeTo(LocalDateTime.now().plusDays(1));
         filterParams.setMinWindSpeed(0.0);
         filterParams.setMaxWindSpeed(10.0);
     }

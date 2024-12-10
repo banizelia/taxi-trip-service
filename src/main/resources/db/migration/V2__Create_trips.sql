@@ -28,6 +28,15 @@ CREATE TABLE IF NOT EXISTS public.trips
         REFERENCES public.weather_observations (date)
 );
 
+CREATE INDEX IF NOT EXISTS idx_trips_pickup_datetime
+    ON public.trips (pickup_datetime);
+
+CREATE INDEX IF NOT EXISTS idx_trips_pickup_date_weather_id
+    ON public.trips (pickup_date, id);
+
+CREATE INDEX IF NOT EXISTS idx_trips_pickup_date
+    ON public.trips (pickup_date);
+
 INSERT INTO public.trips
 (id, vendor_id, pickup_datetime, dropoff_datetime, passenger_count, trip_distance, rate_code_id, store_and_fwd_flag, pickup_location_id, dropoff_location_id, payment_type, fare_amount, extra, mta_tax, tip_amount, tolls_amount, improvement_surcharge, total_amount, congestion_surcharge, airport_fee)
 VALUES

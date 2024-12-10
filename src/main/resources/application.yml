@@ -4,6 +4,7 @@ spring:
     username: postgres
     password: 12345678
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: update
   flyway:

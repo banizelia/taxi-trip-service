@@ -47,13 +47,13 @@ class TripsRepositoryTest {
 
         @Test
         void filter_ReturnsCorrectTrips_NoFavoriteFilter() {
-            LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);
-            LocalDateTime endDateTime = LocalDateTime.of(2023, 1, 2, 23, 59);
+            LocalDateTime pickupDateTimeFrom = LocalDateTime.of(2000, 1, 1, 0, 0);
+            LocalDateTime pickupDateTimeTo = LocalDateTime.of(2023, 1, 2, 23, 59);
             double minWindSpeed = 0.0;
             double maxWindSpeed = 10.0;
             Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
 
-            Page<Trip> result = tripsRepository.filter(null, startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
+            Page<Trip> result = tripsRepository.filter(null, pickupDateTimeFrom, pickupDateTimeTo, minWindSpeed, maxWindSpeed, pageable);
 
             assertFalse(result.isEmpty());
             assertEquals(1000, result.getTotalElements());
@@ -66,13 +66,13 @@ class TripsRepositoryTest {
         @Test
         void filter_ReturnsFavoriteTrips() {
             Boolean isFavorite = true;
-            LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);
-            LocalDateTime endDateTime = LocalDateTime.of(2024, 12, 1, 23, 59);
+            LocalDateTime pickupDateTimeFrom = LocalDateTime.of(2000, 1, 1, 0, 0);
+            LocalDateTime pickupDateTimeTo = LocalDateTime.of(2024, 12, 1, 23, 59);
             double minWindSpeed = 0.0;
             double maxWindSpeed = 10.0;
             Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
 
-            Page<Trip> result = tripsRepository.filter(isFavorite, startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
+            Page<Trip> result = tripsRepository.filter(isFavorite, pickupDateTimeFrom, pickupDateTimeTo, minWindSpeed, maxWindSpeed, pageable);
 
             assertFalse(result.isEmpty());
             assertEquals(99, result.getTotalElements());
@@ -83,13 +83,13 @@ class TripsRepositoryTest {
         @Test
         void filter_ReturnsNonFavoriteTrips() {
             Boolean isFavorite = false;
-            LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);
-            LocalDateTime endDateTime = LocalDateTime.of(2024, 12, 1, 23, 59);
+            LocalDateTime pickupDateTimeFrom = LocalDateTime.of(2000, 1, 1, 0, 0);
+            LocalDateTime pickupDateTimeTo = LocalDateTime.of(2024, 12, 1, 23, 59);
             double minWindSpeed = 0.0;
             double maxWindSpeed = 10.0;
             Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
 
-            Page<Trip> result = tripsRepository.filter(isFavorite, startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
+            Page<Trip> result = tripsRepository.filter(isFavorite, pickupDateTimeFrom, pickupDateTimeTo, minWindSpeed, maxWindSpeed, pageable);
 
             assertFalse(result.isEmpty());
             assertEquals(901, result.getTotalElements());
@@ -99,13 +99,13 @@ class TripsRepositoryTest {
 
         @Test
         void filter_NoMatchingTrips_ReturnsEmptyPage() {
-            LocalDateTime startDateTime = LocalDateTime.of(2025, 1, 1, 0, 0);
-            LocalDateTime endDateTime = LocalDateTime.of(2025, 1, 2, 23, 59);
+            LocalDateTime pickupDateTimeFrom = LocalDateTime.of(2025, 1, 1, 0, 0);
+            LocalDateTime pickupDateTimeTo = LocalDateTime.of(2025, 1, 2, 23, 59);
             Double minWindSpeed = 15.0;
             Double maxWindSpeed = 20.0;
             Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
 
-            Page<Trip> result = tripsRepository.filter(null, startDateTime, endDateTime, minWindSpeed, maxWindSpeed, pageable);
+            Page<Trip> result = tripsRepository.filter(null, pickupDateTimeFrom, pickupDateTimeTo, minWindSpeed, maxWindSpeed, pageable);
 
             assertTrue(result.isEmpty());
         }
@@ -116,12 +116,12 @@ class TripsRepositoryTest {
 
         @Test
         void streamFilter_ReturnsAllTrips_NoFavoriteFilter() {
-            LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);
-            LocalDateTime endDateTime = LocalDateTime.of(2024, 12, 1, 23, 59);
+            LocalDateTime pickupDateTimeFrom = LocalDateTime.of(2000, 1, 1, 0, 0);
+            LocalDateTime pickupDateTimeTo = LocalDateTime.of(2024, 12, 1, 23, 59);
             Double minWindSpeed = 0.0;
             Double maxWindSpeed = 100.0;
 
-            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(null, startDateTime, endDateTime, minWindSpeed, maxWindSpeed).spliterator(), false)
+            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(null, pickupDateTimeFrom, pickupDateTimeTo, minWindSpeed, maxWindSpeed).spliterator(), false)
                     .toList();
 
             assertEquals(1000, trips.size());
@@ -130,12 +130,12 @@ class TripsRepositoryTest {
         @Test
         void streamFilter_ReturnsFavoriteTrips() {
             Boolean isFavorite = true;
-            LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);
-            LocalDateTime endDateTime = LocalDateTime.of(2024, 12, 1, 23, 59);
+            LocalDateTime pickupDateTimeFrom = LocalDateTime.of(2000, 1, 1, 0, 0);
+            LocalDateTime pickupDateTimeTo = LocalDateTime.of(2024, 12, 1, 23, 59);
             Double minWindSpeed = 0.0;
             Double maxWindSpeed = 100.0;
 
-            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(isFavorite, startDateTime, endDateTime, minWindSpeed, maxWindSpeed).spliterator(), false)
+            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(isFavorite, pickupDateTimeFrom, pickupDateTimeTo, minWindSpeed, maxWindSpeed).spliterator(), false)
                     .toList();
 
             assertEquals(99, trips.size());
@@ -145,12 +145,12 @@ class TripsRepositoryTest {
         @Test
         void streamFilter_ReturnsNonFavoriteTrips() {
             Boolean isFavorite = false;
-            LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);
-            LocalDateTime endDateTime = LocalDateTime.of(2024, 12, 1, 23, 59);
+            LocalDateTime pickupDateTimeFrom = LocalDateTime.of(2000, 1, 1, 0, 0);
+            LocalDateTime pickupDateTimeTo = LocalDateTime.of(2024, 12, 1, 23, 59);
             Double minWindSpeed = 0.0;
             Double maxWindSpeed = 100.0;
 
-            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(isFavorite, startDateTime, endDateTime, minWindSpeed, maxWindSpeed).spliterator(), false)
+            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(isFavorite, pickupDateTimeFrom, pickupDateTimeTo, minWindSpeed, maxWindSpeed).spliterator(), false)
                     .toList();
 
             assertEquals(901, trips.size());
@@ -159,12 +159,12 @@ class TripsRepositoryTest {
 
         @Test
         void streamFilter_NoMatchingTrips_ReturnsEmptyStream() {
-            LocalDateTime startDateTime = LocalDateTime.of(2025, 1, 1, 0, 0);
-            LocalDateTime endDateTime = LocalDateTime.of(2025, 1, 2, 23, 59);
+            LocalDateTime pickupDateTimeFrom = LocalDateTime.of(2025, 1, 1, 0, 0);
+            LocalDateTime pickupDateTimeTo = LocalDateTime.of(2025, 1, 2, 23, 59);
             Double minWindSpeed = 15.0;
             Double maxWindSpeed = 20.0;
 
-            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(null, startDateTime, endDateTime, minWindSpeed, maxWindSpeed).spliterator(), false)
+            List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(null, pickupDateTimeFrom, pickupDateTimeTo, minWindSpeed, maxWindSpeed).spliterator(), false)
                     .toList();
 
             assertTrue(trips.isEmpty());

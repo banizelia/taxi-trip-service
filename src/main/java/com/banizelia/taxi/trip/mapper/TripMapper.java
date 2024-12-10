@@ -11,5 +11,6 @@ public interface TripMapper {
     TripMapper INSTANCE = Mappers.getMapper(TripMapper.class);
 
     @Mapping(target = "isFavorite", expression = "java(trip.getFavoriteTrip() != null)")
+    @Mapping(target = "averageWindSpeed", source = "weather.averageWindSpeed")
     TripDto tripToTripDto(Trip trip);
 }

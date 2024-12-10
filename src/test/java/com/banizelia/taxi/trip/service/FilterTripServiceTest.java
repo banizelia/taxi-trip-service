@@ -31,18 +31,18 @@ class FilterTripServiceTest {
     @InjectMocks
     private FilterTripService filterTripService;
 
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
+    private LocalDateTime pickupDateTimeFrom;
+    private LocalDateTime pickupDateTimeTo;
     private Pageable pageable;
 
     @BeforeEach
     void setUp() {
-        startDateTime = LocalDateTime.of(2024, 1, 1, 0, 0);
-        endDateTime = LocalDateTime.of(2024, 1, 31, 23, 59);
+        pickupDateTimeFrom = LocalDateTime.of(2024, 1, 1, 0, 0);
+        pickupDateTimeTo = LocalDateTime.of(2024, 1, 31, 23, 59);
 
         filterParams = new TripFilterParams();
-        filterParams.setStartDateTime(startDateTime);
-        filterParams.setEndDateTime(endDateTime);
+        filterParams.setPickupDateTimeFrom(pickupDateTimeFrom);
+        filterParams.setPickupDateTimeTo(pickupDateTimeTo);
         filterParams.setMinWindSpeed(0.0);
         filterParams.setMaxWindSpeed(10.0);
         filterParams.setIsFavorite(null);
@@ -56,8 +56,8 @@ class FilterTripServiceTest {
 
         when(tripsRepository.filter(
                 null,
-                startDateTime,
-                endDateTime,
+                pickupDateTimeFrom,
+                pickupDateTimeTo,
                 0.0,
                 10.0,
                 pageable
@@ -70,8 +70,8 @@ class FilterTripServiceTest {
 
         verify(tripsRepository).filter(
                 null,
-                startDateTime,
-                endDateTime,
+                pickupDateTimeFrom,
+                pickupDateTimeTo,
                 0.0,
                 10.0,
                 pageable
@@ -85,8 +85,8 @@ class FilterTripServiceTest {
 
         when(tripsRepository.filter(
                 null,
-                startDateTime,
-                endDateTime,
+                pickupDateTimeFrom,
+                pickupDateTimeTo,
                 0.0,
                 10.0,
                 pageable
@@ -100,8 +100,8 @@ class FilterTripServiceTest {
 
         verify(tripsRepository).filter(
                 null,
-                startDateTime,
-                endDateTime,
+                pickupDateTimeFrom,
+                pickupDateTimeTo,
                 0.0,
                 10.0,
                 pageable
@@ -115,8 +115,8 @@ class FilterTripServiceTest {
 
         when(tripsRepository.filter(
                 null,
-                startDateTime,
-                endDateTime,
+                pickupDateTimeFrom,
+                pickupDateTimeTo,
                 0.0,
                 10.0,
                 pageable
@@ -131,8 +131,8 @@ class FilterTripServiceTest {
 
         verify(tripsRepository).filter(
                 null,
-                startDateTime,
-                endDateTime,
+                pickupDateTimeFrom,
+                pickupDateTimeTo,
                 0.0,
                 10.0,
                 pageable);
@@ -146,8 +146,8 @@ class FilterTripServiceTest {
 
         when(tripsRepository.filter(
                 null,
-                startDateTime,
-                endDateTime,
+                pickupDateTimeFrom,
+                pickupDateTimeTo,
                 0.0,
                 10.0,
                 pageable
@@ -164,8 +164,8 @@ class FilterTripServiceTest {
 
         verify(tripsRepository).filter(
                 null,
-                startDateTime,
-                endDateTime,
+                pickupDateTimeFrom,
+                pickupDateTimeTo,
                 0.0,
                 10.0,
                 pageable
@@ -181,8 +181,8 @@ class FilterTripServiceTest {
 
         when(tripsRepository.filter(
                 true,
-                startDateTime,
-                endDateTime,
+                pickupDateTimeFrom,
+                pickupDateTimeTo,
                 0.0,
                 10.0,
                 pageable
@@ -195,8 +195,8 @@ class FilterTripServiceTest {
 
         verify(tripsRepository).filter(
                 true,
-                startDateTime,
-                endDateTime,
+                pickupDateTimeFrom,
+                pickupDateTimeTo,
                 0.0,
                 10.0,
                 pageable

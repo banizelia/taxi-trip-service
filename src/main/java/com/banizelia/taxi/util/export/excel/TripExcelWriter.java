@@ -1,17 +1,22 @@
 package com.banizelia.taxi.util.export.excel;
 
+import com.banizelia.taxi.config.ExcelExporterConfig;
 import com.banizelia.taxi.trip.model.TripDto;
 import com.banizelia.taxi.util.extractors.FieldAndFunctionExtractor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.dhatim.fastexcel.Worksheet;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TripExcelWriter {
+    private final ExcelExporterConfig conf;
+
     private final List<FieldAndFunctionExtractor> extractors = List.of(
             new FieldAndFunctionExtractor("ID", TripDto::getId),
             new FieldAndFunctionExtractor("Vendor ID", TripDto::getVendorId),
@@ -35,6 +40,7 @@ public class TripExcelWriter {
             new FieldAndFunctionExtractor("Airport Fee", TripDto::getAirportFee)
     );
 
+
     public void writeHeaders(Worksheet sheet) {
         for (int i = 0; i < extractors.size(); i++) {
             sheet.value(0, i, extractors.get(i).name());
@@ -45,10 +51,8 @@ public class TripExcelWriter {
         for (int column = 0; column < extractors.size(); column++) {
             Object val = extractors.get(column).extractor().apply(dto);
             if (val instanceof LocalDateTime dateTime) {
-
                 sheet.value(row, column, dateTime);
                 sheet.style(row, column).format("yyyy-MM-dd H:mm:ss").set();
-
             } else if (val instanceof Number number) {
                 sheet.value(row, column, number.doubleValue());
             } else if (val != null) {

@@ -19,9 +19,4 @@ public class ExcelExporterConfig {
 
     @Positive
     int batchSize;
-
-    @AssertTrue()
-    private boolean isBatchSizeValid() {
-        return batchSize <= maxRowsPerSheet;
-    }
 }

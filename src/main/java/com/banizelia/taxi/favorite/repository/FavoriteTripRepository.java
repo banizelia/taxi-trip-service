@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Repository
 public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long> {
@@ -23,4 +24,9 @@ public interface FavoriteTripRepository extends JpaRepository<FavoriteTrip, Long
     List<FavoriteTrip> findAllByOrderByPositionAsc();
 
     Optional<FavoriteTrip> findByTripId(Long id);
+
+    Stream<FavoriteTrip> streamAllByOrderByPositionAsc();
+
+    @Query("SELECT ft FROM FavoriteTrip ft ORDER BY ft.position ASC")
+    Stream<FavoriteTrip> findAllByOrderByPositionAscStream();
 }

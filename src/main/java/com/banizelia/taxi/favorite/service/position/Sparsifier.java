@@ -4,18 +4,26 @@ import com.banizelia.taxi.config.FavoriteTripListConfig;
 import com.banizelia.taxi.error.position.PositionOverflowException;
 import com.banizelia.taxi.favorite.model.FavoriteTrip;
 import com.banizelia.taxi.favorite.repository.FavoriteTripRepository;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import jakarta.transaction.Transactional;
 
-import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Stream;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class Sparsifier {
     private final FavoriteTripRepository favoriteTripRepository;
     private final FavoriteTripListConfig config;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Transactional
     public long getNextAvailablePosition() {
@@ -32,19 +40,50 @@ public class Sparsifier {
         return maxPosition == 0 ? config.getInitialPosition() : (maxPosition + config.getPositionGap());
     }
 
+//    @Transactional
+//    public void sparsify() {
+//        List<FavoriteTrip> trips = favoriteTripRepository.findAllByOrderByPositionAsc();
+//
+//        if (!trips.isEmpty()) {
+//            AtomicLong currentPosition = new AtomicLong(config.getInitialPosition());
+//
+//            trips.forEach(trip -> trip.setPosition(currentPosition.getAndAdd(config.getPositionGap())));
+//            favoriteTripRepository.saveAll(trips);
+//        }
+//    }
+
     @Transactional
     public void sparsify() {
-        List<FavoriteTrip> trips = favoriteTripRepository.findAllByOrderByPositionAsc();
+        AtomicLong currentPosition = new AtomicLong(config.getInitialPosition());
+        AtomicInteger count = new AtomicInteger();
 
-        if (!trips.isEmpty()) {
-            AtomicLong currentPosition = new AtomicLong(config.getInitialPosition());
+        Stream<FavoriteTrip> stream = favoriteTripRepository.findAllByOrderByPositionAscStream();
 
-            trips.forEach(trip -> trip.setPosition(currentPosition.getAndAdd(config.getPositionGap())));
-            favoriteTripRepository.saveAll(trips);
-        }
+        stream.forEach(trip -> {
+            trip.setPosition(currentPosition.getAndAdd(config.getPositionGap()));
+            count.getAndIncrement();
+            if (count.get() % config.getBatchSize() == 0){
+                entityManager.flush();
+                entityManager.clear();
+                logUsedMemoryInMB();
+            }
+        });
+
+        entityManager.flush();
+        entityManager.clear();
     }
 
     private boolean isRebalancingNeeded(long maxPosition) {
         return maxPosition > Long.MAX_VALUE * config.getRebalanceThreshold();
+    }
+
+    long tripCount = 1;
+
+    private void logUsedMemoryInMB() {
+        Runtime runtime = Runtime.getRuntime();
+
+        long usedMemoryBytes = runtime.totalMemory() - runtime.freeMemory();
+
+        log.info("Записана поездка {}. Использовано памяти: {} MB", tripCount++,  usedMemoryBytes / (1024 * 1024));
     }
 }

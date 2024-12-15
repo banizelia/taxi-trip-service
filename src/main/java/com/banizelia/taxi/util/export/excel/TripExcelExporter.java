@@ -2,9 +2,10 @@ package com.banizelia.taxi.util.export.excel;
 
 import com.banizelia.taxi.config.ExcelExporterConfig;
 import com.banizelia.taxi.error.export.ExportException;
-import com.banizelia.taxi.trip.model.TripDto;
 import com.banizelia.taxi.trip.model.TripFilterParams;
 import com.banizelia.taxi.util.export.TripDataProvider;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dhatim.fastexcel.Workbook;
@@ -14,7 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Component
@@ -25,36 +27,71 @@ public class TripExcelExporter {
     private final ExcelExporterConfig conf;
     private final TripExcelWriter writer;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public void exportTrips(OutputStream outputStream, TripFilterParams filterParams) throws IOException {
+        entityManager.clear();
+
         Workbook workbook = new Workbook(outputStream, "Trips", "1.0");
 
         try {
-            Worksheet worksheet = workbook.newWorksheet(conf.getSheetPrefix() + "1");
-            writer.writeHeaders(worksheet);
+            AtomicInteger pageCount = new AtomicInteger(1);
+            AtomicInteger rowCount = new AtomicInteger(1);
 
-            Iterator<TripDto> iterator = dataProvider.provide(filterParams);
+            AtomicInteger count = new AtomicInteger();
 
-            int row = 1;
-            int pageCount = 1;
-            while (iterator.hasNext()) {
-                if (row > conf.getMaxRowsPerSheet()) {
-                    worksheet.finish();
-                    outputStream.flush();
-                    pageCount++;
-                    worksheet = workbook.newWorksheet(conf.getSheetPrefix() + pageCount);
-                    writer.writeHeaders(worksheet);
-                    row = 1;
+            AtomicReference<Worksheet> currentWorksheet = new AtomicReference<>(
+                    workbook.newWorksheet(conf.getSheetPrefix() + pageCount.get())
+            );
+
+            writer.writeHeaders(currentWorksheet.get());
+
+
+            dataProvider.provide(filterParams).forEach(tripDto -> {
+
+                count.incrementAndGet();
+
+                try {
+                    writer.writeRow(currentWorksheet.get(), rowCount.getAndIncrement(), tripDto);
+
+                    if (rowCount.get() > conf.getMaxRowsPerSheet()) {
+
+
+                        currentWorksheet.get().finish();
+                        flush(outputStream);
+
+                        pageCount.incrementAndGet();
+                        currentWorksheet.set(workbook.newWorksheet(conf.getSheetPrefix() + pageCount.get()));
+                        writer.writeHeaders(currentWorksheet.get());
+                        rowCount.set(1);
+                    }
+
+                    if (rowCount.get() % conf.getBatchSize() == 0){
+
+                        Runtime runtime = Runtime.getRuntime();
+                        long usedMemoryBytes = runtime.totalMemory() - runtime.freeMemory();
+
+                        log.info("Записан батч, текущий ряд: {} . Использовано памяти: {} MB", count.get(),  usedMemoryBytes / (1024 * 1024));
+
+
+                        flush(outputStream);
+                    }
+
+                } catch (IOException e) {
+                    log.error("Error while writing row {}: {}", count.get(), e.getMessage(), e);
+                    throw new ExportException("Error while exporting to excel", e);
                 }
-                writer.writeRow(worksheet, row++, iterator.next());
-                if (row % conf.getBatchSize() == 0) {
-                    outputStream.flush();
-                }
-            }
-        } catch (IOException e) {
-            throw new ExportException("Error while exporting to excel", e);
+            });
         } finally {
             workbook.finish();
-            outputStream.flush();
+
+            flush(outputStream);
         }
+    }
+
+    private void flush(OutputStream outputStream) throws IOException {
+        outputStream.flush();
+        entityManager.clear();
     }
 }

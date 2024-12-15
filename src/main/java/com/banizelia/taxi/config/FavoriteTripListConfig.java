@@ -24,4 +24,7 @@ public class FavoriteTripListConfig {
     @DecimalMin("0.1")
     @DecimalMax("0.9")
     double rebalanceThreshold;
+
+    @Min(1)
+    int batchSize;
 }

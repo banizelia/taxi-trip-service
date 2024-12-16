@@ -6,10 +6,10 @@ import com.banizelia.taxi.favorite.model.FavoriteTrip;
 import com.banizelia.taxi.favorite.repository.FavoriteTripRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import jakarta.transaction.Transactional;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -40,18 +40,6 @@ public class Sparsifier {
         return maxPosition == 0 ? config.getInitialPosition() : (maxPosition + config.getPositionGap());
     }
 
-//    @Transactional
-//    public void sparsify() {
-//        List<FavoriteTrip> trips = favoriteTripRepository.findAllByOrderByPositionAsc();
-//
-//        if (!trips.isEmpty()) {
-//            AtomicLong currentPosition = new AtomicLong(config.getInitialPosition());
-//
-//            trips.forEach(trip -> trip.setPosition(currentPosition.getAndAdd(config.getPositionGap())));
-//            favoriteTripRepository.saveAll(trips);
-//        }
-//    }
-
     @Transactional
     public void sparsify() {
         AtomicLong currentPosition = new AtomicLong(config.getInitialPosition());
@@ -62,28 +50,32 @@ public class Sparsifier {
         stream.forEach(trip -> {
             trip.setPosition(currentPosition.getAndAdd(config.getPositionGap()));
             count.getAndIncrement();
-            if (count.get() % config.getBatchSize() == 0){
-                entityManager.flush();
-                entityManager.clear();
+
+            if (count.get() % config.getBatchSize() == 0) {
+                flush();
+
                 logUsedMemoryInMB();
             }
+
         });
 
-        entityManager.flush();
-        entityManager.clear();
+        flush();
     }
 
     private boolean isRebalancingNeeded(long maxPosition) {
         return maxPosition > Long.MAX_VALUE * config.getRebalanceThreshold();
     }
 
-    long tripCount = 1;
+    private void flush() {
+        entityManager.flush();
+        entityManager.clear();
+    }
 
     private void logUsedMemoryInMB() {
         Runtime runtime = Runtime.getRuntime();
 
         long usedMemoryBytes = runtime.totalMemory() - runtime.freeMemory();
 
-        log.info("Записана поездка {}. Использовано памяти: {} MB", tripCount++,  usedMemoryBytes / (1024 * 1024));
+        log.info("Batch written. RAM Used: {} MB", usedMemoryBytes / (1024 * 1024));
     }
 }

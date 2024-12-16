@@ -3,17 +3,19 @@ package com.banizelia.taxi.trip.model;
 import com.banizelia.taxi.favorite.model.FavoriteTrip;
 import com.banizelia.taxi.weather.model.Weather;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TripTest {
 
-    private Trip trip;
     private final LocalDateTime localDateTime = LocalDateTime.of(2024, 1, 1, 12, 0);
     private final LocalDate localDate = LocalDate.of(2024, 1, 1);
+    private Trip trip;
 
     @BeforeEach
     void setUp() {
@@ -23,6 +25,67 @@ class TripTest {
     @Test
     void testNoArgsConstructor() {
         assertNotNull(trip);
+    }
+
+    @Test
+    void testCompleteTrip() {
+        trip.setId(1L);
+        trip.setVendorId(1);
+        trip.setPickupDatetime(localDateTime);
+        trip.setDropoffDatetime(localDateTime.plusHours(1));
+        trip.setPassengerCount(2);
+        trip.setTripDistance(10.5);
+        trip.setRateCodeId(1);
+        trip.setStoreAndFwdFlag("Y");
+        trip.setPickupLocationId(100);
+        trip.setDropoffLocationId(200);
+        trip.setPaymentType(1);
+        trip.setFareAmount(25.50);
+        trip.setExtra(2.0);
+        trip.setMtaTax(0.5);
+        trip.setTipAmount(5.0);
+        trip.setTollsAmount(6.0);
+        trip.setImprovementSurcharge(0.3);
+        trip.setTotalAmount(39.30);
+        trip.setCongestionSurcharge(2.5);
+        trip.setAirportFee(1.5);
+        trip.setPickupDate(localDate);
+
+        Weather weather = new Weather();
+        weather.setId(1L);
+        weather.setDate(localDate);
+        trip.setWeather(weather);
+
+        FavoriteTrip favoriteTrip = new FavoriteTrip();
+        favoriteTrip.setId(1L);
+        favoriteTrip.setTripId(1L);
+        trip.setFavoriteTrip(favoriteTrip);
+
+        assertAll(
+                () -> assertEquals(1L, trip.getId()),
+                () -> assertEquals(1, trip.getVendorId()),
+                () -> assertEquals(localDateTime, trip.getPickupDatetime()),
+                () -> assertEquals(localDateTime.plusHours(1), trip.getDropoffDatetime()),
+                () -> assertEquals(2, trip.getPassengerCount()),
+                () -> assertEquals(10.5, trip.getTripDistance()),
+                () -> assertEquals(1, trip.getRateCodeId()),
+                () -> assertEquals("Y", trip.getStoreAndFwdFlag()),
+                () -> assertEquals(100, trip.getPickupLocationId()),
+                () -> assertEquals(200, trip.getDropoffLocationId()),
+                () -> assertEquals(1, trip.getPaymentType()),
+                () -> assertEquals(25.50, trip.getFareAmount()),
+                () -> assertEquals(2.0, trip.getExtra()),
+                () -> assertEquals(0.5, trip.getMtaTax()),
+                () -> assertEquals(5.0, trip.getTipAmount()),
+                () -> assertEquals(6.0, trip.getTollsAmount()),
+                () -> assertEquals(0.3, trip.getImprovementSurcharge()),
+                () -> assertEquals(39.30, trip.getTotalAmount()),
+                () -> assertEquals(2.5, trip.getCongestionSurcharge()),
+                () -> assertEquals(1.5, trip.getAirportFee()),
+                () -> assertEquals(localDate, trip.getPickupDate()),
+                () -> assertNotNull(trip.getWeather()),
+                () -> assertNotNull(trip.getFavoriteTrip())
+        );
     }
 
     @Nested
@@ -199,66 +262,5 @@ class TripTest {
             assertEquals(favoriteTrip.getId(), trip.getFavoriteTrip().getId());
             assertEquals(favoriteTrip.getTripId(), trip.getFavoriteTrip().getTripId());
         }
-    }
-
-    @Test
-    void testCompleteTrip() {
-        trip.setId(1L);
-        trip.setVendorId(1);
-        trip.setPickupDatetime(localDateTime);
-        trip.setDropoffDatetime(localDateTime.plusHours(1));
-        trip.setPassengerCount(2);
-        trip.setTripDistance(10.5);
-        trip.setRateCodeId(1);
-        trip.setStoreAndFwdFlag("Y");
-        trip.setPickupLocationId(100);
-        trip.setDropoffLocationId(200);
-        trip.setPaymentType(1);
-        trip.setFareAmount(25.50);
-        trip.setExtra(2.0);
-        trip.setMtaTax(0.5);
-        trip.setTipAmount(5.0);
-        trip.setTollsAmount(6.0);
-        trip.setImprovementSurcharge(0.3);
-        trip.setTotalAmount(39.30);
-        trip.setCongestionSurcharge(2.5);
-        trip.setAirportFee(1.5);
-        trip.setPickupDate(localDate);
-
-        Weather weather = new Weather();
-        weather.setId(1L);
-        weather.setDate(localDate);
-        trip.setWeather(weather);
-
-        FavoriteTrip favoriteTrip = new FavoriteTrip();
-        favoriteTrip.setId(1L);
-        favoriteTrip.setTripId(1L);
-        trip.setFavoriteTrip(favoriteTrip);
-
-        assertAll(
-                () -> assertEquals(1L, trip.getId()),
-                () -> assertEquals(1, trip.getVendorId()),
-                () -> assertEquals(localDateTime, trip.getPickupDatetime()),
-                () -> assertEquals(localDateTime.plusHours(1), trip.getDropoffDatetime()),
-                () -> assertEquals(2, trip.getPassengerCount()),
-                () -> assertEquals(10.5, trip.getTripDistance()),
-                () -> assertEquals(1, trip.getRateCodeId()),
-                () -> assertEquals("Y", trip.getStoreAndFwdFlag()),
-                () -> assertEquals(100, trip.getPickupLocationId()),
-                () -> assertEquals(200, trip.getDropoffLocationId()),
-                () -> assertEquals(1, trip.getPaymentType()),
-                () -> assertEquals(25.50, trip.getFareAmount()),
-                () -> assertEquals(2.0, trip.getExtra()),
-                () -> assertEquals(0.5, trip.getMtaTax()),
-                () -> assertEquals(5.0, trip.getTipAmount()),
-                () -> assertEquals(6.0, trip.getTollsAmount()),
-                () -> assertEquals(0.3, trip.getImprovementSurcharge()),
-                () -> assertEquals(39.30, trip.getTotalAmount()),
-                () -> assertEquals(2.5, trip.getCongestionSurcharge()),
-                () -> assertEquals(1.5, trip.getAirportFee()),
-                () -> assertEquals(localDate, trip.getPickupDate()),
-                () -> assertNotNull(trip.getWeather()),
-                () -> assertNotNull(trip.getFavoriteTrip())
-        );
     }
 }

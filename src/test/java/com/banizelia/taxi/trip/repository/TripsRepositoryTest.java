@@ -7,12 +7,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.StreamSupport;
@@ -23,17 +27,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class TripsRepositoryTest {
-    @Autowired
-    private TripsRepository tripsRepository;
-
-    @Autowired
-    private WeatherRepository weatherRepository;
-
     @Container
     private static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:latest")
             .withDatabaseName("testdb")
             .withUsername("postgres")
             .withPassword("12345678");
+    @Autowired
+    private TripsRepository tripsRepository;
+    @Autowired
+    private WeatherRepository weatherRepository;
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -56,7 +58,7 @@ class TripsRepositoryTest {
             Page<Trip> result = tripsRepository.filter(null, pickupDateTimeFrom, pickupDateTimeTo, minWindSpeed, maxWindSpeed, pageable);
 
             assertFalse(result.isEmpty());
-            assertEquals(1000, result.getTotalElements());
+            assertEquals(3, result.getTotalElements());
             Trip trip = result.getContent().getFirst();
             double windSpeed = trip.getWeather().getAverageWindSpeed();
             assertEquals(1, trip.getId());
@@ -75,7 +77,7 @@ class TripsRepositoryTest {
             Page<Trip> result = tripsRepository.filter(isFavorite, pickupDateTimeFrom, pickupDateTimeTo, minWindSpeed, maxWindSpeed, pageable);
 
             assertFalse(result.isEmpty());
-            assertEquals(99, result.getTotalElements());
+            assertEquals(2, result.getTotalElements());
             Trip trip = result.getContent().getFirst();
             assertNotNull(trip.getFavoriteTrip());
         }
@@ -92,7 +94,7 @@ class TripsRepositoryTest {
             Page<Trip> result = tripsRepository.filter(isFavorite, pickupDateTimeFrom, pickupDateTimeTo, minWindSpeed, maxWindSpeed, pageable);
 
             assertFalse(result.isEmpty());
-            assertEquals(901, result.getTotalElements());
+            assertEquals(1, result.getTotalElements());
             Trip trip = result.getContent().getFirst();
             assertNull(trip.getFavoriteTrip());
         }
@@ -124,7 +126,7 @@ class TripsRepositoryTest {
             List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(null, pickupDateTimeFrom, pickupDateTimeTo, minWindSpeed, maxWindSpeed).spliterator(), false)
                     .toList();
 
-            assertEquals(1000, trips.size());
+            assertEquals(3, trips.size());
         }
 
         @Test
@@ -138,7 +140,7 @@ class TripsRepositoryTest {
             List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(isFavorite, pickupDateTimeFrom, pickupDateTimeTo, minWindSpeed, maxWindSpeed).spliterator(), false)
                     .toList();
 
-            assertEquals(99, trips.size());
+            assertEquals(2, trips.size());
             trips.forEach(trip -> assertNotNull(trip.getFavoriteTrip()));
         }
 
@@ -153,7 +155,7 @@ class TripsRepositoryTest {
             List<Trip> trips = StreamSupport.stream(tripsRepository.streamFilter(isFavorite, pickupDateTimeFrom, pickupDateTimeTo, minWindSpeed, maxWindSpeed).spliterator(), false)
                     .toList();
 
-            assertEquals(901, trips.size());
+            assertEquals(1, trips.size());
             trips.forEach(trip -> assertNull(trip.getFavoriteTrip()));
         }
 

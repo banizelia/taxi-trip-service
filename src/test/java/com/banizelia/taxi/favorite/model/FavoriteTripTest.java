@@ -2,8 +2,8 @@ package com.banizelia.taxi.favorite.model;
 
 import com.banizelia.taxi.trip.model.Trip;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,6 +24,31 @@ class FavoriteTripTest {
         assertNull(favoriteTrip.getPosition());
         assertNull(favoriteTrip.getVersion());
         assertNull(favoriteTrip.getTrip());
+    }
+
+    @Test
+    void testCompleteObject() {
+        Long id = 1L;
+        Long tripId = 2L;
+        Long position = 100L;
+        Long version = 1L;
+        Trip trip = new Trip();
+        trip.setId(tripId);
+
+        favoriteTrip.setId(id);
+        favoriteTrip.setTripId(tripId);
+        favoriteTrip.setPosition(position);
+        favoriteTrip.setVersion(version);
+        favoriteTrip.setTrip(trip);
+
+        assertAll(
+                () -> assertEquals(id, favoriteTrip.getId()),
+                () -> assertEquals(tripId, favoriteTrip.getTripId()),
+                () -> assertEquals(position, favoriteTrip.getPosition()),
+                () -> assertEquals(version, favoriteTrip.getVersion()),
+                () -> assertNotNull(favoriteTrip.getTrip()),
+                () -> assertEquals(trip, favoriteTrip.getTrip())
+        );
     }
 
     @Nested
@@ -69,14 +94,11 @@ class FavoriteTripTest {
     class RelationshipTests {
         @Test
         void testTripRelationship() {
-            // Arrange
             Trip trip = new Trip();
             trip.setId(1L);
 
-            // Act
             favoriteTrip.setTrip(trip);
 
-            // Assert
             assertNotNull(favoriteTrip.getTrip());
             assertEquals(trip, favoriteTrip.getTrip());
             assertEquals(trip.getId(), favoriteTrip.getTrip().getId());
@@ -84,39 +106,9 @@ class FavoriteTripTest {
 
         @Test
         void testTripRelationshipNull() {
-            // Act
             favoriteTrip.setTrip(null);
 
-            // Assert
             assertNull(favoriteTrip.getTrip());
         }
-    }
-
-    @Test
-    void testCompleteObject() {
-        // Arrange
-        Long id = 1L;
-        Long tripId = 2L;
-        Long position = 100L;
-        Long version = 1L;
-        Trip trip = new Trip();
-        trip.setId(tripId);
-
-        // Act
-        favoriteTrip.setId(id);
-        favoriteTrip.setTripId(tripId);
-        favoriteTrip.setPosition(position);
-        favoriteTrip.setVersion(version);
-        favoriteTrip.setTrip(trip);
-
-        // Assert
-        assertAll(
-                () -> assertEquals(id, favoriteTrip.getId()),
-                () -> assertEquals(tripId, favoriteTrip.getTripId()),
-                () -> assertEquals(position, favoriteTrip.getPosition()),
-                () -> assertEquals(version, favoriteTrip.getVersion()),
-                () -> assertNotNull(favoriteTrip.getTrip()),
-                () -> assertEquals(trip, favoriteTrip.getTrip())
-        );
     }
 }

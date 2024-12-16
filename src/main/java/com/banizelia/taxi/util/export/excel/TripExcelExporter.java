@@ -60,12 +60,12 @@ public class TripExcelExporter {
                         rowCount.set(1);
                     }
 
-                    if (rowCount.get() % conf.getBatchSize() == 0){
+                    if (rowCount.get() % conf.getBatchSize() == 0) {
 
                         Runtime runtime = Runtime.getRuntime();
                         long usedMemoryBytes = runtime.totalMemory() - runtime.freeMemory();
 
-                        log.info("Batch written, row {}, page {}. Использовано памяти: {} MB", rowCount.get(), pageCount.get(),  usedMemoryBytes / (1024 * 1024));
+                        log.info("Batch written, row {}, page {}. Использовано памяти: {} MB", rowCount.get(), pageCount.get(), usedMemoryBytes / (1024 * 1024));
 
                         flush(outputStream);
                     }

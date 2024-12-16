@@ -1,15 +1,17 @@
 package com.banizelia.taxi.trip.model;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TripDtoTest {
 
-    private TripDto tripDto;
     private final LocalDateTime testDateTime = LocalDateTime.of(2024, 1, 1, 12, 0);
+    private TripDto tripDto;
 
     @BeforeEach
     void setUp() {
@@ -21,92 +23,6 @@ class TripDtoTest {
         assertNotNull(tripDto);
         assertNull(tripDto.getId());
         assertNull(tripDto.getVendorId());
-    }
-
-    @Nested
-    class GetterSetterTests {
-        @Test
-        void testIdGetterSetter() {
-            Long id = 1L;
-            tripDto.setId(id);
-            assertEquals(id, tripDto.getId());
-        }
-
-        @Test
-        void testVendorIdGetterSetter() {
-            int vendorId = 1;
-            tripDto.setVendorId(vendorId);
-            assertEquals(vendorId, tripDto.getVendorId());
-        }
-
-        @Test
-        void testPickupDatetimeGetterSetter() {
-            tripDto.setPickupDatetime(testDateTime);
-            assertEquals(testDateTime, tripDto.getPickupDatetime());
-        }
-
-        @Test
-        void testDropoffDatetimeGetterSetter() {
-            tripDto.setDropoffDatetime(testDateTime);
-            assertEquals(testDateTime, tripDto.getDropoffDatetime());
-        }
-
-        @Test
-        void testPassengerCountGetterSetter() {
-            Integer count = 2;
-            tripDto.setPassengerCount(count);
-            assertEquals(count, tripDto.getPassengerCount());
-        }
-
-        @Test
-        void testTripDistanceGetterSetter() {
-            Double distance = 10.5;
-            tripDto.setTripDistance(distance);
-            assertEquals(distance, tripDto.getTripDistance());
-        }
-
-        @Test
-        void testLocationIdsGetterSetter() {
-            Integer pickupId = 100;
-            Integer dropoffId = 200;
-            tripDto.setPickupLocationId(pickupId);
-            tripDto.setDropoffLocationId(dropoffId);
-            assertEquals(pickupId, tripDto.getPickupLocationId());
-            assertEquals(dropoffId, tripDto.getDropoffLocationId());
-        }
-
-        @Test
-        void testPaymentFieldsGetterSetter() {
-            Double fareAmount = 25.50;
-            Double extra = 2.0;
-            Double mtaTax = 0.5;
-            Double tipAmount = 5.0;
-            Double tollsAmount = 6.0;
-            Double improvementSurcharge = 0.3;
-            Double totalAmount = 39.30;
-            Double congestionSurcharge = 2.5;
-            Double airportFee = 1.5;
-
-            tripDto.setFareAmount(fareAmount);
-            tripDto.setExtra(extra);
-            tripDto.setMtaTax(mtaTax);
-            tripDto.setTipAmount(tipAmount);
-            tripDto.setTollsAmount(tollsAmount);
-            tripDto.setImprovementSurcharge(improvementSurcharge);
-            tripDto.setTotalAmount(totalAmount);
-            tripDto.setCongestionSurcharge(congestionSurcharge);
-            tripDto.setAirportFee(airportFee);
-
-            assertEquals(fareAmount, tripDto.getFareAmount());
-            assertEquals(extra, tripDto.getExtra());
-            assertEquals(mtaTax, tripDto.getMtaTax());
-            assertEquals(tipAmount, tripDto.getTipAmount());
-            assertEquals(tollsAmount, tripDto.getTollsAmount());
-            assertEquals(improvementSurcharge, tripDto.getImprovementSurcharge());
-            assertEquals(totalAmount, tripDto.getTotalAmount());
-            assertEquals(congestionSurcharge, tripDto.getCongestionSurcharge());
-            assertEquals(airportFee, tripDto.getAirportFee());
-        }
     }
 
     @Test
@@ -217,5 +133,91 @@ class TripDtoTest {
 
         assertNotEquals(dto, other);
         assertNotEquals(null, dto);
+    }
+
+    @Nested
+    class GetterSetterTests {
+        @Test
+        void testIdGetterSetter() {
+            Long id = 1L;
+            tripDto.setId(id);
+            assertEquals(id, tripDto.getId());
+        }
+
+        @Test
+        void testVendorIdGetterSetter() {
+            int vendorId = 1;
+            tripDto.setVendorId(vendorId);
+            assertEquals(vendorId, tripDto.getVendorId());
+        }
+
+        @Test
+        void testPickupDatetimeGetterSetter() {
+            tripDto.setPickupDatetime(testDateTime);
+            assertEquals(testDateTime, tripDto.getPickupDatetime());
+        }
+
+        @Test
+        void testDropoffDatetimeGetterSetter() {
+            tripDto.setDropoffDatetime(testDateTime);
+            assertEquals(testDateTime, tripDto.getDropoffDatetime());
+        }
+
+        @Test
+        void testPassengerCountGetterSetter() {
+            Integer count = 2;
+            tripDto.setPassengerCount(count);
+            assertEquals(count, tripDto.getPassengerCount());
+        }
+
+        @Test
+        void testTripDistanceGetterSetter() {
+            Double distance = 10.5;
+            tripDto.setTripDistance(distance);
+            assertEquals(distance, tripDto.getTripDistance());
+        }
+
+        @Test
+        void testLocationIdsGetterSetter() {
+            Integer pickupId = 100;
+            Integer dropoffId = 200;
+            tripDto.setPickupLocationId(pickupId);
+            tripDto.setDropoffLocationId(dropoffId);
+            assertEquals(pickupId, tripDto.getPickupLocationId());
+            assertEquals(dropoffId, tripDto.getDropoffLocationId());
+        }
+
+        @Test
+        void testPaymentFieldsGetterSetter() {
+            Double fareAmount = 25.50;
+            Double extra = 2.0;
+            Double mtaTax = 0.5;
+            Double tipAmount = 5.0;
+            Double tollsAmount = 6.0;
+            Double improvementSurcharge = 0.3;
+            Double totalAmount = 39.30;
+            Double congestionSurcharge = 2.5;
+            Double airportFee = 1.5;
+
+            tripDto.setFareAmount(fareAmount);
+            tripDto.setExtra(extra);
+            tripDto.setMtaTax(mtaTax);
+            tripDto.setTipAmount(tipAmount);
+            tripDto.setTollsAmount(tollsAmount);
+            tripDto.setImprovementSurcharge(improvementSurcharge);
+            tripDto.setTotalAmount(totalAmount);
+            tripDto.setCongestionSurcharge(congestionSurcharge);
+            tripDto.setAirportFee(airportFee);
+
+            assertEquals(fareAmount, tripDto.getFareAmount());
+            assertEquals(extra, tripDto.getExtra());
+            assertEquals(mtaTax, tripDto.getMtaTax());
+            assertEquals(tipAmount, tripDto.getTipAmount());
+            assertEquals(tollsAmount, tripDto.getTollsAmount());
+            assertEquals(improvementSurcharge, tripDto.getImprovementSurcharge());
+            assertEquals(totalAmount, tripDto.getTotalAmount());
+            assertEquals(congestionSurcharge, tripDto.getCongestionSurcharge());
+            assertEquals(airportFee, tripDto.getAirportFee());
+        }
     }
 }

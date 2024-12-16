@@ -22,13 +22,14 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -151,7 +152,8 @@ class TripControllerTest {
     void download_WithValidFilenameAndParams_ShouldReturnValidResponse() {
         String filename = "test";
         TripFilterParams params = filterParams;
-        StreamingResponseBody streamingResponseBody = outputStream -> {};
+        StreamingResponseBody streamingResponseBody = outputStream -> {
+        };
         when(downloadTripService.execute(any(TripFilterParams.class))).thenReturn(streamingResponseBody);
 
         ResponseEntity<StreamingResponseBody> response = tripController.download(filename, params);
@@ -176,7 +178,8 @@ class TripControllerTest {
     void download_ShouldIncludeTimestampInFilename() {
         String filename = "test";
         TripFilterParams params = filterParams;
-        StreamingResponseBody streamingResponseBody = outputStream -> {};
+        StreamingResponseBody streamingResponseBody = outputStream -> {
+        };
         when(downloadTripService.execute(any(TripFilterParams.class))).thenReturn(streamingResponseBody);
 
         ResponseEntity<StreamingResponseBody> response = tripController.download(filename, params);
@@ -193,7 +196,8 @@ class TripControllerTest {
 
         String filename = "test";
         TripFilterParams params = filterParams;
-        StreamingResponseBody streamingResponseBody = outputStream -> {};
+        StreamingResponseBody streamingResponseBody = outputStream -> {
+        };
         when(downloadTripService.execute(any(TripFilterParams.class))).thenReturn(streamingResponseBody);
 
         ResponseEntity<StreamingResponseBody> response = tripController.download(filename, params);

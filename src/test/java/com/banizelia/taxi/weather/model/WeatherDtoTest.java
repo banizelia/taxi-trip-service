@@ -1,14 +1,16 @@
 package com.banizelia.taxi.weather.model;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class WeatherDtoTest {
 
-    private WeatherDto weatherDto;
     private final LocalDate localDate = LocalDate.of(2024, 1, 1);
+    private WeatherDto weatherDto;
 
     @BeforeEach
     void setUp() {

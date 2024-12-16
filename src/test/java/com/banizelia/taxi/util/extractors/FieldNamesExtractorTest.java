@@ -1,19 +1,12 @@
 package com.banizelia.taxi.util.extractors;
 
 import org.junit.jupiter.api.Test;
+
 import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 class FieldNamesExtractorTest {
-
-    static class TestClass {
-        private String field1;
-        private int field2;
-        protected double field3;
-        public boolean field4;
-    }
-
-    static class EmptyClass {
-    }
 
     @Test
     void getFields_shouldReturnFieldNames() {
@@ -40,5 +33,15 @@ class FieldNamesExtractorTest {
         Set<String> secondCall = FieldNamesExtractor.getFields(TestClass.class);
 
         assertSame(firstCall, secondCall);
+    }
+
+    static class TestClass {
+        public boolean field4;
+        protected double field3;
+        private String field1;
+        private int field2;
+    }
+
+    static class EmptyClass {
     }
 }

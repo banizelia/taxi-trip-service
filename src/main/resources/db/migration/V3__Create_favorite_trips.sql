@@ -18,5 +18,4 @@ CREATE INDEX IF NOT EXISTS idx_favorite_trip_position
 
 INSERT INTO public.favorite_trips (trip_id, position, version) VALUES
 (1, 1, 0),
-(2, 2, 0),
-(3, 3, 0);
+(2, 2, 0);

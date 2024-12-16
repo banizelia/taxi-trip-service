@@ -1,17 +1,20 @@
 package com.banizelia.taxi.weather.model;
 
 import com.banizelia.taxi.trip.model.Trip;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class WeatherTest {
 
-    private Weather weather;
     private final LocalDate localDate = LocalDate.of(2024, 1, 1);
+    private Weather weather;
 
     @BeforeEach
     void setUp() {

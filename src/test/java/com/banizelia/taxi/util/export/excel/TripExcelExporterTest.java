@@ -4,50 +4,50 @@ import com.banizelia.taxi.config.ExcelExporterConfig;
 import com.banizelia.taxi.trip.model.TripDto;
 import com.banizelia.taxi.trip.model.TripFilterParams;
 import com.banizelia.taxi.util.export.TripDataProvider;
-import org.dhatim.fastexcel.Worksheet;
+import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
 import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import static org.mockito.Mockito.when;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.stream.Stream;
+
 
 class TripExcelExporterTest {
+    private TripDataProvider dataProvider;
+    private ExcelExporterConfig conf;
+    private TripExcelWriter writer;
+    private EntityManager em;
+    private TripExcelExporter exporter;
+
+    @BeforeEach
+    void setup() throws Exception {
+        dataProvider = Mockito.mock(TripDataProvider.class);
+        conf = Mockito.mock(ExcelExporterConfig.class);
+        writer = Mockito.mock(TripExcelWriter.class);
+        em = Mockito.mock(EntityManager.class);
+
+        exporter = new TripExcelExporter(dataProvider, conf, writer);
+
+        Field field = TripExcelExporter.class.getDeclaredField("entityManager");
+        field.setAccessible(true);
+        field.set(exporter, em);
+
+        Mockito.when(conf.getSheetPrefix()).thenReturn("Sheet");
+        Mockito.when(conf.getMaxRowsPerSheet()).thenReturn(10);
+        Mockito.when(conf.getBatchSize()).thenReturn(5);
+    }
+
     @Test
-    void testExportTrips() throws Exception {
-        TripDataProvider provider = Mockito.mock(TripDataProvider.class);
-        ExcelExporterConfig conf = Mockito.mock(ExcelExporterConfig.class);
-        TripExcelWriter writer = Mockito.mock(TripExcelWriter.class);
-
-        when(conf.getSheetPrefix()).thenReturn("trips_");
-        when(conf.getMaxRowsPerSheet()).thenReturn(100);
-        when(conf.getBatchSize()).thenReturn(10);
-
-        Iterator<TripDto> it = new Iterator<>() {
-            int count = 0;
-
-            @Override
-            public boolean hasNext() {
-                return count < 5;
-            }
-
-            @Override
-            public TripDto next() {
-                if (!hasNext()) throw new NoSuchElementException();
-                count++;
-                TripDto dto = new TripDto();
-                dto.setId((long) count);
-                return dto;
-            }
-        };
-        when(provider.provide(Mockito.any())).thenReturn(it);
-
-        TripExcelExporter exporter = new TripExcelExporter(provider, conf, writer);
+    void testExportTrips() throws IOException {
+        Mockito.when(dataProvider.provide(Mockito.any())).thenReturn(Stream.of(new TripDto(), new TripDto()));
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         exporter.exportTrips(out, new TripFilterParams());
 
-        Mockito.verify(writer, Mockito.atLeastOnce()).writeHeaders(Mockito.any(Worksheet.class));
-        Mockito.verify(writer, Mockito.atLeastOnce()).writeRow(Mockito.any(Worksheet.class), Mockito.anyInt(), Mockito.any());
+        Mockito.verify(writer, Mockito.atLeastOnce()).writeHeaders(Mockito.any());
+        Mockito.verify(writer, Mockito.atLeastOnce()).writeRow(Mockito.any(), Mockito.anyInt(), Mockito.any(TripDto.class));
     }
 }

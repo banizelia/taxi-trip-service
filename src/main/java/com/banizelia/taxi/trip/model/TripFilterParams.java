@@ -34,7 +34,7 @@ public class TripFilterParams {
         if (pickupDateTimeFrom == null || pickupDateTimeTo == null) {
             return true;
         }
-        return pickupDateTimeTo.isAfter(pickupDateTimeFrom)|| pickupDateTimeFrom.equals(pickupDateTimeTo);
+        return pickupDateTimeTo.isAfter(pickupDateTimeFrom) || pickupDateTimeFrom.equals(pickupDateTimeTo);
     }
 
     @AssertTrue()

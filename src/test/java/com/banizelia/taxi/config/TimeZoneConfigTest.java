@@ -4,7 +4,9 @@ import com.banizelia.taxi.error.initialization.InvalidTimeZoneException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+
 import java.util.TimeZone;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TimeZoneConfigTest {

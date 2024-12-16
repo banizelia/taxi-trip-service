@@ -1,11 +1,12 @@
-import psycopg2
 import random
 from datetime import datetime, timedelta
 from io import StringIO
+
+import psycopg2
 from tqdm import tqdm
 
 NUM_ROWS = 2_000_000  # Количество строк для вставки
-BATCH_SIZE = 10_000    # Размер партии вставки
+BATCH_SIZE = 10_000  # Размер партии вставки
 
 def random_pickup_datetime():
     start = datetime(2016, 1, 1, 0, 0, 0)

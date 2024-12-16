@@ -1,5 +1,6 @@
-import psycopg2
 from io import StringIO
+
+import psycopg2
 from tqdm import tqdm
 
 NUM_ROWS = 1_000_000  # Количество строк для вставки за один запуск

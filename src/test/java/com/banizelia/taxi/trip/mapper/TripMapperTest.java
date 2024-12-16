@@ -4,17 +4,19 @@ import com.banizelia.taxi.favorite.model.FavoriteTrip;
 import com.banizelia.taxi.trip.model.Trip;
 import com.banizelia.taxi.trip.model.TripDto;
 import com.banizelia.taxi.weather.model.Weather;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TripMapperTest {
 
-    private Trip trip;
     private final LocalDateTime localDateTime = LocalDateTime.of(2024, 1, 1, 12, 0);
     private final LocalDate localDate = LocalDate.of(2024, 1, 1);
+    private Trip trip;
 
     @BeforeEach
     void setUp() {

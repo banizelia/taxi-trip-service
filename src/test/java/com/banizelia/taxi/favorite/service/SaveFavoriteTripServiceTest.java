@@ -12,30 +12,28 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SaveFavoriteTripServiceTest {
 
-    @Mock
-    private FavoriteTripRepository favoriteTripRepository;
-
-    @Mock
-    private TripsRepository tripsRepository;
-
-    @Mock
-    private PositionCalculator positionCalculator;
-
-    @InjectMocks
-    private SaveFavoriteTripService service;
-
-    @Captor
-    private ArgumentCaptor<FavoriteTrip> favoriteTripCaptor;
-
     private static final Long TRIP_ID = 1L;
     private static final Long MAX_POSITION = 100L;
+    @Mock
+    private FavoriteTripRepository favoriteTripRepository;
+    @Mock
+    private TripsRepository tripsRepository;
+    @Mock
+    private PositionCalculator positionCalculator;
+    @InjectMocks
+    private SaveFavoriteTripService service;
+    @Captor
+    private ArgumentCaptor<FavoriteTrip> favoriteTripCaptor;
 
     @BeforeEach
     void setUp() {

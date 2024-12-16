@@ -2,7 +2,9 @@ package com.banizelia.taxi.util.extractors;
 
 import com.banizelia.taxi.trip.model.TripDto;
 import org.junit.jupiter.api.Test;
+
 import java.util.function.Function;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 

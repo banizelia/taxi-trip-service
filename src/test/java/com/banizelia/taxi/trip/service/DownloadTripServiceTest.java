@@ -1,18 +1,21 @@
 package com.banizelia.taxi.trip.service;
 
 import com.banizelia.taxi.error.export.ExportException;
-import com.banizelia.taxi.util.export.excel.TripExcelExporter;
 import com.banizelia.taxi.trip.model.TripFilterParams;
+import com.banizelia.taxi.util.export.excel.TripExcelExporter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
 import java.io.IOException;
 import java.io.OutputStream;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

@@ -9,8 +9,12 @@ import com.banizelia.taxi.favorite.service.position.PositionCalculator;
 import jakarta.persistence.OptimisticLockException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -90,7 +94,7 @@ class DragAndDropFavoriteTripServiceTest {
 
         when(favoriteTripRepository.findByTripId(tripId)).thenReturn(Optional.of(favoriteTrip));
         when(positionCalculator.calculateNewPosition(targetPosition)).thenReturn(newPosition);
-        when(favoriteTripRepository.save(favoriteTrip)).thenThrow(new FavoriteTripModificationException("Concurrent error", new OptimisticLockException() ));
+        when(favoriteTripRepository.save(favoriteTrip)).thenThrow(new FavoriteTripModificationException("Concurrent error", new OptimisticLockException()));
 
         assertThrows(FavoriteTripModificationException.class, () -> dragAndDropFavoriteTripService.execute(tripId, targetPosition));
         verify(favoriteTripRepository, times(1)).findByTripId(tripId);

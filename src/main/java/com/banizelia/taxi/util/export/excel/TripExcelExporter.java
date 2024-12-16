@@ -39,26 +39,19 @@ public class TripExcelExporter {
             AtomicInteger pageCount = new AtomicInteger(1);
             AtomicInteger rowCount = new AtomicInteger(1);
 
-            AtomicInteger count = new AtomicInteger();
-
-            AtomicReference<Worksheet> currentWorksheet = new AtomicReference<>(
-                    workbook.newWorksheet(conf.getSheetPrefix() + pageCount.get())
-            );
+            Worksheet worksheet = workbook.newWorksheet(conf.getSheetPrefix() + pageCount.get());
+            AtomicReference<Worksheet> currentWorksheet = new AtomicReference<>(worksheet);
 
             writer.writeHeaders(currentWorksheet.get());
 
-
             dataProvider.provide(filterParams).forEach(tripDto -> {
-
-                count.incrementAndGet();
 
                 try {
                     writer.writeRow(currentWorksheet.get(), rowCount.getAndIncrement(), tripDto);
 
                     if (rowCount.get() > conf.getMaxRowsPerSheet()) {
-
-
                         currentWorksheet.get().finish();
+
                         flush(outputStream);
 
                         pageCount.incrementAndGet();
@@ -72,14 +65,13 @@ public class TripExcelExporter {
                         Runtime runtime = Runtime.getRuntime();
                         long usedMemoryBytes = runtime.totalMemory() - runtime.freeMemory();
 
-                        log.info("Записан батч, текущий ряд: {} . Использовано памяти: {} MB", count.get(),  usedMemoryBytes / (1024 * 1024));
-
+                        log.info("Batch written, row {}, page {}. Использовано памяти: {} MB", rowCount.get(), pageCount.get(),  usedMemoryBytes / (1024 * 1024));
 
                         flush(outputStream);
                     }
 
                 } catch (IOException e) {
-                    log.error("Error while writing row {}: {}", count.get(), e.getMessage(), e);
+                    log.error("Error while writing row {} at page {}: {}", rowCount.get(), pageCount.get(), e.getMessage(), e);
                     throw new ExportException("Error while exporting to excel", e);
                 }
             });

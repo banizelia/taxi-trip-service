@@ -19,6 +19,8 @@ public class TripExcelWriter {
 
     private final List<FieldAndFunctionExtractor> extractors = List.of(
             new FieldAndFunctionExtractor("ID", TripDto::getId),
+            new FieldAndFunctionExtractor("Favorite", TripDto::getIsFavorite),
+            new FieldAndFunctionExtractor("Average Wind Speed", TripDto::getAverageWindSpeed),
             new FieldAndFunctionExtractor("Vendor ID", TripDto::getVendorId),
             new FieldAndFunctionExtractor("Pickup Datetime", TripDto::getPickupDatetime),
             new FieldAndFunctionExtractor("Dropoff Datetime", TripDto::getDropoffDatetime),

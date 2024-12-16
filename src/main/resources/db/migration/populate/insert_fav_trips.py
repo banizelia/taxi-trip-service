@@ -4,6 +4,7 @@ from tqdm import tqdm
 
 NUM_ROWS = 1_000_000  # Количество строк для вставки за один запуск
 BATCH_SIZE = 10_000  # Размер партии вставки
+sparsify = True
 
 def main():
     conn = None
@@ -34,7 +35,12 @@ def main():
 
                 for _ in range(BATCH_SIZE):
                     trip_id = count
-                    position = count
+
+                    if sparsify:
+                        position = count * 10000000
+                    else:
+                        position = count
+
                     version = 1
                     row = f"{trip_id}\t{position}\t{version}\n"
                     buffer.write(row)

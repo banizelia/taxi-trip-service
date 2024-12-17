@@ -6,7 +6,10 @@ CREATE TABLE IF NOT EXISTS public.favorite_trips
     trip_id bigint,
     position bigint,
     version bigint,
-    CONSTRAINT favorite_trips_pkey PRIMARY KEY (id)
+    CONSTRAINT favorite_trips_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_favorite_trips_trip FOREIGN KEY (trip_id)
+        REFERENCES public.trips (id)
+        ON DELETE CASCADE
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_favorite_trips_trip_id

@@ -12,6 +12,7 @@ spring:
     baseline-on-migrate: true
     locations: classpath:db/migration
 
+server-port: 7771
 async-timeout-millis: 5400000
 application-timezone: "GMT"
 

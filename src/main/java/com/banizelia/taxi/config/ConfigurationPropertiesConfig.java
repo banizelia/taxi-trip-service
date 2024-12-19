@@ -5,5 +5,5 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @Configuration
 @EnableConfigurationProperties({FavoriteTripListConfig.class, ExcelExporterConfig.class})
-public class PropertiesConfig {
+public class ConfigurationPropertiesConfig {
 }

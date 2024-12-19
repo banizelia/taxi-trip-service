@@ -53,12 +53,8 @@ public class Sparsifier {
 
             if (count.get() % config.getBatchSize() == 0) {
                 flush();
-
-                logUsedMemoryInMB();
             }
-
         });
-
         flush();
     }
 
@@ -69,13 +65,5 @@ public class Sparsifier {
     private void flush() {
         entityManager.flush();
         entityManager.clear();
-    }
-
-    private void logUsedMemoryInMB() {
-        Runtime runtime = Runtime.getRuntime();
-
-        long usedMemoryBytes = runtime.totalMemory() - runtime.freeMemory();
-
-        log.info("Batch written. RAM Used: {} MB", usedMemoryBytes / (1024 * 1024));
     }
 }

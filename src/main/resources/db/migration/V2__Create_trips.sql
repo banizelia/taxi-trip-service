@@ -37,6 +37,9 @@ CREATE INDEX IF NOT EXISTS idx_trips_pickup_date_weather_id
 CREATE INDEX IF NOT EXISTS idx_trips_pickup_date
     ON public.trips (pickup_date);
 
+CREATE INDEX IF NOT EXISTS idx_trips_id
+    ON public.trips (id);
+
 INSERT INTO public.trips
 (id, vendor_id, pickup_datetime, dropoff_datetime, passenger_count, trip_distance, rate_code_id, store_and_fwd_flag, pickup_location_id, dropoff_location_id, payment_type, fare_amount, extra, mta_tax, tip_amount, tolls_amount, improvement_surcharge, total_amount, congestion_surcharge, airport_fee)
 VALUES

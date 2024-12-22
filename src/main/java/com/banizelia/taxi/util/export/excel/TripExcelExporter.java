@@ -62,6 +62,8 @@ public class TripExcelExporter {
 
                     if (rowCount.get() % conf.getBatchSize() == 0) {
                         flush(outputStream);
+
+                        log.info("Batch written, row {}, page {}.", rowCount.get(), pageCount.get());
                     }
 
                 } catch (IOException e) {

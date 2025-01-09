@@ -1,12 +1,12 @@
+import psycopg2
 import random
 from datetime import datetime, timedelta
 from io import StringIO
-
-import psycopg2
 from tqdm import tqdm
 
 NUM_ROWS = 2_000_000  # Количество строк для вставки
 BATCH_SIZE = 10_000  # Размер партии вставки
+
 
 def random_pickup_datetime():
     start = datetime(2016, 1, 1, 0, 0, 0)
@@ -15,8 +15,10 @@ def random_pickup_datetime():
     random_seconds = random.randint(0, int(delta.total_seconds()))
     return start + timedelta(seconds=random_seconds)
 
+
 def random_store_and_fwd_flag():
     return random.choice(['Y', 'N'])
+
 
 def random_nullable(field_type):
     if random.random() < 0.1:
@@ -24,6 +26,7 @@ def random_nullable(field_type):
     if field_type == 'float':
         return f"{round(random.uniform(0.0, 20.0), 2)}"
     return ''
+
 
 def main():
     conn = None
@@ -142,6 +145,7 @@ def main():
             cursor.close()
         if conn:
             conn.close()
+
 
 if __name__ == "__main__":
     main()

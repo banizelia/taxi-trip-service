@@ -1,9 +1,11 @@
 package com.banizelia.taxi.util.export.excel;
 
 import com.banizelia.taxi.config.ExcelExporterConfig;
+import com.banizelia.taxi.trip.export.excel.TripExcelExporter;
+import com.banizelia.taxi.trip.export.excel.TripExcelWriter;
+import com.banizelia.taxi.trip.export.provider.TripDataProvider;
 import com.banizelia.taxi.trip.model.TripDto;
 import com.banizelia.taxi.trip.model.TripFilterParams;
-import com.banizelia.taxi.util.export.TripDataProvider;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +17,7 @@ import java.lang.reflect.Field;
 import java.util.stream.Stream;
 
 
-class TripExcelExporterTest {
+class TripExcelTripExporterTest {
     private TripDataProvider dataProvider;
     private ExcelExporterConfig conf;
     private TripExcelWriter writer;
@@ -45,7 +47,7 @@ class TripExcelExporterTest {
         Mockito.when(dataProvider.provide(Mockito.any())).thenReturn(Stream.of(new TripDto(), new TripDto()));
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        exporter.exportTrips(out, new TripFilterParams());
+        exporter.export(out, new TripFilterParams());
 
         Mockito.verify(writer, Mockito.atLeastOnce()).writeHeaders(Mockito.any());
         Mockito.verify(writer, Mockito.atLeastOnce()).writeRow(Mockito.any(), Mockito.anyInt(), Mockito.any(TripDto.class));

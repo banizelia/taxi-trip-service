@@ -1,4 +1,4 @@
-package com.banizelia.taxi.util.export;
+package com.banizelia.taxi.trip.export.provider;
 
 import com.banizelia.taxi.trip.mapper.TripMapper;
 import com.banizelia.taxi.trip.model.TripDto;

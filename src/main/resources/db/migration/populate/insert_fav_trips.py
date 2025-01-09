@@ -1,11 +1,11 @@
-from io import StringIO
-
 import psycopg2
+from io import StringIO
 from tqdm import tqdm
 
 NUM_ROWS = 1_000_000  # Количество строк для вставки за один запуск
 BATCH_SIZE = 10_000  # Размер партии вставки
 sparsify = True
+
 
 def main():
     conn = None
@@ -75,6 +75,7 @@ def main():
             cursor.close()
         if conn:
             conn.close()
+
 
 if __name__ == "__main__":
     main()

@@ -1,9 +1,10 @@
-package com.banizelia.taxi.util.export.excel;
+package com.banizelia.taxi.trip.export.excel;
 
 import com.banizelia.taxi.config.ExcelExporterConfig;
 import com.banizelia.taxi.error.export.ExportException;
+import com.banizelia.taxi.trip.export.TripExporter;
+import com.banizelia.taxi.trip.export.provider.TripDataProvider;
 import com.banizelia.taxi.trip.model.TripFilterParams;
-import com.banizelia.taxi.util.export.TripDataProvider;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class TripExcelExporter {
+public class TripExcelExporter implements TripExporter {
     private final TripDataProvider dataProvider;
     private final ExcelExporterConfig conf;
     private final TripExcelWriter writer;
@@ -30,7 +31,7 @@ public class TripExcelExporter {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public void exportTrips(OutputStream outputStream, TripFilterParams filterParams) throws IOException {
+    public void export(OutputStream outputStream, TripFilterParams filterParams) throws IOException {
         entityManager.clear();
 
         Workbook workbook = new Workbook(outputStream, "Trips", "1.0");

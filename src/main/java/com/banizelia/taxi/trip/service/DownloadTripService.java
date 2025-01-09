@@ -1,8 +1,8 @@
 package com.banizelia.taxi.trip.service;
 
 import com.banizelia.taxi.error.export.ExportException;
+import com.banizelia.taxi.trip.export.excel.TripExcelExporter;
 import com.banizelia.taxi.trip.model.TripFilterParams;
-import com.banizelia.taxi.util.export.excel.TripExcelExporter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +19,7 @@ public class DownloadTripService {
     public StreamingResponseBody execute(TripFilterParams filterParams) {
         return out -> {
             try (out) {
-                tripExcelExporter.exportTrips(out, filterParams);
+                tripExcelExporter.export(out, filterParams);
             } catch (IOException e) {
                 throw new ExportException("Error exporting data to Excel", e);
             }

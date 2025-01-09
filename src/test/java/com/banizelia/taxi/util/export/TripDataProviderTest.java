@@ -1,5 +1,6 @@
 package com.banizelia.taxi.util.export;
 
+import com.banizelia.taxi.trip.export.provider.TripDataProvider;
 import com.banizelia.taxi.trip.model.Trip;
 import com.banizelia.taxi.trip.model.TripFilterParams;
 import com.banizelia.taxi.trip.repository.TripsRepository;

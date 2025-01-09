@@ -1,9 +1,7 @@
-package com.banizelia.taxi.util.export.excel;
+package com.banizelia.taxi.trip.export.excel;
 
-import com.banizelia.taxi.config.ExcelExporterConfig;
 import com.banizelia.taxi.trip.model.TripDto;
 import com.banizelia.taxi.util.extractors.FieldAndFunctionExtractor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dhatim.fastexcel.Worksheet;
 import org.springframework.stereotype.Component;
@@ -13,10 +11,7 @@ import java.util.List;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class TripExcelWriter {
-    private final ExcelExporterConfig conf;
-
     private final List<FieldAndFunctionExtractor> extractors = List.of(
             new FieldAndFunctionExtractor("ID", TripDto::getId),
             new FieldAndFunctionExtractor("Favorite", TripDto::getIsFavorite),

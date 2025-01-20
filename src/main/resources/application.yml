@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/taxi-trip-service-db
+    username: postgres
+    password: 12345678
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+server-port: 7771
+async-timeout-millis: 5400000
+application-timezone: "GMT"
+
+excel-export:
+  sheet-prefix: "trips_"
+  max-rows-per-sheet: 1000000 # must be smaller than 1048575 because of Excel limitations
+  batch-size: 100000
+
+favorite-trip-list:
+  position-gap: 10000000
+  initial-position: 10000000
+  min-gap: 100
+  rebalance-threshold: 0.8
+  batch-size: 10000
